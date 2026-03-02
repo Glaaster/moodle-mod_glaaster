@@ -1,0 +1,6 @@
+{
+    "plugintypes": {
+        "ltiglaastersource": "mod\/glaaster\/source",
+        "ltiglaasterservice": "mod\/glaaster\/service"
+    }
+}

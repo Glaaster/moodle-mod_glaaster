@@ -1,0 +1,95 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_glaaster/tool_configure
+
+    This template provides the layout for the external tool configuration page in the
+    LTI module.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    *
+
+    Example context (json):
+    {
+        "configuremanualurl":"https://some.tool.example/mod/glaaster/typessettings.php?sesskey=OKl37bHflL&amp;returnto=toolconfigure",
+        "managetoolsurl":"https://some.tool.example/admin/settings.php?section=modsettingglaaster",
+        "managetoolproxiesurl":"https://some.tool.example/mod/glaaster/toolproxies.php"
+    }
+
+}}
+<div id="main-content-container">
+    <div id="registration-form-container" aria-live="polite">
+        <div id="registration-feedback-container" aria-live="polite"></div>
+        <div id="registration-choice-container" class="mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center justify-content-between flex-wrap gap-3 p-4">
+                    <div>
+                        <h5 class="mb-1 fw-semibold">{{#str}} connect_glaaster, mod_glaaster {{/str}}</h5>
+                        <p class="mb-0 text-muted small">{{#str}} connect_glaaster_desc, mod_glaaster {{/str}}</p>
+                        {{^connectenabled}}
+                        <p class="mb-0 mt-2 text-warning small">
+                            <span class="fa fa-exclamation-triangle me-1" aria-hidden="true"></span>
+                            {{^hasapiuser}}{{#str}} connect_requires_user, mod_glaaster {{/str}}{{/hasapiuser}}
+                            {{#hasapiuser}}{{^hasapitoken}}{{#str}} connect_requires_token, mod_glaaster {{/str}}{{/hasapitoken}}{{/hasapiuser}}
+                        </p>
+                        {{/connectenabled}}
+                    </div>
+                    <button id="tool-create-button" type="button"
+                            class="btn btn-primary btn-lg d-inline-flex align-items-center gap-2"
+                            data-registerurl="{{{ registerurl }}}"
+                            data-apitoken="{{{ apitoken }}}"
+                            {{^connectenabled}}disabled="disabled"{{/connectenabled}}>
+                        <span class="btn-text">{{#str}} connect_glaaster, mod_glaaster {{/str}}</span>
+                        <span class="btn-loader">
+                            {{> mod_glaaster/loader }}
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="alert alert-info d-flex align-items-start gap-2 mt-3" role="alert">
+            <span class="fa fa-info-circle mt-1 flex-shrink-0" aria-hidden="true"></span>
+            <span>{{#str}} connect_support_info, mod_glaaster {{/str}}</span>
+        </div>
+        <div id="external-registration-container" aria-live="polite" class="hidden">
+            {{> mod_glaaster/external_registration }}
+        </div>
+    </div>
+
+    <div id="tool-list-container" class="loading">
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="rounded-circle bg-primary d-inline-block"
+                  style="width:10px;height:10px;flex-shrink:0"></span>
+            <h5 class="mb-0 fw-semibold text-dark">{{#str}} tooltypes, mod_glaaster {{/str}}</h5>
+        </div>
+        <div id="tool-list-loader-container">
+            {{> mod_glaaster/loader }}
+        </div>
+        {{> mod_glaaster/tool_list }}
+    </div>
+</div>
+{{#js}}
+    require(['mod_glaaster/tool_configure_controller'], function(controller) {
+    controller.init();
+    });
+{{/js}}
