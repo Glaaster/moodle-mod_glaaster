@@ -104,7 +104,7 @@ class types_helper {
 
         require_capability('mod/glaaster:addcoursetool', $context);
 
-        $ltitype = lti_glaaster_get_type($tooltypeid);
+        $ltitype = lti_glaaster_get_type(typeid: $tooltypeid);
         if ($ltitype && ($ltitype->coursevisible != LTI_GLAASTER_COURSEVISIBLE_NO)) {
             $coursevisible =
                 $showinactivitychooser ? LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER : LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED;

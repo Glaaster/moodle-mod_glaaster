@@ -23,12 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
  */
-define(['jquery', 'core/paged_content_factory', 'core/notification', 'core/templates',
+define(['jquery', 'core/notification', 'core/templates',
         'mod_glaaster/events',
         'mod_glaaster/tool_types_and_proxies',
         'core/config'],
     function ($,
-              pagedContentFactory, notification, templates, ltiEvents,
+              notification, templates, ltiEvents,
               toolTypesAndProxies, config) {
 
         var SELECTORS = {
@@ -246,50 +246,25 @@ define(['jquery', 'core/paged_content_factory', 'core/notification', 'core/templ
 
             const cardContainer = getToolCardContainer();
             const listContainer = getToolListContainer();
-            const limit = 60;
-            // Get initial data with zero limit and offset.
-            fetchToolCount().done(function (data) {
-                pagedContentFactory.createWithTotalAndLimit(
-                    data.count,
-                    limit,
-                    function (pagesData) {
-                        return pagesData.map(function (pageData) {
-                            return fetchToolData(pageData.limit, pageData.offset)
-                                .then(function (data) {
-                                    return renderToolData(data);
-                                });
-                        });
-                    },
-                    {
-                        'showFirstLast': true
-                    })
-                    .done(function (html, js) {
-                        // Add the paged content into the page.
-                        templates.replaceNodeContents(cardContainer, html, js);
-                    })
-                    .always(function () {
-                        stopLoading(listContainer);
-                        M.util.js_complete('reloadToolList');
-                    });
-            });
             startLoading(listContainer);
-        };
 
-        /**
-         * Fetch the count of tool type and proxy datasets.
-         *
-         * @return {*|void}
-         */
-        const fetchToolCount = function () {
-            return toolTypesAndProxies.count({'orphanedonly': true})
-                .done(function (data) {
-                    return data;
-                }).catch(function (error) {
-                    // Add debug message, then return empty data.
-                    notification.exception(error);
-                    return {
-                        'count': 0
-                    };
+            fetchToolData(1, 0)
+                .then(function (data) {
+                    // If a tool already exists, disable the create button.
+                    const hasTools = data.types.length > 0 || data.proxies.length > 0;
+                    if (hasTools) {
+                        $(SELECTORS.TOOL_CREATE_BUTTON).prop('disabled', true).attr('disabled', 'disabled');
+                    } else {
+                        $(SELECTORS.TOOL_CREATE_BUTTON).prop('disabled', false).removeAttr('disabled');
+                    }
+                    return renderToolData(data);
+                })
+                .then(function (html, js) {
+                    templates.replaceNodeContents(cardContainer, html, js);
+                })
+                .always(function () {
+                    stopLoading(listContainer);
+                    M.util.js_complete('reloadToolList');
                 });
         };
 

@@ -50,8 +50,10 @@ defined('MOODLE_INTERNAL') || die;
 
 $string['apisetup'] = 'Glaaster API Setup';
 $string['apisetup_desc'] = 'Assign a Moodle user to authenticate Glaaster webservice calls. The selected user will be granted the Glaaster API role and added to the Glaaster API service.';
-$string['apiuser'] = 'API User';
+$string['apiuser'] = 'API Glaaster User';
 $string['apiuser_desc'] = 'Start typing a username or full name to search.';
+$string['apiuser_help_title'] = 'Create a dedicated user';
+$string['apiuser_help'] = 'This user will be used to authenticate Glaaster webservice calls. To create a dedicated user, go to Site Administration > Users > Accounts > Add a new user and fill in the following details:<br><br><strong>Username:</strong> glaasterapi<br><strong>First name:</strong> Glaaster<br><strong>Last name:</strong> API<br><strong>Email:</strong> system@glaaster.com<br><br>⚠️ Keep this user — it will be required for the Glaaster administration configuration.';
 $string['apiuser_current'] = 'Current API user: {$a}';
 $string['apiuser_none'] = 'No API user configured.';
 $string['apiuser_saved'] = 'API user saved successfully.';
@@ -85,7 +87,7 @@ $string['connect_requires_token'] = 'An API token must be generated before you c
 $string['connect_status_pending'] = 'Validating...';
 $string['connect_status_validated'] = 'Validated';
 $string['connect_status_error'] = 'Error';
-$string['connect_status_api_pending'] = 'Pending';
+$string['connect_status_api_pending'] = 'Awaiting Glaaster validation';
 $string['connect_support_info'] = 'If you experience any issues connecting, please contact <a href="mailto:system@glaaster.com">system@glaaster.com</a> for assistance.';
 $string['add_ltilegacy'] = 'Add Legacy LTI';
 $string['addnewapp'] = 'Enable external application';

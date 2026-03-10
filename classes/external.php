@@ -790,7 +790,7 @@ class mod_glaaster_external extends external_api {
             $type = new stdClass();
             $data = new stdClass();
             $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
-            $data->lti_coursevisible = 1;
+            $data->lti_coursevisible = 2;
             $data->lti_sendname = LTI_GLAASTER_SETTING_DELEGATE;
             $data->lti_sendemailaddr = LTI_GLAASTER_SETTING_DELEGATE;
             $data->lti_acceptgrades = LTI_GLAASTER_SETTING_DELEGATE;

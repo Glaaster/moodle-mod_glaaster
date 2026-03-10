@@ -22,8 +22,22 @@
  */
 
 import Ajax from 'core/ajax';
+import Modal from 'core/modal';
 
 export const init = () => {
+    // Help modal for API user field.
+    const helpBtn = document.getElementById('apiuser-help-btn');
+    if (helpBtn) {
+        helpBtn.addEventListener('click', async() => {
+            const modal = await Modal.create({
+                title: helpBtn.dataset.helpTitle ?? '',
+                body: helpBtn.dataset.helpContent ?? '',
+                show: true,
+            });
+            modal.show();
+        });
+    }
+
     const searchInput = document.getElementById('apiuser-search');
     const hiddenInput = document.getElementById('apiuserid-value');
     const suggestions = document.getElementById('apiuser-suggestions');

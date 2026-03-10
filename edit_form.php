@@ -224,7 +224,7 @@ class mod_glaaster_edit_types_form extends moodleform {
                 }
                 $mform->addElement('select', 'lti_coursevisible', get_string($stringname, 'glaaster'), $options);
                 $mform->addHelpButton('lti_coursevisible', $stringname, 'glaaster');
-                $mform->setDefault('lti_coursevisible', '1');
+                $mform->setDefault('lti_coursevisible', '2');
             }
         } else {
             $mform->addElement('hidden', 'lti_coursevisible', LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER);

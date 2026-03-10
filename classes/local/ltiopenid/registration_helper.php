@@ -134,7 +134,7 @@ class registration_helper {
         $config->lti_ltiversion = LTI_GLAASTER_VERSION_1P3;
         $config->lti_organizationid_default = LTI_GLAASTER_DEFAULT_ORGID_SITEID;
         $config->lti_icon = $logouri;
-        $config->lti_coursevisible = LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED;
+        $config->lti_coursevisible = LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
         $config->lti_contentitem = 0;
         // Sets Content Item.
         if (!empty($messages)) {

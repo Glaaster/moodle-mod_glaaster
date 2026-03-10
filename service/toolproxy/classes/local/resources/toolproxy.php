@@ -204,7 +204,7 @@ class toolproxy extends resource_base {
                 $config = new stdClass();
                 $config->lti_toolurl = "{$baseurl}{$launchrequest->path}";
                 $config->lti_typename = $tool->name;
-                $config->lti_coursevisible = 1;
+                $config->lti_coursevisible = 2;
                 $config->lti_forcessl = 0;
                 if (isset($messages['ContentItemSelectionRequest'])) {
                     $contentitemrequest = $messages['ContentItemSelectionRequest'];

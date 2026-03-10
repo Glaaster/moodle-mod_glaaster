@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || ($_SERVER['REQUEST_METHOD'] === 'GE
         try {
             $tokenres = registration_helper::get()->validate_registration_token(trim(substr($authheader, 7)));
             $type = new stdClass();
-            $type->state = LTI_GLAASTER_TOOL_STATE_PENDING;
+            $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
             if (array_key_exists('type', $tokenres)) {
                 $type = $tokenres['type'];
             }

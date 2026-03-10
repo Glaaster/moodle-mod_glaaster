@@ -40,7 +40,7 @@ if ($cartridgeurl) {
     $type = new stdClass();
     $data = new stdClass();
     $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
-    $data->lti_coursevisible = 1;
+    $data->lti_coursevisible = 2;
     lti_glaaster_load_type_from_cartridge($cartridgeurl, $data);
     lti_glaaster_add_type($type, $data);
 }
@@ -178,11 +178,11 @@ if ($needssetup) {
     );
 }
 
-$domainform = html_writer::start_div('card border-0 shadow-sm mb-4');
-$domainform .= html_writer::start_div('card-header d-flex align-items-center gap-2 bg-white border-bottom');
+$domainform = html_writer::start_div('card border-0 mb-4', ['style' => 'box-shadow:0 4px 16px rgba(0,0,0,0.12),0 1px 4px rgba(0,0,0,0.08)']);
+$domainform .= html_writer::start_div('card-header bg-white border-bottom', ['style' => 'display:flex;align-items:center;gap:12px;']);
 $domainform .= html_writer::tag('span', '', [
-    'class' => 'rounded-circle bg-primary d-inline-block',
-    'style' => 'width:10px;height:10px;flex-shrink:0',
+    'class' => 'rounded-circle bg-primary d-inline-block flex-shrink-0',
+    'style' => 'width:10px;height:10px;',
 ]);
 $domainform .= html_writer::tag(
     'h5',
@@ -198,7 +198,7 @@ $domainform .= html_writer::start_div('mb-3');
 $domainform .= html_writer::tag(
     'label',
     get_string('tooldomain', 'mod_glaaster'),
-    ['for' => 'tooldomain', 'class' => 'form-label fw-medium text-secondary small text-uppercase letter-spacing-1']
+    ['for' => 'tooldomain', 'class' => 'form-label fw-medium small text-uppercase letter-spacing-1', 'style' => 'color:#343a40']
 );
 $domainform .= html_writer::empty_tag('input', [
     'type' => 'text',
@@ -221,8 +221,6 @@ $domainform .= html_writer::tag('button', get_string('savechanges'), [
 $domainform .= html_writer::end_tag('form');
 $domainform .= html_writer::end_div();
 $domainform .= html_writer::end_div();
-
-echo $domainform;
 
 // Glaaster API Setup card.
 $apirole = $DB->get_record('role', ['shortname' => 'glaasterapi']);
@@ -250,11 +248,11 @@ $statusmissing = html_writer::tag(
     ['class' => 'badge bg-warning text-dark']
 );
 
-$setupform = html_writer::start_div('card border-0 shadow-sm mb-4');
-$setupform .= html_writer::start_div('card-header d-flex align-items-center gap-2 bg-white border-bottom');
+$setupform = html_writer::start_div('card border-0 mb-4', ['style' => 'box-shadow:0 4px 16px rgba(0,0,0,0.12),0 1px 4px rgba(0,0,0,0.08)']);
+$setupform .= html_writer::start_div('card-header bg-white border-bottom', ['style' => 'display:flex;align-items:center;gap:12px;']);
 $setupform .= html_writer::tag('span', '', [
-    'class' => 'rounded-circle bg-primary d-inline-block',
-    'style' => 'width:10px;height:10px;flex-shrink:0',
+    'class' => 'rounded-circle bg-primary d-inline-block flex-shrink-0',
+    'style' => 'width:10px;height:10px;',
 ]);
 $setupform .= html_writer::tag(
     'h5',
@@ -268,7 +266,7 @@ $setupform .= html_writer::start_div('card-body');
 $setupform .= html_writer::tag(
     'p',
     get_string('apistatus', 'mod_glaaster'),
-    ['class' => 'fw-medium text-secondary small text-uppercase mb-2']
+    ['class' => 'fw-medium small text-uppercase mb-2', 'style' => 'color:#343a40']
 );
 $setupform .= html_writer::start_tag('ul', ['class' => 'list-unstyled mb-3']);
 $setupform .= html_writer::tag(
@@ -298,7 +296,7 @@ if ($apitoken) {
     $setupform .= html_writer::tag(
         'label',
         get_string('apitoken_label', 'mod_glaaster'),
-        ['class' => 'form-label fw-medium text-secondary small text-uppercase']
+        ['class' => 'form-label fw-medium small text-uppercase', 'style' => 'color:#343a40']
     );
     $setupform .= html_writer::start_div('input-group');
     $setupform .= html_writer::empty_tag('input', [
@@ -337,12 +335,25 @@ $setupform .= html_writer::start_tag('form', ['method' => 'post', 'action' => $P
 $setupform .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
 $setupform .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'saveapiuser', 'value' => '1']);
 $setupform .= html_writer::start_div('mb-3 position-relative');
+$apihelpicon = html_writer::tag(
+    'button',
+    '?',
+    [
+        'type' => 'button',
+        'id' => 'apiuser-help-btn',
+        'class' => 'badge rounded-pill bg-secondary border-0 ms-2',
+        'style' => 'cursor:pointer;font-size:0.75rem;padding:2px 7px;vertical-align:middle;',
+        'aria-label' => get_string('apiuser', 'mod_glaaster'),
+        'data-help-content' => get_string('apiuser_help', 'mod_glaaster'),
+        'data-help-title' => get_string('apiuser_help_title', 'mod_glaaster'),
+    ]
+);
 $setupform .= html_writer::tag(
     'label',
-    get_string('apiuser', 'mod_glaaster'),
+    get_string('apiuser', 'mod_glaaster') . $apihelpicon,
     [
         'for' => 'apiuser-search',
-        'class' => 'form-label fw-medium text-secondary small text-uppercase letter-spacing-1',
+        'class' => 'form-label fw-medium small text-uppercase letter-spacing-1', 'style' => 'color:#343a40',
     ]
 );
 // Hidden field holds the resolved user ID.
@@ -376,13 +387,65 @@ $setupform .= html_writer::tag('button', get_string('savechanges'), [
     'class' => 'btn btn-primary px-4',
 ]);
 $setupform .= html_writer::end_tag('form');
+
+// Connect button with warnings.
+$connectenabled = $apiuserid && $apitoken;
+$registerurl = 'https://' . $tooldomain . '/register';
+$apitokenvalue = $apitoken ? $apitoken->token : '';
+$setupform .= html_writer::start_div('mt-3 pt-3 border-top');
+if (!$connectenabled) {
+    $warningmsg = !$apiuserid
+        ? get_string('connect_requires_user', 'mod_glaaster')
+        : get_string('connect_requires_token', 'mod_glaaster');
+    $setupform .= html_writer::tag(
+        'p',
+        html_writer::tag('span', '', ['class' => 'fa fa-exclamation-triangle me-1', 'aria-hidden' => 'true']) . $warningmsg,
+        ['class' => 'text-warning small mb-2']
+    );
+}
+$connectattrs = [
+    'id' => 'tool-create-button',
+    'type' => 'button',
+    'class' => 'btn btn-success d-inline-flex align-items-center gap-2',
+    'data-registerurl' => $registerurl,
+    'data-apitoken' => $apitokenvalue,
+];
+if (!$connectenabled) {
+    $connectattrs['disabled'] = 'disabled';
+}
+$connectbtninner = html_writer::tag('span', get_string('connect_glaaster', 'mod_glaaster'), ['class' => 'btn-text']);
+$connectbtninner .= html_writer::tag('span', $output->render_from_template('mod_glaaster/loader', []), ['class' => 'btn-loader']);
+$setupform .= html_writer::tag('button', $connectbtninner, $connectattrs);
+$setupform .= html_writer::end_div();
+
 $setupform .= html_writer::end_div();
 $setupform .= html_writer::end_div();
+
+$page = new tool_configure_page();
+echo $output->render($page);
 
 $PAGE->requires->js_call_amd('mod_glaaster/api_setup', 'init');
 echo $setupform;
 
-$page = new tool_configure_page();
-echo $output->render($page);
+// Tool list at the bottom of the page.
+echo html_writer::start_div('card border-0 mb-4', ['style' => 'box-shadow:0 4px 16px rgba(0,0,0,0.12),0 1px 4px rgba(0,0,0,0.08)']);
+echo html_writer::start_div('card-header bg-white border-bottom', ['style' => 'display:flex;align-items:center;gap:12px;']);
+echo html_writer::tag('span', '', [
+    'class' => 'rounded-circle bg-primary d-inline-block flex-shrink-0',
+    'style' => 'width:10px;height:10px;',
+]);
+echo html_writer::tag('h5', get_string('tooltypes', 'mod_glaaster'), ['class' => 'mb-0 fw-semibold text-dark']);
+echo html_writer::end_div();
+echo html_writer::start_div('card-body p-0');
+echo html_writer::start_div('', ['id' => 'tool-list-container', 'class' => 'loading p-3']);
+echo html_writer::start_div('', ['id' => 'tool-list-loader-container']);
+echo $output->render_from_template('mod_glaaster/loader', []);
+echo html_writer::end_div();
+echo $output->render_from_template('mod_glaaster/tool_list', []);
+echo html_writer::end_div();
+echo html_writer::end_div();
+echo html_writer::end_div();
+
+echo $domainform;
 
 echo $output->footer();
