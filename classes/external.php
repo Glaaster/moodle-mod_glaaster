@@ -149,7 +149,7 @@ class mod_glaaster_external extends external_api {
 
         // Request and permission validation.
         $lti = $DB->get_record('glaaster', ['id' => $params['toolid']], '*', MUST_EXIST);
-        [$cm] = get_course_and_cm_from_instance($lti, 'glaaster');
+        [, $cm] = get_course_and_cm_from_instance($lti, 'glaaster');
 
         $context = context_module::instance($cm->id);
         self::validate_context($context);
@@ -238,7 +238,7 @@ class mod_glaaster_external extends external_api {
 
             // Get the ltis in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
-            $ltis = get_all_instances_in_courses("lti", $courses);
+            $ltis = get_all_instances_in_courses("glaaster", $courses);
 
             foreach ($ltis as $lti) {
                 $context = context_module::instance($lti->coursemodule);
@@ -590,9 +590,9 @@ class mod_glaaster_external extends external_api {
      * @throws moodle_exception
      * @since Moodle 3.1
      */
-    public static function get_tool_proxy_registration_request($id) {
+    public static function glaaster_get_tool_proxy_registration_request($id) {
         $params = self::validate_parameters(
-            self::get_tool_proxy_registration_request_parameters(),
+            self::glaaster_get_tool_proxy_registration_request_parameters(),
             [
                 'id' => $id,
             ]
@@ -613,7 +613,7 @@ class mod_glaaster_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function get_tool_proxy_registration_request_parameters() {
+    public static function glaaster_get_tool_proxy_registration_request_parameters() {
         return new external_function_parameters(
             [
                 'id' => new external_value(PARAM_INT, 'Tool proxy id'),
@@ -627,7 +627,7 @@ class mod_glaaster_external extends external_api {
      * @return external_description
      * @since Moodle 3.1
      */
-    public static function get_tool_proxy_registration_request_returns() {
+    public static function glaaster_get_tool_proxy_registration_request_returns() {
         return new external_function_parameters(
             [
                 'lti_message_type' => new external_value(PARAM_ALPHANUMEXT, 'LTI message type'),

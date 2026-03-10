@@ -23,6 +23,8 @@
  * @since      Moodle 4.3
  */
 
+namespace mod_glaaster;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -36,7 +38,7 @@ require_once($CFG->dirroot . '/mod/glaaster/edit_form.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 4.3
  */
-class test_edit_form extends \mod_glaaster\mod_glaaster_edit_types_form {
+class test_edit_form extends \mod_glaaster_edit_types_form {
     /**
      * Expose the internal moodleform's MoodleQuickForm
      *

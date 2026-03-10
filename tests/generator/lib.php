@@ -24,8 +24,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_glaaster\tests\generator;
-
 use core\exception\moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
@@ -142,7 +140,7 @@ class mod_glaaster_generator extends testing_module_generator {
         // Grab any non-prefixed fields; these are the type fields. The rest is considered config.
         $type = array_filter(
             $data,
-            fn($val, $key) => !str_contains($key, 'glaaster_') && !str_contains($key, 'ltiglaasterservice_'),
+            fn($val, $key) => !str_contains($key, 'lti_') && !str_contains($key, 'ltiglaasterservice_'),
             ARRAY_FILTER_USE_BOTH
         );
         $config = array_diff_key($data, $type);

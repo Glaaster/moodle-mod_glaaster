@@ -51,7 +51,7 @@ class helper {
                               ltp.timecreated, ltp.timemodified";
             $sort = " ORDER BY ltp.name ASC, ltp.state DESC, ltp.timemodified DESC";
         }
-        $from = " FROM {lti_tool_proxies} ltp";
+        $from = " FROM {glaaster_tool_proxies} ltp";
         if ($orphanedonly) {
             $join = " LEFT JOIN {glaaster_types} lt ON ltp.id = lt.toolproxyid";
             $where = " WHERE lt.toolproxyid IS null";

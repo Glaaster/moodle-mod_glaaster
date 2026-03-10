@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/glaaster/servicelib.php');
  */
 final class servicelib_test extends basic_testcase {
     /**
-     * Test data provider for testing lti_parse_message_id
+     * Test data provider for testing glaaster_parse_message_id
      *
      * @return array
      */
@@ -98,14 +98,14 @@ XML;
     }
 
     /**
-     * Test that lti_parse_message_id never fails with good and bad XML.
+     * Test that glaaster_parse_message_id never fails with good and bad XML.
      *
      * @dataProvider message_id_provider
      * @param mixed $expected Expected message ID.
      * @param string $xml XML to parse.
      */
-    public function test_lti_parse_message_id($expected, $xml): void {
+    public function test_glaaster_parse_message_id($expected, $xml): void {
         $xml = simplexml_load_string($xml);
-        $this->assertEquals($expected, lti_parse_message_id($xml));
+        $this->assertEquals($expected, glaaster_parse_message_id($xml));
     }
 }

@@ -179,7 +179,7 @@ function glaaster_delete_instance($id) {
     global $DB, $CFG;
     require_once($CFG->dirroot . '/mod/glaaster/locallib.php');
 
-    if (!$basiclti = $DB->get_record("lti", ["id" => $id])) {
+    if (!$basiclti = $DB->get_record("glaaster", ["id" => $id])) {
         return false;
     }
 
@@ -197,7 +197,7 @@ function glaaster_delete_instance($id) {
     api::update_completion_date_event($cm->id, 'glaaster', $id, null);
 
     // We must delete the module record after we delete the grade item.
-    if ($DB->delete_records("lti", ["id" => $basiclti->id])) {
+    if ($DB->delete_records("glaaster", ["id" => $basiclti->id])) {
         $services = lti_glaaster_get_services();
         foreach ($services as $service) {
             $service->instance_deleted($id);
@@ -574,7 +574,7 @@ function glaaster_get_fontawesome_icon_map() {
  * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
  * @return action_interface|null
  */
-function glaaster_core_calendar_provide_event_action(
+function mod_glaaster_core_calendar_provide_event_action(
     calendar_event $event,
     action_factory $factory,
     int $userid = 0
@@ -585,7 +585,7 @@ function glaaster_core_calendar_provide_event_action(
         $userid = $USER->id;
     }
 
-    $cm = get_fast_modinfo($event->courseid, $userid)->instances['lti'][$event->instance];
+    $cm = get_fast_modinfo($event->courseid, $userid)->instances['glaaster'][$event->instance];
 
     if (!$cm->uservisible) {
         // The module is not visible to the user for any reason.

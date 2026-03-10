@@ -249,7 +249,7 @@ final class types_helper_test extends mod_glaaster_testcase {
         $result = types_helper::override_type_showinactivitychooser($tool2id, $course->id, $context, true);
         $this->assertTrue($result);
         $cvisibleoverriden = $DB->get_field(
-            'lti_coursevisible',
+            'glaaster_coursevisible',
             'coursevisible',
             ['typeid' => $tool2id, 'courseid' => $course->id]
         );
@@ -269,7 +269,7 @@ final class types_helper_test extends mod_glaaster_testcase {
         $result = types_helper::override_type_showinactivitychooser($tool5id, $course->id, $context, false);
         $this->assertTrue($result);
         $cvisibleoverriden = $DB->get_field(
-            'lti_coursevisible',
+            'glaaster_coursevisible',
             'coursevisible',
             ['typeid' => $tool5id, 'courseid' => $course->id]
         );

@@ -39,14 +39,14 @@ class course_module_viewed extends \core\event\course_module_viewed {
      * @return array
      */
     public static function get_objectid_mapping() {
-        return ['db' => 'lti', 'restore' => 'lti'];
+        return ['db' => 'glaaster', 'restore' => 'glaaster'];
     }
 
     /**
      * Init method.
      */
     protected function init() {
-        $this->data['objecttable'] = 'lti';
+        $this->data['objecttable'] = 'glaaster';
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }

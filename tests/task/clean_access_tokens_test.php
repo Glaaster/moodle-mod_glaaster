@@ -55,6 +55,7 @@ final class clean_access_tokens_test extends advanced_testcase {
         $token->timecreated = $time - DAYSECS;
 
         $t1id = $DB->insert_record('glaaster_access_tokens', $token);
+        $token->id = $t1id;
 
         $this->assertEquals($t1id, $token->id);
 

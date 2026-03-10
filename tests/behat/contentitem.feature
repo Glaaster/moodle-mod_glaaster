@@ -30,6 +30,6 @@ Feature: Glaaster - Content-Item support
     Given the following "mod_glaaster > tool instances" exist:
       | name                 | tool            | course |
       | Test tool activity 1 | Teaching Tool 1 | C1     |
-    When I am on the "Test tool activity 1" "lti activity editing" page logged in as teacher1
+    When I am on the "Test tool activity 1" "glaaster activity editing" page logged in as teacher1
     Then I should see "Select content"
     And the "Select content" "button" should be enabled

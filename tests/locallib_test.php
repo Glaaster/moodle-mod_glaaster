@@ -382,7 +382,7 @@ final class locallib_test extends mod_glaaster_testcase {
             </imsx_POXEnvelopeRequest>
 ';
 
-        $parsed = lti_parse_grade_replace_message(new SimpleXMLElement($message));
+        $parsed = glaaster_parse_grade_replace_message(new SimpleXMLElement($message));
 
         $this->assertEquals($parsed->userid, '2');
         $this->assertEquals($parsed->instanceid, '2');
@@ -390,7 +390,7 @@ final class locallib_test extends mod_glaaster_testcase {
 
         $ltiinstance = (object) ['servicesalt' => '4e5fcc06de1d58.44963230'];
 
-        lti_verify_sourcedid($ltiinstance, $parsed);
+        glaaster_verify_sourcedid($ltiinstance, $parsed);
     }
 
     /*
@@ -1215,60 +1215,6 @@ final class locallib_test extends mod_glaaster_testcase {
                 'claim' => 'service_versions',
                 'isarray' => true,
             ],
-            'custom_gradebookservices_scope' => [
-                'suffix' => 'ags',
-                'group' => 'endpoint',
-                'claim' => 'scope',
-                'isarray' => true,
-            ],
-            'custom_lineitems_url' => [
-                'suffix' => 'ags',
-                'group' => 'endpoint',
-                'claim' => 'lineitems',
-                'isarray' => false,
-            ],
-            'custom_lineitem_url' => [
-                'suffix' => 'ags',
-                'group' => 'endpoint',
-                'claim' => 'lineitem',
-                'isarray' => false,
-            ],
-            'custom_results_url' => [
-                'suffix' => 'ags',
-                'group' => 'endpoint',
-                'claim' => 'results',
-                'isarray' => false,
-            ],
-            'custom_result_url' => [
-                'suffix' => 'ags',
-                'group' => 'endpoint',
-                'claim' => 'result',
-                'isarray' => false,
-            ],
-            'custom_scores_url' => [
-                'suffix' => 'ags',
-                'group' => 'endpoint',
-                'claim' => 'scores',
-                'isarray' => false,
-            ],
-            'custom_score_url' => [
-                'suffix' => 'ags',
-                'group' => 'endpoint',
-                'claim' => 'score',
-                'isarray' => false,
-            ],
-            'lis_outcome_service_url' => [
-                'suffix' => 'bo',
-                'group' => 'basicoutcome',
-                'claim' => 'lis_outcome_service_url',
-                'isarray' => false,
-            ],
-            'lis_result_sourcedid' => [
-                'suffix' => 'bo',
-                'group' => 'basicoutcome',
-                'claim' => 'lis_result_sourcedid',
-                'isarray' => false,
-            ],
             'for_user_id' => [
                 'suffix' => '',
                 'group' => 'for_user',
@@ -1576,53 +1522,6 @@ MwIDAQAB
     }
 
     /**
-     * Test adding a single gradable item through content item.
-     */
-    public function test_lti_glaaster_tool_configuration_from_content_item_single_gradable(): void {
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $type = new stdClass();
-        $type->name = "Test tool";
-        $type->baseurl = "http://example.com";
-        $config = new stdClass();
-        $config->lti_acceptgrades = LTI_GLAASTER_SETTING_DELEGATE;
-        $typeid = lti_glaaster_add_type($type, $config);
-
-        $this->getDataGenerator()->get_plugin_generator('mod_glaaster');
-        $contentitems = [];
-        $contentitems[] = [
-            'type' => 'ltiResourceLink',
-            'url' => 'http://example.com/messages/launch',
-            'title' => 'Test title',
-            'lineItem' => [
-                'resourceId' => 'r12345',
-                'tag' => 'final',
-                'scoreMaximum' => 10.0,
-            ],
-            'frame' => [],
-        ];
-        $contentitemsjson13 = json_encode($contentitems);
-        $json11 = lti_glaaster_convert_content_items($contentitemsjson13);
-
-        $config = lti_glaaster_tool_configuration_from_content_item(
-            $typeid,
-            'ContentItemSelection',
-            $type->ltiversion,
-            'ConsumerKey',
-            $json11
-        );
-
-        $this->assertEquals($contentitems[0]['url'], $config->toolurl);
-        $this->assertEquals(LTI_GLAASTER_SETTING_ALWAYS, $config->instructorchoiceacceptgrades);
-        $this->assertEquals($contentitems[0]['lineItem']['tag'], $config->lineitemtag);
-        $this->assertEquals($contentitems[0]['lineItem']['resourceId'], $config->lineitemresourceid);
-        $this->assertEquals($contentitems[0]['lineItem']['scoreMaximum'], $config->grade_modgrade_point);
-        $this->assertEquals('', $config->lineitemsubreviewurl);
-        $this->assertEquals('', $config->lineitemsubreviewparams);
-    }
-
-    /**
      * Test adding a single gradable item through content item with an empty subreview url.
      * @covers ::lti_glaaster_tool_configuration_from_content_item()
      *
@@ -1666,125 +1565,6 @@ MwIDAQAB
 
         $this->assertEquals('DEFAULT', $config->lineitemsubreviewurl);
         $this->assertEquals('', $config->lineitemsubreviewparams);
-    }
-
-    /**
-     *
-     * Test adding a single gradable item through content item.
-     * @covers ::lti_glaaster_tool_configuration_from_content_item()
-     *
-     */
-    public function test_lti_glaaster_tool_configuration_from_content_item_single_gradable_subreview_default(): void {
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $type = new stdClass();
-        $type->name = "Test tool";
-        $type->baseurl = "http://example.com";
-        $config = new stdClass();
-        $config->lti_acceptgrades = LTI_GLAASTER_SETTING_DELEGATE;
-        $typeid = lti_glaaster_add_type($type, $config);
-
-        $contentitems = [];
-        $contentitems[] = [
-            'type' => 'ltiResourceLink',
-            'url' => 'http://example.com/messages/launch',
-            'title' => 'Test title',
-            'lineItem' => [
-                'resourceId' => 'r12345',
-                'tag' => 'final',
-                'scoreMaximum' => 10.0,
-                'submissionReview' => [],
-            ],
-            'frame' => [],
-        ];
-        $contentitemsjson13 = json_encode($contentitems);
-        $json11 = lti_glaaster_convert_content_items($contentitemsjson13);
-
-        $config = lti_glaaster_tool_configuration_from_content_item(
-            $typeid,
-            'ContentItemSelection',
-            $type->ltiversion,
-            'ConsumerKey',
-            $json11
-        );
-
-        $this->assertEquals($contentitems[0]['url'], $config->toolurl);
-        $this->assertEquals(LTI_GLAASTER_SETTING_ALWAYS, $config->instructorchoiceacceptgrades);
-        $this->assertEquals($contentitems[0]['lineItem']['tag'], $config->lineitemtag);
-        $this->assertEquals($contentitems[0]['lineItem']['resourceId'], $config->lineitemresourceid);
-        $this->assertEquals($contentitems[0]['lineItem']['scoreMaximum'], $config->grade_modgrade_point);
-        $this->assertEquals('DEFAULT', $config->lineitemsubreviewurl);
-        $this->assertEquals('', $config->lineitemsubreviewparams);
-    }
-
-    /**
-     * Test adding multiple gradable items through content item.
-     */
-    public function test_lti_glaaster_tool_configuration_from_content_item_multiple(): void {
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $type = new stdClass();
-        $type->name = "Test tool";
-        $type->baseurl = "http://example.com";
-        $config = new stdClass();
-        $config->lti_acceptgrades = LTI_GLAASTER_SETTING_DELEGATE;
-        $typeid = lti_glaaster_add_type($type, $config);
-
-        $this->getDataGenerator()->get_plugin_generator('mod_glaaster');
-        $contentitems = [];
-        $contentitems[] = [
-            'type' => 'ltiResourceLink',
-            'url' => 'http://example.com/messages/launch',
-            'title' => 'Test title',
-            'text' => 'Test text',
-            'icon' => [
-                'url' => 'http://lti.example.com/image.jpg',
-                'width' => 100,
-            ],
-            'frame' => [],
-        ];
-        $contentitems[] = [
-            'type' => 'ltiResourceLink',
-            'url' => 'http://example.com/messages/launchgraded',
-            'title' => 'Test Graded',
-            'lineItem' => [
-                'resourceId' => 'r12345',
-                'tag' => 'final',
-                'scoreMaximum' => 10.0,
-                'submissionReview' => [
-                    'url' => 'https://testsub.url',
-                    'custom' => ['a' => 'b'],
-                ],
-            ],
-            'frame' => [],
-        ];
-        $contentitemsjson13 = json_encode($contentitems);
-        $json11 = lti_glaaster_convert_content_items($contentitemsjson13);
-
-        $config = lti_glaaster_tool_configuration_from_content_item(
-            $typeid,
-            'ContentItemSelection',
-            $type->ltiversion,
-            'ConsumerKey',
-            $json11
-        );
-        $this->assertNotNull($config->multiple);
-        $this->assertEquals(2, count($config->multiple));
-        $this->assertEquals($contentitems[0]['title'], $config->multiple[0]->name);
-        $this->assertEquals($contentitems[0]['url'], $config->multiple[0]->toolurl);
-        $this->assertEquals(LTI_GLAASTER_SETTING_NEVER, $config->multiple[0]->instructorchoiceacceptgrades);
-        $this->assertEquals($contentitems[1]['url'], $config->multiple[1]->toolurl);
-        $this->assertEquals(LTI_GLAASTER_SETTING_ALWAYS, $config->multiple[1]->instructorchoiceacceptgrades);
-        $this->assertEquals($contentitems[1]['lineItem']['tag'], $config->multiple[1]->lineitemtag);
-        $this->assertEquals($contentitems[1]['lineItem']['resourceId'], $config->multiple[1]->lineitemresourceid);
-        $this->assertEquals($contentitems[1]['lineItem']['scoreMaximum'], $config->multiple[1]->grade_modgrade_point);
-        $this->assertEquals(
-            $contentitems[1]['lineItem']['submissionReview']['url'],
-            $config->multiple[1]->lineitemsubreviewurl
-        );
-        $this->assertEquals("a=b", $config->multiple[1]->lineitemsubreviewparams);
     }
 
     /**
@@ -1917,37 +1697,6 @@ MwIDAQAB
 
         $this->assertEquals('sso.example.com', $params['oauth_consumer_key']);
         $this->assertEquals('John Doe', $params['lis_person_name_full']);
-    }
-
-    /**
-     * Test lti_glaaster_get_permitted_service_scopes().
-     */
-    public function test_lti_glaaster_get_permitted_service_scopes(): void {
-        $this->resetAfterTest();
-
-        $this->setAdminUser();
-
-        // Create a tool type, associated with that proxy.
-        $type = new stdClass();
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
-        $type->name = "Test tool";
-        $type->description = "Example description";
-        $type->baseurl = $this->getExternalTestFileUrl('/test.html');
-
-        $typeconfig = new stdClass();
-        $typeconfig->lti_acceptgrades = true;
-
-        $typeid = lti_glaaster_add_type($type, $typeconfig);
-
-        $tool = lti_glaaster_get_type($typeid);
-
-        $config = lti_glaaster_get_type_config($typeid);
-        $permittedscopes = lti_glaaster_get_permitted_service_scopes($tool, $config);
-
-        $expected = [
-            'https://purl.imsglobal.org/spec/lti-bo/scope/basicoutcome',
-        ];
-        $this->assertEquals($expected, $permittedscopes);
     }
 
     /**

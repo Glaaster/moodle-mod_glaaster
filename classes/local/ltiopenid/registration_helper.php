@@ -45,6 +45,10 @@ class registration_helper {
     const SCOPE_NRPS = 'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly';
     /** Tool Settings scope */
     const SCOPE_TOOL_SETTING = 'https://purl.imsglobal.org/spec/lti-ts/scope/toolsetting';
+    /** AGS score scope */
+    const SCOPE_AGS_SCORE = 'https://purl.imsglobal.org/spec/lti-ags/scope/score';
+    /** AGS lineitem scope */
+    const SCOPE_AGS_LINEITEM = 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem';
 
     /** Indicates the token is to create a new registration */
     const REG_TOKEN_OP_NEW_REG = 'reg';
@@ -167,6 +171,8 @@ class registration_helper {
         // Sets Service info based on scopes.
         $config->ltiglaasterservice_memberships = 0;
         $config->ltiglaasterservice_toolsettings = 0;
+        $config->ltiglaasterservice_gradesynchronization = 0;
+        $config->lti_acceptgrades = LTI_GLAASTER_SETTING_NEVER;
         if (isset($scopes)) {
             // Sets Names and Role Provisioning info.
             if (in_array(self::SCOPE_NRPS, $scopes)) {
@@ -176,6 +182,17 @@ class registration_helper {
             // Sets Tool Settings info.
             if (in_array(self::SCOPE_TOOL_SETTING, $scopes)) {
                 $config->ltiglaasterservice_toolsettings = 1;
+            }
+
+            // Sets Grade Synchronization info.
+            $hasscore = in_array(self::SCOPE_AGS_SCORE, $scopes);
+            $haslineitem = in_array(self::SCOPE_AGS_LINEITEM, $scopes);
+            if ($hasscore && $haslineitem) {
+                $config->ltiglaasterservice_gradesynchronization = 2;
+                $config->lti_acceptgrades = LTI_GLAASTER_SETTING_DELEGATE;
+            } else if ($hasscore || $haslineitem) {
+                $config->ltiglaasterservice_gradesynchronization = 1;
+                $config->lti_acceptgrades = LTI_GLAASTER_SETTING_DELEGATE;
             }
         }
 

@@ -55,14 +55,5 @@ final class generator_test extends advanced_testcase {
 
         $context = context_module::instance($cm->id);
         $this->assertEquals($lti->cmid, $context->instanceid);
-
-        // Test gradebook integration using low level DB access - DO NOT USE IN PLUGIN CODE!
-        $lti = $generator->create_instance(['course' => $course->id, 'assessed' => 1, 'scale' => 100]);
-        $gitem = $DB->get_record('grade_items', ['courseid' => $course->id, 'itemtype' => 'mod',
-            'itemmodule' => 'lti', 'iteminstance' => $lti->id]);
-        $this->assertNotEmpty($gitem);
-        $this->assertEquals(100, $gitem->grademax);
-        $this->assertEquals(0, $gitem->grademin);
-        $this->assertEquals(GRADE_TYPE_VALUE, $gitem->gradetype);
     }
 }

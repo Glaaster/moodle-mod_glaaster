@@ -111,7 +111,7 @@ class service_exception_handler {
         $type = str_replace('Request', 'Response', $this->type);
 
         // Build the appropriate xml.
-        $response = lti_glaaster_get_response_xml('failure', $message, $this->id, $type);
+        $response = glaaster_get_response_xml('failure', $message, $this->id, $type);
 
         $xml = $response->asXML();
 

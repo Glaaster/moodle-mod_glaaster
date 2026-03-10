@@ -298,11 +298,7 @@ EOD;
         $this->assertEquals($orig['redirect_uris'], $reg['redirect_uris']);
         $this->assertEquals($orig['jwks_uri'], $reg['jwks_uri']);
         $this->assertEquals($orig['logo_uri'], $reg['logo_uri']);
-        $this->assertEquals('https://purl.imsglobal.org/spec/lti-ags/scope/score ' .
-            'https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly ' .
-            'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly ' .
-            'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem ' .
-            'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly', $reg['scope']);
+        $this->assertEquals('https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly', $reg['scope']);
         $ltiorig = $orig['https://purl.imsglobal.org/spec/lti-tool-configuration'];
         $lti = $reg['https://purl.imsglobal.org/spec/lti-tool-configuration'];
         $this->assertEquals("12", $lti['deployment_id']);

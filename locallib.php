@@ -103,6 +103,7 @@ function lti_glaaster_get_jwt_message_type_mapping() {
         'basic-lti-launch-request' => 'LtiResourceLinkRequest',
         'ContentItemSelectionRequest' => 'LtiDeepLinkingRequest',
         'LtiDeepLinkingResponse' => 'ContentItemSelection',
+        'LtiSubmissionReviewRequest' => 'LtiSubmissionReviewRequest',
     ];
 }
 
@@ -1574,6 +1575,29 @@ function glaaster_content_item_to_form(object $tool, object $typeconfig, object 
 
     if (isset($item->custom)) {
         $config->instructorcustomparameters = glaaster_params_to_string($item->custom);
+    }
+
+    // Sets grade/line item info.
+    $config->instructorchoiceacceptgrades = LTI_GLAASTER_SETTING_NEVER;
+    $config->lineitemsubreviewurl = '';
+    $config->lineitemsubreviewparams = '';
+    if (isset($item->lineItem)) {
+        $config->instructorchoiceacceptgrades = LTI_GLAASTER_SETTING_ALWAYS;
+        $config->lineitemtag = $item->lineItem->tag ?? '';
+        $config->lineitemresourceid = $item->lineItem->resourceId ?? '';
+        $config->grade_modgrade_point = $item->lineItem->scoreMaximum ?? 100;
+        if (isset($item->lineItem->submissionReview)) {
+            $subreview = $item->lineItem->submissionReview;
+            $url = $subreview->url ?? '';
+            $config->lineitemsubreviewurl = empty($url) ? 'DEFAULT' : $url;
+            if (isset($subreview->custom)) {
+                $params = [];
+                foreach ((array)$subreview->custom as $key => $value) {
+                    $params[] = $key . '=' . $value;
+                }
+                $config->lineitemsubreviewparams = implode("\n", $params);
+            }
+        }
     }
 
     // Pass an indicator to the relevant form field.

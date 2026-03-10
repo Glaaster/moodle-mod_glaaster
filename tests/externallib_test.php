@@ -105,7 +105,7 @@ final class externallib_test extends mod_glaaster_testcase {
 
         // Basic test, the function returns what it's expected.
         self::assertEquals($lti->toolurl, $result['endpoint']);
-        self::assertCount(36, $result['parameters']);
+        self::assertCount(34, $result['parameters']);
 
         // Check some parameters.
         $parameters = [];
@@ -136,7 +136,7 @@ final class externallib_test extends mod_glaaster_testcase {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $lti = $this->getDataGenerator()->create_module(
-            'lti',
+            'glaaster',
             ['course' => $course->id, 'toolurl' => 'http://localhost/not/real/tool.php']
         );
         $context = context_module::instance($lti->cmid);
@@ -269,7 +269,7 @@ final class externallib_test extends mod_glaaster_testcase {
 
         $additionalfields = ['timecreated', 'timemodified', 'typeid', 'toolurl', 'securetoolurl',
             'instructorchoicesendname', 'instructorchoicesendemailaddr', 'instructorchoiceallowroster',
-            'instructorchoiceallowsetting', 'instructorcustomparameters', 'instructorchoiceacceptgrades', 'grade',
+            'instructorchoiceallowsetting', 'instructorcustomparameters',
             'resourcekey', 'password', 'debuglaunch', 'servicesalt', 'visible', 'groupmode', 'groupingid', 'section', 'lang'];
 
         foreach ($additionalfields as $field) {

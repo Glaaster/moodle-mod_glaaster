@@ -10,7 +10,7 @@ Feature: Glaaster - Rename external tools via inline editing
       | Course 1 | C1        | 0        |
     And the following "activities" exist:
       | activity | course | name                 |
-      | lti      | C1     | Test tool activity 1 |
+      | glaaster | C1     | Test tool activity 1 |
 
   @javascript
   Scenario: Add a tool and inline edit

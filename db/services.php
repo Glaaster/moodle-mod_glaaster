@@ -85,7 +85,7 @@ $functions = [
 
     'mod_glaaster_get_tool_proxy_registration_request' => [
         'classname' => 'mod_glaaster_external',
-        'methodname' => 'get_tool_proxy_registration_request',
+        'methodname' => 'glaaster_get_tool_proxy_registration_request',
         'description' => 'Get a registration request for a tool proxy',
         'type' => 'read',
         'capabilities' => 'moodle/site:config',

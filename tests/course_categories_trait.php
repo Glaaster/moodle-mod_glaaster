@@ -22,6 +22,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 4.3
  */
+
+namespace mod_glaaster;
+
+/**
+ * Trait providing course categories setup helpers for unit tests.
+ *
+ * @package    mod_glaaster
+ * @copyright  2023 Jackson D'Souza <jackson.dsouza@catalyst-eu.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 trait mod_glaaster_course_categories_trait {
     /**
      * Setup course categories.

@@ -38,9 +38,9 @@ use core_privacy\local\request\approved_userlist;
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements core_userlist_provider, \core_privacy\local\metadata\provider, \core_privacy\local\request\plugin\provider {
+class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\plugin\provider, core_userlist_provider {
     /**
-     * Returns meta data about this system.
+     * Returns meta data about this system.\core_privacy\local\metadata\provider, \core_privacy\local\request\plugin\provider
      *
      * @param collection $collection The initialised collection to add items to.
      * @return collection A listing of user data stored through this system.

@@ -34,7 +34,7 @@ Feature: Glaaster - Add tools
     And "Select content" "button" should not be visible
     And "Tool URL" "field" should not be visible
     And I press "Save and return to course"
-    And I am on the "Test tool activity 1" "lti activity editing" page
+    And I am on the "Test tool activity 1" "glaaster activity editing" page
     Then the field "Activity name" matches value "Test tool activity 1"
     And "Launch container" "field" should not be visible
     And "Select content" "button" should not be visible
@@ -50,7 +50,7 @@ Feature: Glaaster - Add tools
   # For tool that does not support Content-Item message type, the Select content button must be disabled.
     And "Select content" "button" should not be visible
     And I press "Save and return to course"
-    And I am on the "Test tool activity 2" "lti activity editing" page
+    And I am on the "Test tool activity 2" "glaaster activity editing" page
     Then the field "Activity name" matches value "Test tool activity 2"
     And "Launch container" "field" should not be visible
     And "Select content" "button" should not be visible
@@ -60,14 +60,14 @@ Feature: Glaaster - Add tools
   Scenario: Editing a (deprecated) manually configured activity instance, confirming that config changes aren't possible
     Given the following "activities" exist:
       | activity | name          | course | toolurl                                                       |
-      | lti      | A manual tool | C1     | /mod/glaaster/tests/fixtures/ims_cartridge_basic_lti_link.xml |
+      | glaaster | A manual tool | C1     | /mod/glaaster/tests/fixtures/ims_cartridge_basic_lti_link.xml |
   # Add a course tool with the same URL as that of the manually configured instance (the tool URL found in the above cartridge).
   # This would normally be domain-matched during edit, resulting in the assignment of a preconfigured tool to the instance.
   # In this case, because config changes and domain matching are disabled, the test confirms this doesn't take place.
     And the following "mod_glaaster > course tools" exist:
       | name          | baseurl                                 | course | lti_sendname | lti_sendemailaddr | lti_acceptgrades |
       | Course tool 2 | http://www.example.com/lti/provider.php | C1     | 0            | 1                 | 2                |
-    When I am on the "A manual tool" "lti activity editing" page logged in as teacher1
+    When I am on the "A manual tool" "glaaster activity editing" page logged in as teacher1
     Then I should see "Manually configured External tool activities are no longer supported"
     And I follow "Show more..."
     And I expand all fieldsets
@@ -108,7 +108,7 @@ Feature: Glaaster - Add tools
       | Consumer key       | key                       |
       | Shared secret      | secret                    |
     And I press "Save and return to course"
-    And I am on the "A manual tool" "lti activity editing" page logged in as teacher1
+    And I am on the "A manual tool" "glaaster activity editing" page logged in as teacher1
     And I follow "Show more..."
   # This confirms that the instance config, while locked to user edits, still inherits privacy settings from the tool which
   # it was domain-matched to.
