@@ -49,7 +49,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version = 2026030911;    // The current module version (Date: YYYYMMDDXX).
+$plugin->version = 2026031301;    // The current module version (Date: YYYYMMDDXX).
 $plugin->requires = 2022041200;    // Requires this Moodle version.
 $plugin->component = 'mod_glaaster';     // Full name of the plugin (used for diagnostics).
 $plugin->release = '1.2.0';
