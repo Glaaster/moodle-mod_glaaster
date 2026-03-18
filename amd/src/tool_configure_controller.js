@@ -14,103 +14,47 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Standard Ajax wrapper for Moodle. It calls the central Ajax script,
- * which can call any existing webservice using the current session.
- * In addition, it can batch multiple requests and return multiple responses.
+ * Controls the tool configuration page behaviour.
  *
  * @module     mod_glaaster/tool_configure_controller
  * @copyright  2015 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      3.1
  */
-define(['jquery', 'core/notification', 'core/templates',
-        'mod_glaaster/events',
-        'mod_glaaster/tool_types_and_proxies',
-        'core/config'],
-    function ($,
-              notification, templates, ltiEvents,
-              toolTypesAndProxies, config) {
+define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'mod_glaaster/events',
+        'mod_glaaster/tool_types_and_proxies', 'core/config'],
+    function($, ajax, notification, str, ltiEvents, toolTypesAndProxies, config) {
 
         var SELECTORS = {
             EXTERNAL_REGISTRATION_CONTAINER: '#external-registration-container',
             EXTERNAL_REGISTRATION_PAGE_CONTAINER: '#external-registration-page-container',
             EXTERNAL_REGISTRATION_TEMPLATE_CONTAINER: '#external-registration-template-container',
-            TOOL_CARD_CONTAINER: '#tool-card-container',
-            TOOL_LIST_CONTAINER: '#tool-list-container',
+            TOOL_STATUS_CONTAINER: '#tool-status-container',
             TOOL_CREATE_BUTTON: '#tool-create-button',
             REGISTRATION_CHOICE_CONTAINER: '#registration-choice-container',
         };
 
-        /**
-         * Get the tool list container element.
-         *
-         * @method getToolListContainer
-         * @private
-         * @return {Object} jQuery object
-         */
-        var getToolListContainer = function () {
-            return $(SELECTORS.TOOL_LIST_CONTAINER);
-        };
-
-        /**
-         * Get the tool card container element.
-         *
-         * @method getToolCardContainer
-         * @private
-         * @return {Object} jQuery object
-         */
-        const getToolCardContainer = function () {
-            return $(SELECTORS.TOOL_CARD_CONTAINER);
-        };
-
-        /**
-         * Get the external registration container element.
-         *
-         * @method getExternalRegistrationContainer
-         * @private
-         * @return {Object} jQuery object
-         */
-        var getExternalRegistrationContainer = function () {
+        var getExternalRegistrationContainer = function() {
             return $(SELECTORS.EXTERNAL_REGISTRATION_CONTAINER);
         };
 
-        /**
-         * Get the registration choice container element.
-         *
-         * @method getRegistrationChoiceContainer
-         * @private
-         * @return {Object} jQuery object
-         */
-        var getRegistrationChoiceContainer = function () {
+        var getRegistrationChoiceContainer = function() {
             return $(SELECTORS.REGISTRATION_CHOICE_CONTAINER);
         };
 
-        /**
-         * Close the LTI Advantage Registration IFrame.
-         *
-         * @private
-         * @param {Object} e post message event sent from the registration frame.
-         */
-        var closeLTIAdvRegistration = function (e) {
+        var getToolStatusContainer = function() {
+            return $(SELECTORS.TOOL_STATUS_CONTAINER);
+        };
+
+        var closeLTIAdvRegistration = function(e) {
             if (e.data && 'org.imsglobal.lti.close' === e.data.subject) {
                 $(SELECTORS.EXTERNAL_REGISTRATION_TEMPLATE_CONTAINER).empty();
                 hideExternalRegistration();
                 showRegistrationChoices();
-                showToolList();
-                showRegistrationChoices();
-                reloadToolList();
+                reloadToolStatus();
             }
         };
 
-        /**
-         * Load the external registration template and render it in the DOM and display it.
-         *
-         * @method initiateRegistration
-         * @private
-         * @param {String} url where to send the registration request
-         */
-        var initiateRegistration = function (url) {
-            // Show the external registration page in an iframe.
+        var initiateRegistration = function(url) {
             $(SELECTORS.EXTERNAL_REGISTRATION_PAGE_CONTAINER).removeClass('hidden');
             var container = $(SELECTORS.EXTERNAL_REGISTRATION_TEMPLATE_CONTAINER);
             container.append($('<iframe src="' + config.wwwroot + '/mod/glaaster/startltiadvregistration.php?url='
@@ -119,226 +63,206 @@ define(['jquery', 'core/notification', 'core/templates',
             window.addEventListener("message", closeLTIAdvRegistration, false);
         };
 
-        /**
-         * Hide the external registration container.
-         *
-         * @method hideExternalRegistration
-         * @private
-         */
-        var hideExternalRegistration = function () {
+        var hideExternalRegistration = function() {
             getExternalRegistrationContainer().addClass('hidden');
         };
 
-        /**
-         * Hide the registration choice container.
-         *
-         * @method hideRegistrationChoices
-         * @private
-         */
-        var hideRegistrationChoices = function () {
+        var hideRegistrationChoices = function() {
             getRegistrationChoiceContainer().addClass('hidden');
         };
 
-        /**
-         * Display the external registration panel and hides the other panels.
-         *
-         * @method showExternalRegistration
-         * @private
-         */
-        var showExternalRegistration = function () {
+        var showExternalRegistration = function() {
             hideRegistrationChoices();
             getExternalRegistrationContainer().removeClass('hidden');
             screenReaderAnnounce(getExternalRegistrationContainer());
         };
 
-        /**
-         * Display the registration choices panel and hides the other panels.
-         *
-         * @method showRegistrationChoices
-         * @private
-         */
-        var showRegistrationChoices = function () {
+        var showRegistrationChoices = function() {
             hideExternalRegistration();
             getRegistrationChoiceContainer().removeClass('hidden');
             screenReaderAnnounce(getRegistrationChoiceContainer());
         };
 
-        /**
-         * JAWS does not notice visibility changes with aria-live.
-         * Remove and add the content back to force it to read it out.
-         * This function can be removed once JAWS supports visibility.
-         *
-         * @method screenReaderAnnounce
-         * @param {Object} element
-         * @private
-         */
-        var screenReaderAnnounce = function (element) {
+        var screenReaderAnnounce = function(element) {
             var children = element.children().detach();
             children.appendTo(element);
         };
 
-        /**
-         * Hides the list of tool types.
-         *
-         * @method hideToolList
-         * @private
-         */
-        var hideToolList = function () {
-            getToolListContainer().addClass('hidden');
-        };
-
-        /**
-         * Display the list of tool types.
-         *
-         * @method hideToolList
-         * @private
-         */
-        var showToolList = function () {
-            getToolListContainer().removeClass('hidden');
-        };
-
-        /**
-         * Display the registration feedback alert and hide the other panels.
-         *
-         * @method showRegistrationFeedback
-         * @param {Object} data
-         * @private
-         */
-        var showRegistrationFeedback = function (data) {
+        var showRegistrationFeedback = function(data) {
             var type = data.error ? 'error' : 'success';
-            notification.addNotification({
-                message: data.message,
-                type: type
+            notification.addNotification({message: data.message, type: type});
+        };
+
+        /**
+         * Render a minimal inline tool status row: status pill + edit + delete buttons.
+         *
+         * @param {Object} tool Tool type data object from the webservice.
+         */
+        var renderToolStatus = function(tool) {
+            var container = getToolStatusContainer();
+            container.empty();
+
+            if (!tool) {
+                return;
+            }
+
+            var element = $('<div class="tool-status-row d-flex align-items-center gap-1"></div>');
+            element.attr('data-type-id', tool.id);
+            element.attr('data-platformid', tool.platformid || '');
+            element.attr('data-clientid', tool.clientid || '');
+            element.attr('data-deploymentid', tool.deploymentid || '');
+            element.attr('data-statusurl', tool.statusurl || '');
+
+            // Status pill with animated dot — class updated by checkConnectionStatus.
+            var badge = $(
+                '<span class="glaaster-status-pill status-pending tool-connection-status">' +
+                '<span class="status-dot"></span>' +
+                '<span class="status-text"></span>' +
+                '</span>'
+            );
+            element.append(badge);
+
+            // Edit button.
+            if (tool.urls && tool.urls.edit) {
+                var editBtn = $('<a class="glaaster-tool-action glaaster-tool-action-edit" title="Edit"></a>');
+                editBtn.attr('href', tool.urls.edit);
+                editBtn.append($('<span class="fa fa-pencil" aria-hidden="true"></span>'));
+                element.append(editBtn);
+            }
+
+            // Delete button.
+            var deleteBtn = $(
+                '<button type="button" class="glaaster-tool-action glaaster-tool-action-delete"'+
+                'title="Delete"></button>'
+            );
+            deleteBtn.append($('<span class="fa fa-trash" aria-hidden="true"></span>'));
+            deleteBtn.on('click', function() {
+                deleteTool(tool.id, element);
+            });
+            element.append(deleteBtn);
+
+            container.append(element);
+            checkConnectionStatus(element, tool);
+        };
+
+        /**
+         * Check tool connection status and update the badge.
+         *
+         * @param {Object} element jQuery element containing the tool row.
+         * @param {Object} tool Tool data object.
+         */
+        var checkConnectionStatus = function(element, tool) {
+            if (!tool.statusurl || !tool.clientid || !tool.platformid) {
+                element.find('.tool-connection-status').addClass('d-none');
+                return;
+            }
+
+            str.get_strings([
+                {key: 'connect_status_pending', component: 'mod_glaaster'},
+                {key: 'connect_status_validated', component: 'mod_glaaster'},
+                {key: 'connect_status_error', component: 'mod_glaaster'},
+                {key: 'connect_status_api_pending', component: 'mod_glaaster'},
+            ]).then(function(strings) {
+                var pill = element.find('.tool-connection-status');
+                pill.find('.status-text').text(strings[0]);
+
+                ajax.call([{
+                    methodname: 'mod_glaaster_check_tool_status',
+                    args: {statusurl: tool.statusurl, iss: tool.platformid, client_id: tool.clientid}
+                }])[0]
+                    .then(function(result) {
+                        pill.removeClass('status-pending status-validated status-error');
+                        if (result.active === true) {
+                            pill.addClass('status-validated').find('.status-text').text(strings[1]);
+                        } else if (result.status === 'PENDING' || result.status === '') {
+                            pill.addClass('status-pending').find('.status-text').text(strings[3]);
+                        } else {
+                            pill.addClass('status-error').find('.status-text').text(strings[2]);
+                        }
+                        return result;
+                    })
+                    .catch(function() {
+                        pill.removeClass('status-pending status-validated')
+                            .addClass('status-error')
+                            .find('.status-text').text(strings[2]);
+                    });
+
+                return strings;
+            }).catch(function() {
+                element.find('.tool-connection-status').addClass('d-none');
             });
         };
 
         /**
-         * Show the loading animation
+         * Delete a tool type with confirmation.
          *
-         * @method startLoading
-         * @private
-         * @param {Object} element jQuery object
+         * @param {number} typeId Tool type ID.
+         * @param {Object} element jQuery element to remove on success.
          */
-        var startLoading = function (element) {
-            element.addClass("loading");
+        var deleteTool = function(typeId, element) {
+            str.get_strings([
+                {key: 'delete', component: 'mod_glaaster'},
+                {key: 'delete_confirmation', component: 'mod_glaaster'},
+                {key: 'delete', component: 'mod_glaaster'},
+                {key: 'cancel', component: 'core'},
+            ]).done(function(strs) {
+                notification.confirm(strs[0], strs[1], strs[2], strs[3], function() {
+                    ajax.call([{
+                        methodname: 'mod_glaaster_delete_tool_type',
+                        args: {id: typeId}
+                    }])[0]
+                        .then(function() {
+                            element.remove();
+                            // Re-enable the connect button since there are no more tools.
+                            $(SELECTORS.TOOL_CREATE_BUTTON).prop('disabled', false).removeAttr('disabled');
+                            return;
+                        })
+                        .catch(notification.exception);
+                });
+            }).fail(notification.exception);
         };
 
         /**
-         * Hide the loading animation
-         *
-         * @method stopLoading
-         * @private
-         * @param {Object} element jQuery object
+         * Fetch the first orphaned tool type and render its inline status row.
          */
-        var stopLoading = function (element) {
-            element.removeClass("loading");
-        };
+        var reloadToolStatus = function() {
+            M.util.js_pending('reloadToolStatus');
 
-        /**
-         * Refresh the list of tool types and render the new ones.
-         *
-         * @method reloadToolList
-         * @private
-         */
-        var reloadToolList = function () {
-            // Behat tests should wait for the tool list to load.
-            M.util.js_pending('reloadToolList');
+            toolTypesAndProxies.query({orphanedonly: true, limit: 1, offset: 0})
+                .then(function(data) {
+                    var tool = (data.types && data.types.length > 0) ? data.types[0] : null;
 
-            const cardContainer = getToolCardContainer();
-            const listContainer = getToolListContainer();
-            startLoading(listContainer);
-
-            fetchToolData(1, 0)
-                .then(function (data) {
-                    // If a tool already exists, disable the create button.
-                    const hasTools = data.types.length > 0 || data.proxies.length > 0;
-                    if (hasTools) {
+                    if (tool) {
                         $(SELECTORS.TOOL_CREATE_BUTTON).prop('disabled', true).attr('disabled', 'disabled');
                     } else {
                         $(SELECTORS.TOOL_CREATE_BUTTON).prop('disabled', false).removeAttr('disabled');
                     }
-                    return renderToolData(data);
-                })
-                .then(function (html, js) {
-                    templates.replaceNodeContents(cardContainer, html, js);
-                })
-                .always(function () {
-                    stopLoading(listContainer);
-                    M.util.js_complete('reloadToolList');
-                });
-        };
 
-        /**
-         * Fetch the data for tool type and proxy cards.
-         *
-         * @param {number} limit Maximum number of datasets to get.
-         * @param {number} offset Offset count for fetching the data.
-         * @return {*|void}
-         */
-        const fetchToolData = function (limit, offset) {
-            const args = {'orphanedonly': true};
-            // Only add limit and offset to args if they are integers and not null, otherwise defaults will be used.
-            if (limit !== null && !Number.isNaN(limit)) {
-                args.limit = limit;
-            }
-            if (offset !== null && !Number.isNaN(offset)) {
-                args.offset = offset;
-            }
-            return toolTypesAndProxies.query(args)
-                .done(function (data) {
+                    renderToolStatus(tool);
                     return data;
-                }).catch(function (error) {
-                    // Add debug message, then return empty data.
+                })
+                .catch(function(error) {
                     notification.exception(error);
-                    return {
-                        'types': [],
-                        'proxies': [],
-                        'limit': limit,
-                        'offset': offset
-                    };
+                })
+                .always(function() {
+                    M.util.js_complete('reloadToolStatus');
                 });
         };
 
-        /**
-         * Render Tool and Proxy cards from data.
-         *
-         * @param {Object} data Contains arrays of data objects to populate cards.
-         * @return {*}
-         */
-        const renderToolData = function (data) {
-            const context = {
-                tools: data.types,
-                proxies: data.proxies,
-            };
-            return templates.render('mod_glaaster/tool_list', context)
-                .done(function (html, js) {
-                        return {html, js};
-                    }
-                );
-        };
-
-        /**
-         * Sets up the listeners for user interaction on the page.
-         *
-         * @method registerEventListeners
-         * @private
-         */
-        var registerEventListeners = function () {
-
-            $(document).on(ltiEvents.NEW_TOOL_TYPE, function () {
-                reloadToolList();
+        var registerEventListeners = function() {
+            $(document).on(ltiEvents.NEW_TOOL_TYPE, function() {
+                reloadToolStatus();
             });
 
-            $(document).on(ltiEvents.STOP_EXTERNAL_REGISTRATION, function () {
-                showToolList();
+            $(document).on(ltiEvents.STOP_EXTERNAL_REGISTRATION, function() {
                 showRegistrationChoices();
             });
 
-            $(document).on(ltiEvents.REGISTRATION_FEEDBACK, function (event, data) {
+            $(document).on(ltiEvents.REGISTRATION_FEEDBACK, function(event, data) {
                 showRegistrationFeedback(data);
             });
 
-            $(SELECTORS.TOOL_CREATE_BUTTON).click(function (e) {
+            $(SELECTORS.TOOL_CREATE_BUTTON).click(function(e) {
                 e.preventDefault();
                 var url = $(this).data('registerurl');
                 var token = $(this).data('apitoken');
@@ -346,20 +270,14 @@ define(['jquery', 'core/notification', 'core/templates',
                     var separator = url.indexOf('?') !== -1 ? '&' : '?';
                     url = url + separator + 'token=' + encodeURIComponent(token);
                 }
-                hideToolList();
                 initiateRegistration(url);
             });
-
         };
 
-        return /** @alias module:mod_glaaster/cartridge_registration_form */ {
-
-            /**
-             * Initialise this module.
-             */
-            init: function () {
+        return /** @alias module:mod_glaaster/tool_configure_controller */ {
+            init: function() {
                 registerEventListeners();
-                reloadToolList();
+                reloadToolStatus();
             }
         };
     });

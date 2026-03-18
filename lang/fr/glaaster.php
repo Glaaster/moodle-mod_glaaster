@@ -592,7 +592,43 @@ $string['tooldomain'] = 'Domaine de l\'outil';
 $string['tooldomain_desc'] =
     'Domaine utilisé pour récupérer l\'instance Glaaster. Permet de tester avec différents environnements.';
 $string['apisetup'] = 'Configuration de l\'API Glaaster';
-$string['apisetup_desc'] = 'Assignez un utilisateur Moodle pour authentifier les appels webservice de Glaaster. L\'utilisateur sélectionné se verra attribuer le rôle API Glaaster et sera ajouté au service API Glaaster.';
+$string['apisetup_desc'] = 'Suivez les étapes ci-dessous pour configurer la connexion à l\'API Glaaster.';
+
+// Étape 1 – Créer un utilisateur dédié.
+$string['apistep_createuser'] = 'Étape 1 — Créer un utilisateur dédié';
+$string['apistep_createuser_help_title'] = 'Pourquoi créer un utilisateur dédié ?';
+$string['apistep_createuser_help'] = 'Glaaster a besoin d\'un compte Moodle dédié pour authentifier ses appels webservice. Ce compte joue le rôle de compte de service — il n\'est jamais utilisé pour se connecter en tant que personne réelle.<br><br>Pour le créer, rendez-vous dans <strong>Administration du site &gt; Utilisateurs &gt; Comptes &gt; Ajouter un utilisateur</strong> et renseignez :<br><br><strong>Nom d\'utilisateur :</strong> glaasterapi<br><strong>Prénom :</strong> Glaaster<br><strong>Nom :</strong> API<br><strong>E-mail :</strong> system@glaaster.com<br><br>⚠️ Conservez ce compte actif — il est indispensable au fonctionnement de l\'API Glaaster.';
+$string['apistep_createuser_desc'] = 'Créez un compte Moodle dédié que Glaaster utilisera pour authentifier ses appels API. Ce compte ne doit jamais être utilisé pour se connecter en tant que personne réelle.';
+
+// Étape 2 – Associer l'utilisateur.
+$string['apistep_assignuser'] = 'Étape 2 — Associer l\'utilisateur API';
+$string['apistep_assignuser_help_title'] = 'Que se passe-t-il lors de l\'association ?';
+$string['apistep_assignuser_help'] = 'Lorsque vous enregistrez l\'utilisateur sélectionné, Moodle effectue automatiquement deux actions :<br><br>• Attribuer le <strong>rôle API Glaaster</strong> (<code>glaasterapi</code>) à cet utilisateur au niveau du système — ce rôle lui confère les permissions minimales nécessaires pour répondre aux requêtes de Glaaster.<br>• Ajouter l\'utilisateur au <strong>service web API Glaaster</strong> (<code>glaaster_api</code>) — cela l\'autorise à appeler les fonctions du webservice Moodle exposées à Glaaster.<br><br>Vous n\'avez rien d\'autre à faire — les deux assignations sont effectuées automatiquement.';
+$string['apistep_assignuser_desc'] = 'Sélectionnez l\'utilisateur dédié que vous venez de créer. Le rôle API Glaaster et le service web Glaaster lui seront assignés automatiquement.';
+
+// Étape 3 – Générer le token.
+$string['apistep_token'] = 'Étape 3 — Générer le token API';
+
+// Étape 4 – Notifier Glaaster.
+$string['apistep_notify'] = 'Étape 4 — Notifier Glaaster';
+$string['apistep_notify_help_title'] = 'Pourquoi notifier Glaaster ?';
+$string['apistep_notify_help'] = 'Une fois cette instance Moodle connectée à Glaaster, envoyez un email de notification à l\'équipe Glaaster afin qu\'elle puisse activer et valider votre connexion de son côté.<br><br>Cliquez sur le bouton ci-dessous pour ouvrir votre client email avec un message pré-rempli. Il ne reste plus qu\'à l\'envoyer.';
+$string['apistep_notify_desc'] = 'Envoyez un email à l\'équipe Glaaster pour l\'informer que la connexion a été activée. Un message pré-rempli avec l\'URL de votre Moodle est prêt à envoyer.';
+$string['apistep_notify_btn'] = 'Notifier Glaaster par email';
+$string['apistep_notify_subject'] = 'Connexion Glaaster activée — {$a}';
+$string['apistep_notify_body'] = 'Bonjour,
+
+La connexion LTI Glaaster a été activée avec succès sur l\'instance Moodle suivante :
+
+  URL Moodle : {$a}
+
+Pouvez-vous valider et activer la connexion de votre côté ?
+
+Merci.';
+$string['apistep_token_help_title'] = 'À quoi sert ce token ?';
+$string['apistep_token_help'] = 'Le token API est une clé secrète qui identifie l\'utilisateur API Glaaster auprès de Moodle.<br><br>Lorsque vous cliquez sur <strong>Connecter à Glaaster</strong> à l\'étape suivante, ce token est envoyé automatiquement à la plateforme Glaaster. Glaaster le conserve de façon sécurisée et l\'utilise à chaque requête vers le webservice Moodle pour récupérer les documents et ressources du cours.<br><br>⚠️ Gardez ce token confidentiel — toute personne qui le détient peut interroger votre webservice Moodle au nom de l\'utilisateur API.';
+$string['apistep_token_desc'] = 'Générez un token permanent pour l\'utilisateur API. Ce token sera envoyé automatiquement à Glaaster lors de la connexion, afin que Glaaster puisse récupérer les documents de votre Moodle.';
+
 $string['apiuser'] = 'Utilisateur Glaaster API';
 $string['apiuser_desc'] = 'Commencez à saisir un nom d\'utilisateur ou un nom complet pour rechercher.';
 $string['apiuser_help_title'] = 'Créer un utilisateur dédié';
@@ -603,11 +639,19 @@ $string['apiuser_saved'] = 'Utilisateur API enregistré avec succès.';
 $string['apiuser_notfound'] = 'Utilisateur introuvable.';
 $string['apistatus'] = 'État de la configuration';
 $string['apistatus_role'] = 'Rôle « API Glaaster » (glaasterapi)';
+$string['apistatus_role_help_title'] = 'À propos du rôle API Glaaster';
+$string['apistatus_role_help'] = 'Le rôle <strong>glaasterapi</strong> est créé automatiquement à l\'installation du plugin. Il accorde les permissions Moodle minimales nécessaires à Glaaster pour interroger les fonctions du webservice.<br><br>Ce rôle est attribué automatiquement à l\'utilisateur API lorsque vous complétez l\'étape 2.';
 $string['apistatus_service'] = 'Service « API Glaaster » (glaaster_api)';
+$string['apistatus_service_help_title'] = 'À propos du service web API Glaaster';
+$string['apistatus_service_help'] = 'Le service web <strong>glaaster_api</strong> est créé automatiquement à l\'installation du plugin. Il expose les fonctions Moodle dont Glaaster a besoin pour récupérer les documents et ressources des cours.<br><br>L\'utilisateur API est ajouté à ce service automatiquement lorsque vous complétez l\'étape 2.';
 $string['apistatus_user'] = 'Utilisateur API assigné';
+$string['apistatus_user_help_title'] = 'À propos de l\'utilisateur API';
+$string['apistatus_user_help'] = 'L\'utilisateur API est le compte Moodle dédié que Glaaster utilise pour authentifier ses requêtes. Il doit être créé manuellement (étape 1) puis associé ici (étape 2).<br><br>Lors de l\'association, il reçoit automatiquement le rôle glaasterapi et est ajouté au service web glaaster_api.';
 $string['apistatus_ok'] = 'Prêt';
 $string['apistatus_missing'] = 'Non configuré';
 $string['apistatus_token'] = 'Token API pour le webservice';
+$string['apistatus_token_help_title'] = 'À propos du token API';
+$string['apistatus_token_help'] = 'Le token API est une clé secrète permanente liée à l\'utilisateur API. Il est généré à l\'étape 3 et envoyé automatiquement à Glaaster lorsque vous cliquez sur Connecter.<br><br>Glaaster utilise ce token à chaque requête vers le webservice Moodle pour récupérer les documents et ressources de vos cours.';
 $string['apitoken_label'] = 'Token API';
 $string['apitoken_reveal'] = 'Afficher';
 $string['apitoken_copy'] = 'Copier';

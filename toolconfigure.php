@@ -248,6 +248,27 @@ $statusmissing = html_writer::tag(
     ['class' => 'badge bg-warning text-dark']
 );
 
+// Helper: render a step header with a help button.
+$stepheader = function (string $stepstring, string $helptitle, string $helpcontent, string $helpbtnid) use (&$setupform): void {
+    $helpicon = html_writer::tag(
+        'button',
+        '?',
+        [
+            'type' => 'button',
+            'id' => $helpbtnid,
+            'class' => 'badge rounded-pill bg-secondary border-0 ms-2 api-help-btn',
+            'style' => 'cursor:pointer;font-size:0.75rem;padding:2px 7px;vertical-align:middle;',
+            'data-help-title' => $helptitle,
+            'data-help-content' => $helpcontent,
+        ]
+    );
+    $setupform .= html_writer::tag(
+        'h6',
+        $stepstring . $helpicon,
+        ['class' => 'fw-semibold mb-1', 'style' => 'color:#343a40']
+    );
+};
+
 $setupform = html_writer::start_div('card border-0 mb-4', ['style' => 'box-shadow:0 4px 16px rgba(0,0,0,0.12),0 1px 4px rgba(0,0,0,0.08)']);
 $setupform .= html_writer::start_div('card-header bg-white border-bottom', ['style' => 'display:flex;align-items:center;gap:12px;']);
 $setupform .= html_writer::tag('span', '', [
@@ -262,43 +283,155 @@ $setupform .= html_writer::tag(
 $setupform .= html_writer::end_div();
 $setupform .= html_writer::start_div('card-body');
 
+// Helper: inline help button for status rows.
+$statushelpbtn = function (string $titlekey, string $contentkey): string {
+    return html_writer::tag(
+        'button',
+        '?',
+        [
+            'type' => 'button',
+            'class' => 'badge rounded-pill bg-secondary border-0 ms-1 api-help-btn',
+            'style' => 'cursor:pointer;font-size:0.7rem;padding:1px 6px;vertical-align:middle;',
+            'data-help-title' => get_string($titlekey, 'mod_glaaster'),
+            'data-help-content' => get_string($contentkey, 'mod_glaaster'),
+        ]
+    );
+};
+
 // Status rows.
 $setupform .= html_writer::tag(
     'p',
     get_string('apistatus', 'mod_glaaster'),
     ['class' => 'fw-medium small text-uppercase mb-2', 'style' => 'color:#343a40']
 );
-$setupform .= html_writer::start_tag('ul', ['class' => 'list-unstyled mb-3']);
+$setupform .= html_writer::start_tag('ul', ['class' => 'list-unstyled mb-4']);
 $setupform .= html_writer::tag(
     'li',
-    get_string('apistatus_role', 'mod_glaaster') . ' — ' . ($roleid ? $statusok : $statusmissing),
+    get_string('apistatus_role', 'mod_glaaster')
+        . $statushelpbtn('apistatus_role_help_title', 'apistatus_role_help')
+        . ' — ' . ($roleid ? $statusok : $statusmissing),
     ['class' => 'mb-1']
 );
 $setupform .= html_writer::tag(
     'li',
-    get_string('apistatus_service', 'mod_glaaster') . ' — ' . ($service ? $statusok : $statusmissing),
+    get_string('apistatus_service', 'mod_glaaster')
+        . $statushelpbtn('apistatus_service_help_title', 'apistatus_service_help')
+        . ' — ' . ($service ? $statusok : $statusmissing),
     ['class' => 'mb-1']
 );
 $setupform .= html_writer::tag(
     'li',
-    get_string('apistatus_user', 'mod_glaaster') . ' — ' . ($apiuser ? $statusok : $statusmissing),
+    get_string('apistatus_user', 'mod_glaaster')
+        . $statushelpbtn('apistatus_user_help_title', 'apistatus_user_help')
+        . ' — ' . ($apiuser ? $statusok : $statusmissing),
     ['class' => 'mb-1']
 );
 $setupform .= html_writer::tag(
     'li',
-    get_string('apistatus_token', 'mod_glaaster') . ' — ' . ($apitoken ? $statusok : $statusmissing),
+    get_string('apistatus_token', 'mod_glaaster')
+        . $statushelpbtn('apistatus_token_help_title', 'apistatus_token_help')
+        . ' — ' . ($apitoken ? $statusok : $statusmissing),
     ['class' => 'mb-1']
 );
 $setupform .= html_writer::end_tag('ul');
 
+// ── Step 1: Create a dedicated user ─────────────────────────────────────────
+$setupform .= html_writer::start_div('border rounded p-3 mb-3 bg-light');
+$stepheader(
+    get_string('apistep_createuser', 'mod_glaaster'),
+    get_string('apistep_createuser_help_title', 'mod_glaaster'),
+    get_string('apistep_createuser_help', 'mod_glaaster'),
+    'apistep1-help-btn'
+);
+$setupform .= html_writer::tag(
+    'p',
+    get_string('apistep_createuser_desc', 'mod_glaaster'),
+    ['class' => 'text-muted small mb-2']
+);
+$createuserurl = new moodle_url('/user/editadvanced.php', ['id' => -1]);
+$setupform .= html_writer::tag(
+    'a',
+    get_string('apistep_createuser', 'mod_glaaster'),
+    [
+        'href' => $createuserurl->out(false),
+        'class' => 'btn btn-outline-primary btn-sm',
+        'target' => '_blank',
+        'rel' => 'noopener',
+    ]
+);
+$setupform .= html_writer::end_div();
+
+// ── Step 2: Assign the API user ──────────────────────────────────────────────
+$setupform .= html_writer::start_div('border rounded p-3 mb-3 bg-light');
+$stepheader(
+    get_string('apistep_assignuser', 'mod_glaaster'),
+    get_string('apistep_assignuser_help_title', 'mod_glaaster'),
+    get_string('apistep_assignuser_help', 'mod_glaaster'),
+    'apistep2-help-btn'
+);
+$setupform .= html_writer::tag(
+    'p',
+    get_string('apistep_assignuser_desc', 'mod_glaaster'),
+    ['class' => 'text-muted small mb-2']
+);
+$setupform .= html_writer::start_tag('form', ['method' => 'post', 'action' => $PAGE->url->out(false)]);
+$setupform .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+$setupform .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'saveapiuser', 'value' => '1']);
+$setupform .= html_writer::start_div('mb-2 position-relative');
+// Hidden field holds the resolved user ID.
+$setupform .= html_writer::empty_tag(
+    'input',
+    [
+        'type' => 'hidden',
+        'name' => 'apiuserid',
+        'id' => 'apiuserid-value',
+        'value' => $apiuserid ?: '',
+    ]
+);
+// Visible search input (populated by JS autocomplete).
+$currentname = $apiuser ? fullname($apiuser) . ' (' . $apiuser->username . ')' : '';
+$setupform .= html_writer::empty_tag('input', [
+    'type' => 'text',
+    'id' => 'apiuser-search',
+    'value' => $currentname,
+    'class' => 'form-control',
+    'placeholder' => get_string('apiuser_desc', 'mod_glaaster'),
+    'autocomplete' => 'off',
+]);
+$setupform .= html_writer::tag('div', '', [
+    'id' => 'apiuser-suggestions',
+    'class' => 'list-group position-absolute w-100 d-none',
+    'style' => 'z-index:1000',
+]);
+$setupform .= html_writer::end_div();
+$setupform .= html_writer::tag('button', get_string('savechanges'), [
+    'type' => 'submit',
+    'class' => 'btn btn-primary btn-sm px-4',
+]);
+$setupform .= html_writer::end_tag('form');
+$setupform .= html_writer::end_div();
+
+// ── Step 3: Generate the API token ───────────────────────────────────────────
+$setupform .= html_writer::start_div('border rounded p-3 mb-3 bg-light');
+$stepheader(
+    get_string('apistep_token', 'mod_glaaster'),
+    get_string('apistep_token_help_title', 'mod_glaaster'),
+    get_string('apistep_token_help', 'mod_glaaster'),
+    'apistep3-help-btn'
+);
+$setupform .= html_writer::tag(
+    'p',
+    get_string('apistep_token_desc', 'mod_glaaster'),
+    ['class' => 'text-muted small mb-2']
+);
 if ($apitoken) {
-    $setupform .= html_writer::start_div('mb-3');
+    $setupform .= html_writer::start_div('mb-2');
     $setupform .= html_writer::tag(
         'label',
         get_string('apitoken_label', 'mod_glaaster'),
         ['class' => 'form-label fw-medium small text-uppercase', 'style' => 'color:#343a40']
     );
-    $setupform .= html_writer::start_div('input-group');
+    $setupform .= html_writer::start_div('input-group input-group-sm');
     $setupform .= html_writer::empty_tag('input', [
         'type' => 'password',
         'id' => 'apitoken-display',
@@ -318,77 +451,61 @@ if ($apitoken) {
     );
     $setupform .= html_writer::end_div();
     $setupform .= html_writer::end_div();
-} else if ($apiuserid) {
+} else {
+    if (!$apiuserid) {
+        $setupform .= html_writer::tag(
+            'p',
+            html_writer::tag('span', '', ['class' => 'fa fa-exclamation-triangle me-1', 'aria-hidden' => 'true'])
+            . get_string('apitoken_nouser', 'mod_glaaster'),
+            ['class' => 'text-warning small mb-2']
+        );
+    }
+    $generateattrs = [
+        'type' => 'submit',
+        'class' => 'btn btn-outline-primary btn-sm',
+    ];
+    if (!$apiuserid) {
+        $generateattrs['disabled'] = 'disabled';
+    }
     $setupform .= html_writer::start_tag('form', ['method' => 'post', 'action' => $PAGE->url->out(false)]);
     $setupform .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
     $setupform .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'generateapitoken', 'value' => '1']);
-    $setupform .= html_writer::tag(
-        'button',
-        get_string('apitoken_generate', 'mod_glaaster'),
-        ['type' => 'submit', 'class' => 'btn btn-outline-primary mt-2']
-    );
+    $setupform .= html_writer::tag('button', get_string('apitoken_generate', 'mod_glaaster'), $generateattrs);
     $setupform .= html_writer::end_tag('form');
 }
+$setupform .= html_writer::end_div();
 
-// User autocomplete form.
-$setupform .= html_writer::start_tag('form', ['method' => 'post', 'action' => $PAGE->url->out(false)]);
-$setupform .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
-$setupform .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'saveapiuser', 'value' => '1']);
-$setupform .= html_writer::start_div('mb-3 position-relative');
-$apihelpicon = html_writer::tag(
-    'button',
-    '?',
-    [
-        'type' => 'button',
-        'id' => 'apiuser-help-btn',
-        'class' => 'badge rounded-pill bg-secondary border-0 ms-2',
-        'style' => 'cursor:pointer;font-size:0.75rem;padding:2px 7px;vertical-align:middle;',
-        'aria-label' => get_string('apiuser', 'mod_glaaster'),
-        'data-help-content' => get_string('apiuser_help', 'mod_glaaster'),
-        'data-help-title' => get_string('apiuser_help_title', 'mod_glaaster'),
-    ]
+// ── Step 4: Notify Glaaster ───────────────────────────────────────────────────
+$notifysubject = get_string('apistep_notify_subject', 'mod_glaaster', $CFG->wwwroot);
+$notifybody = get_string('apistep_notify_body', 'mod_glaaster', $CFG->wwwroot);
+$mailtourl = 'mailto:system@glaaster.com'
+    . '?subject=' . rawurlencode($notifysubject)
+    . '&body=' . rawurlencode($notifybody);
+
+$setupform .= html_writer::start_div('border rounded p-3 mb-3 bg-light');
+$stepheader(
+    get_string('apistep_notify', 'mod_glaaster'),
+    get_string('apistep_notify_help_title', 'mod_glaaster'),
+    get_string('apistep_notify_help', 'mod_glaaster'),
+    'apistep4-help-btn'
 );
 $setupform .= html_writer::tag(
-    'label',
-    get_string('apiuser', 'mod_glaaster') . $apihelpicon,
+    'p',
+    get_string('apistep_notify_desc', 'mod_glaaster'),
+    ['class' => 'text-muted small mb-2']
+);
+$setupform .= html_writer::tag(
+    'a',
+    html_writer::tag('span', '', ['class' => 'fa fa-envelope me-2', 'aria-hidden' => 'true'])
+        . get_string('apistep_notify_btn', 'mod_glaaster'),
     [
-        'for' => 'apiuser-search',
-        'class' => 'form-label fw-medium small text-uppercase letter-spacing-1', 'style' => 'color:#343a40',
+        'href' => $mailtourl,
+        'class' => 'btn btn-outline-primary btn-sm',
     ]
 );
-// Hidden field holds the resolved user ID.
-$setupform .= html_writer::empty_tag(
-    'input',
-    [
-        'type' => 'hidden',
-        'name' => 'apiuserid',
-        'id' => 'apiuserid-value',
-        'value' => $apiuserid ?: '',
-    ]
-);
-// Visible search input (populated by JS autocomplete).
-$currentname = $apiuser ? fullname($apiuser) . ' (' . $apiuser->username . ')' : '';
-$setupform .= html_writer::empty_tag('input', [
-    'type' => 'text',
-    'id' => 'apiuser-search',
-    'value' => $currentname,
-    'class' => 'form-control form-control-lg',
-    'placeholder' => get_string('apiuser_desc', 'mod_glaaster'),
-    'autocomplete' => 'off',
-]);
-$setupform .= html_writer::tag('div', '', [
-    'id' => 'apiuser-suggestions',
-    'class' => 'list-group position-absolute w-100 d-none',
-    'style' => 'z-index:1000',
-]);
 $setupform .= html_writer::end_div();
-$setupform .= html_writer::tag('button', get_string('savechanges'), [
-    'type' => 'submit',
-    'class' => 'btn btn-primary px-4',
-]);
-$setupform .= html_writer::end_tag('form');
 
-// Connect button with warnings.
+// ── Connect button ───────────────────────────────────────────────────────────
 $connectenabled = $apiuserid && $apitoken;
 $registerurl = 'https://' . $tooldomain . '/register';
 $apitokenvalue = $apitoken ? $apitoken->token : '';
@@ -415,7 +532,11 @@ if (!$connectenabled) {
 }
 $connectbtninner = html_writer::tag('span', get_string('connect_glaaster', 'mod_glaaster'), ['class' => 'btn-text']);
 $connectbtninner .= html_writer::tag('span', $output->render_from_template('mod_glaaster/loader', []), ['class' => 'btn-loader']);
+
+$setupform .= html_writer::start_div('d-flex align-items-center gap-3 flex-wrap');
 $setupform .= html_writer::tag('button', $connectbtninner, $connectattrs);
+$setupform .= html_writer::tag('div', '', ['id' => 'tool-status-container', 'class' => 'd-flex align-items-center gap-2']);
+$setupform .= html_writer::end_div();
 $setupform .= html_writer::end_div();
 
 $setupform .= html_writer::end_div();
@@ -425,26 +546,8 @@ $page = new tool_configure_page();
 echo $output->render($page);
 
 $PAGE->requires->js_call_amd('mod_glaaster/api_setup', 'init');
+$PAGE->requires->js_call_amd('mod_glaaster/tool_configure_controller', 'init');
 echo $setupform;
-
-// Tool list at the bottom of the page.
-echo html_writer::start_div('card border-0 mb-4', ['style' => 'box-shadow:0 4px 16px rgba(0,0,0,0.12),0 1px 4px rgba(0,0,0,0.08)']);
-echo html_writer::start_div('card-header bg-white border-bottom', ['style' => 'display:flex;align-items:center;gap:12px;']);
-echo html_writer::tag('span', '', [
-    'class' => 'rounded-circle bg-primary d-inline-block flex-shrink-0',
-    'style' => 'width:10px;height:10px;',
-]);
-echo html_writer::tag('h5', get_string('tooltypes', 'mod_glaaster'), ['class' => 'mb-0 fw-semibold text-dark']);
-echo html_writer::end_div();
-echo html_writer::start_div('card-body p-0');
-echo html_writer::start_div('', ['id' => 'tool-list-container', 'class' => 'loading p-3']);
-echo html_writer::start_div('', ['id' => 'tool-list-loader-container']);
-echo $output->render_from_template('mod_glaaster/loader', []);
-echo html_writer::end_div();
-echo $output->render_from_template('mod_glaaster/tool_list', []);
-echo html_writer::end_div();
-echo html_writer::end_div();
-echo html_writer::end_div();
 
 echo $domainform;
 
