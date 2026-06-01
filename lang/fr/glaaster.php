@@ -609,8 +609,14 @@ $string['apistep_assignuser_desc'] = 'Sélectionnez l\'utilisateur dédié que v
 // Étape 3 – Générer le token.
 $string['apistep_token'] = 'Étape 3 — Générer le token API';
 
-// Étape 4 – Notifier Glaaster.
-$string['apistep_notify'] = 'Étape 4 — Notifier Glaaster';
+// Étape 4 – Connecter à Glaaster.
+$string['apistep_connect'] = 'Étape 4 — Connecter à Glaaster';
+$string['apistep_connect_help_title'] = 'Comment se connecter ?';
+$string['apistep_connect_help'] = 'Cliquez sur le bouton Connecter pour enregistrer cette instance Moodle sur la plateforme Glaaster via LTI 1.3. L\'enregistrement s\'ouvre dans une fenêtre intégrée. Une fois terminé, le statut de la connexion se met à jour automatiquement.<br><br>Vous pouvez aussi modifier ou supprimer la connexion via les boutons d\'action à côté du statut.';
+$string['apistep_connect_desc'] = 'Enregistrez cette instance Moodle sur la plateforme Glaaster via LTI 1.3. Une fois connecté, l\'indicateur de statut affiche l\'état de la connexion.';
+
+// Étape 5 – Notifier Glaaster.
+$string['apistep_notify'] = 'Étape 5 — Notifier Glaaster';
 $string['apistep_notify_help_title'] = 'Pourquoi notifier Glaaster ?';
 $string['apistep_notify_help'] = 'Une fois cette instance Moodle connectée à Glaaster, envoyez un email de notification à l\'équipe Glaaster afin qu\'elle puisse activer et valider votre connexion de son côté.<br><br>Cliquez sur le bouton ci-dessous pour ouvrir votre client email avec un message pré-rempli. Il ne reste plus qu\'à l\'envoyer.';
 $string['apistep_notify_desc'] = 'Envoyez un email à l\'équipe Glaaster pour l\'informer que la connexion a été activée. Un message pré-rempli avec l\'URL de votre Moodle est prêt à envoyer.';

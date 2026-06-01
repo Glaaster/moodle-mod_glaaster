@@ -169,6 +169,13 @@ if ($needssetup && $tooldomain && $apiuser && $apitoken) {
     $needssetup = false;
 }
 
+// Check if LTI tool registration is already complete.
+$isconnected = $DB->record_exists_select(
+    'lti_types',
+    'baseurl LIKE :domain AND state = :state',
+    ['domain' => '%' . $tooldomain . '%', 'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED]
+);
+
 echo $output->header();
 
 if ($needssetup) {
@@ -269,8 +276,18 @@ $stepheader = function (string $stepstring, string $helptitle, string $helpconte
     );
 };
 
-$setupform = html_writer::start_div('card border-0 mb-4', ['style' => 'box-shadow:0 4px 16px rgba(0,0,0,0.12),0 1px 4px rgba(0,0,0,0.08)']);
-$setupform .= html_writer::start_div('card-header bg-white border-bottom', ['style' => 'display:flex;align-items:center;gap:12px;']);
+$setupform = html_writer::start_div('card border-0 mb-4 glaaster-setup-card', ['style' => 'box-shadow:0 4px 16px rgba(0,0,0,0.12),0 1px 4px rgba(0,0,0,0.08)']);
+$setupform .= html_writer::start_div(
+    'card-header bg-white border-bottom d-flex align-items-center justify-content-between',
+    [
+        'data-bs-toggle' => 'collapse',
+        'data-bs-target' => '#setup-collapse',
+        'aria-expanded' => $isconnected ? 'false' : 'true',
+        'aria-controls' => 'setup-collapse',
+        'style' => 'cursor:pointer;gap:12px;',
+    ]
+);
+$setupform .= html_writer::start_div('', ['style' => 'display:flex;align-items:center;gap:12px;']);
 $setupform .= html_writer::tag('span', '', [
     'class' => 'rounded-circle bg-primary d-inline-block flex-shrink-0',
     'style' => 'width:10px;height:10px;',
@@ -281,7 +298,10 @@ $setupform .= html_writer::tag(
     ['class' => 'mb-0 fw-semibold text-dark']
 );
 $setupform .= html_writer::end_div();
+$setupform .= html_writer::tag('span', '', ['class' => 'fa fa-chevron-down glaaster-setup-chevron ms-auto', 'aria-hidden' => 'true']);
+$setupform .= html_writer::end_div(); // card-header
 $setupform .= html_writer::start_div('card-body');
+$setupform .= html_writer::start_div('collapse' . ($isconnected ? '' : ' show'), ['id' => 'setup-collapse']);
 
 // Helper: inline help button for status rows.
 $statushelpbtn = function (string $titlekey, string $contentkey): string {
@@ -475,41 +495,23 @@ if ($apitoken) {
 }
 $setupform .= html_writer::end_div();
 
-// ── Step 4: Notify Glaaster ───────────────────────────────────────────────────
-$notifysubject = get_string('apistep_notify_subject', 'mod_glaaster', $CFG->wwwroot);
-$notifybody = get_string('apistep_notify_body', 'mod_glaaster', $CFG->wwwroot);
-$mailtourl = 'mailto:system@glaaster.com'
-    . '?subject=' . rawurlencode($notifysubject)
-    . '&body=' . rawurlencode($notifybody);
+// ── Step 4: Connect to Glaaster ──────────────────────────────────────────────
+$connectenabled = $apiuserid && $apitoken;
+$registerurl = 'https://' . $tooldomain . '/register';
+$apitokenvalue = $apitoken ? $apitoken->token : '';
 
-$setupform .= html_writer::start_div('border rounded p-3 mb-3 bg-light');
+$setupform .= html_writer::start_div('border rounded p-3 mb-3 bg-light', ['id' => 'apistep4-container']);
 $stepheader(
-    get_string('apistep_notify', 'mod_glaaster'),
-    get_string('apistep_notify_help_title', 'mod_glaaster'),
-    get_string('apistep_notify_help', 'mod_glaaster'),
+    get_string('apistep_connect', 'mod_glaaster'),
+    get_string('apistep_connect_help_title', 'mod_glaaster'),
+    get_string('apistep_connect_help', 'mod_glaaster'),
     'apistep4-help-btn'
 );
 $setupform .= html_writer::tag(
     'p',
-    get_string('apistep_notify_desc', 'mod_glaaster'),
+    get_string('apistep_connect_desc', 'mod_glaaster'),
     ['class' => 'text-muted small mb-2']
 );
-$setupform .= html_writer::tag(
-    'a',
-    html_writer::tag('span', '', ['class' => 'fa fa-envelope me-2', 'aria-hidden' => 'true'])
-        . get_string('apistep_notify_btn', 'mod_glaaster'),
-    [
-        'href' => $mailtourl,
-        'class' => 'btn btn-outline-primary btn-sm',
-    ]
-);
-$setupform .= html_writer::end_div();
-
-// ── Connect button ───────────────────────────────────────────────────────────
-$connectenabled = $apiuserid && $apitoken;
-$registerurl = 'https://' . $tooldomain . '/register';
-$apitokenvalue = $apitoken ? $apitoken->token : '';
-$setupform .= html_writer::start_div('mt-3 pt-3 border-top');
 if (!$connectenabled) {
     $warningmsg = !$apiuserid
         ? get_string('connect_requires_user', 'mod_glaaster')
@@ -539,8 +541,45 @@ $setupform .= html_writer::tag('div', '', ['id' => 'tool-status-container', 'cla
 $setupform .= html_writer::end_div();
 $setupform .= html_writer::end_div();
 
+// ── Step 5: Notify Glaaster ───────────────────────────────────────────────────
+$notifysubject = get_string('apistep_notify_subject', 'mod_glaaster', $CFG->wwwroot);
+$notifybody = get_string('apistep_notify_body', 'mod_glaaster', $CFG->wwwroot);
+$mailtourl = 'mailto:system@glaaster.com'
+    . '?subject=' . rawurlencode($notifysubject)
+    . '&body=' . rawurlencode($notifybody);
+
+$setupform .= html_writer::start_div('border rounded p-3 mb-3 bg-light');
+$stepheader(
+    get_string('apistep_notify', 'mod_glaaster'),
+    get_string('apistep_notify_help_title', 'mod_glaaster'),
+    get_string('apistep_notify_help', 'mod_glaaster'),
+    'apistep5-help-btn'
+);
+$setupform .= html_writer::tag(
+    'p',
+    get_string('apistep_notify_desc', 'mod_glaaster'),
+    ['class' => 'text-muted small mb-2']
+);
+$notifybtnattrs = [
+    'id' => 'apistep5-notify-btn',
+    'href' => $mailtourl,
+    'class' => 'btn btn-outline-primary btn-sm' . ($isconnected ? '' : ' disabled'),
+];
+if (!$isconnected) {
+    $notifybtnattrs['aria-disabled'] = 'true';
+    $notifybtnattrs['tabindex'] = '-1';
+}
+$setupform .= html_writer::tag(
+    'a',
+    html_writer::tag('span', '', ['class' => 'fa fa-envelope me-2', 'aria-hidden' => 'true'])
+        . get_string('apistep_notify_btn', 'mod_glaaster'),
+    $notifybtnattrs
+);
 $setupform .= html_writer::end_div();
-$setupform .= html_writer::end_div();
+
+$setupform .= html_writer::end_div(); // #setup-collapse
+$setupform .= html_writer::end_div(); // card-body
+$setupform .= html_writer::end_div(); // card
 
 $page = new tool_configure_page();
 echo $output->render($page);

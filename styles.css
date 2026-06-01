@@ -370,3 +370,24 @@
 #page-mod-lti-coursetools table.table-striped tbody tr:hover {
     background: #fff;
 }
+
+/* Setup card collapsible */
+.glaaster-setup-card .card-header {
+    transition: background 0.15s;
+    user-select: none;
+}
+.glaaster-setup-card .card-header:hover {
+    background: #f8f9fa !important;
+}
+.glaaster-setup-chevron {
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+.glaaster-setup-card .card-header[aria-expanded="false"] .glaaster-setup-chevron {
+    transform: rotate(-90deg);
+}
+/* Disabled notify button */
+#apistep5-notify-btn.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
