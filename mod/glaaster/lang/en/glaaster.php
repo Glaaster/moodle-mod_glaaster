@@ -66,8 +66,14 @@ $string['apistep_assignuser_desc'] = 'Select the dedicated user you just created
 // Step 3 – Generate token.
 $string['apistep_token'] = 'Step 3 — Generate the API token';
 
-// Step 4 – Notify Glaaster.
-$string['apistep_notify'] = 'Step 4 — Notify Glaaster';
+// Step 4 – Connect to Glaaster.
+$string['apistep_connect'] = 'Step 4 — Connect to Glaaster';
+$string['apistep_connect_help_title'] = 'How to connect?';
+$string['apistep_connect_help'] = 'Click the Connect button to register this Moodle instance with the Glaaster platform via LTI 1.3. The registration opens in an iframe. Once completed, the connection status will update automatically.<br><br>You can also edit or delete the connection using the action buttons next to the status indicator.';
+$string['apistep_connect_desc'] = 'Register this Moodle instance with the Glaaster platform via LTI 1.3. Once connected, the status indicator will show the connection state.';
+
+// Step 5 – Notify Glaaster.
+$string['apistep_notify'] = 'Step 5 — Notify Glaaster';
 $string['apistep_notify_help_title'] = 'Why notify Glaaster?';
 $string['apistep_notify_help'] = 'Once you have connected this Moodle instance to Glaaster, send a notification email to the Glaaster team so they can activate and validate your connection on their side.<br><br>Clicking the button below will open your email client with a pre-filled message. Simply send it — the Glaaster team will take care of the rest.';
 $string['apistep_notify_desc'] = 'Send an email to the Glaaster team to notify them that the connection has been activated. A pre-filled message with your Moodle URL is ready to send.';

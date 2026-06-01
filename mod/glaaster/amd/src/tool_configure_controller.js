@@ -174,6 +174,18 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'mod_glaaster/ev
                         pill.removeClass('status-pending status-validated status-error');
                         if (result.active === true) {
                             pill.addClass('status-validated').find('.status-text').text(strings[1]);
+                            // Enable email notification button (step 5).
+                            var notifyBtn = document.getElementById('apistep5-notify-btn');
+                            if (notifyBtn) {
+                                notifyBtn.classList.remove('disabled');
+                                notifyBtn.removeAttribute('aria-disabled');
+                                notifyBtn.removeAttribute('tabindex');
+                            }
+                            // Collapse the full setup card.
+                            var collapseEl = document.getElementById('setup-collapse');
+                            if (collapseEl && typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
+                                bootstrap.Collapse.getOrCreateInstance(collapseEl).hide();
+                            }
                         } else if (result.status === 'PENDING' || result.status === '') {
                             pill.addClass('status-pending').find('.status-text').text(strings[3]);
                         } else {
