@@ -212,6 +212,15 @@ $functions = [
         'ajax' => true,
         'loginrequired' => false,
     ],
+
+    'mod_glaaster_get_user_cohorts' => [
+        'classname'     => 'mod_glaaster\external\get_user_cohorts',
+        'methodname'    => 'execute',
+        'description'   => 'Return the list of cohorts a user belongs to',
+        'type'          => 'read',
+        'ajax'          => true,
+        'loginrequired' => true,
+    ],
 ];
 
 // Pre-built service for Glaaster API integration.
@@ -231,6 +240,8 @@ $services = [
             'mod_resource_get_resources_by_courses',
             'core_files_get_files',
             'core_course_get_contents',
+            'core_group_get_course_user_groups',
+            'mod_glaaster_get_user_cohorts',
         ],
         'enabled' => 1,
         'restrictedusers' => 1,

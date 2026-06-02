@@ -196,5 +196,31 @@ function xmldb_glaaster_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026022523, 'glaaster');
     }
 
+    if ($oldversion < 2026031803) {
+        // Add core_group_get_course_user_groups and mod_glaaster_get_user_cohorts
+        // to the Glaaster API pre-built service for existing installations.
+        $service = $DB->get_record('external_services', ['shortname' => 'glaaster_api']);
+        if ($service) {
+            $toadd = [
+                'core_group_get_course_user_groups',
+                'mod_glaaster_get_user_cohorts',
+            ];
+            foreach ($toadd as $fname) {
+                $exists = $DB->record_exists('external_services_functions', [
+                    'externalserviceid' => $service->id,
+                    'functionname'      => $fname,
+                ]);
+                if (!$exists) {
+                    $DB->insert_record('external_services_functions', (object)[
+                        'externalserviceid' => $service->id,
+                        'functionname'      => $fname,
+                    ]);
+                }
+            }
+        }
+
+        upgrade_mod_savepoint(true, 2026031803, 'glaaster');
+    }
+
     return true;
 }
