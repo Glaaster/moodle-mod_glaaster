@@ -48,7 +48,7 @@ final class delete_course_tool_type_test extends mod_glaaster_testcase {
 
         $typeid = glaaster_add_type(
             (object) [
-                'state' => GLAASTER_TOOL_STATE_CONFIGURED,
+                'state' => MOD_GLAASTER_TOOL_STATE_CONFIGURED,
                 'course' => $course->id,
             ],
             (object) [

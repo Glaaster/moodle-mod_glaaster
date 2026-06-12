@@ -55,7 +55,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($lti->name, true, ['context' => $context]));
 
 // Add a tool type if one does not exist already.
-if (!glaaster_get_tool_by_url_match($lti->toolurl, $lti->course, GLAASTER_TOOL_STATE_ANY)) {
+if (!glaaster_get_tool_by_url_match($lti->toolurl, $lti->course, MOD_GLAASTER_TOOL_STATE_ANY)) {
     // There are no tools (active, pending, or rejected) for the launch URL. Create a new pending tool.
     $tooltype = new stdClass();
     $toolconfig = new stdClass();

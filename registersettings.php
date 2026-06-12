@@ -93,7 +93,7 @@ if ($form->is_cancelled()) {
     if ($action == 'update') {
         $toolproxy = glaaster_get_tool_proxy_config($id);
         $form->set_data($toolproxy);
-        if ($toolproxy->state == GLAASTER_TOOL_PROXY_STATE_ACCEPTED) {
+        if ($toolproxy->state == MOD_GLAASTER_TOOL_PROXY_STATE_ACCEPTED) {
             $form->disable_fields();
         }
     }

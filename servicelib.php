@@ -31,9 +31,9 @@ require_once($CFG->dirroot . '/mod/glaaster/locallib.php');
 // OAuthBody.php functions live in moodle\mod\glaaster namespace.
 use moodle\mod\glaaster as lti;
 
-define('LTI_ITEM_TYPE', 'mod');
-define('LTI_ITEM_MODULE', 'glaaster');
-define('LTI_SOURCE', 'mod/glaaster');
+define('MOD_GLAASTER_ITEM_TYPE', 'mod');
+define('MOD_GLAASTER_ITEM_MODULE', 'glaaster');
+define('MOD_GLAASTER_SOURCE', 'mod/glaaster');
 
 
 if (!function_exists('glaaster_get_response_xml')) {
@@ -202,12 +202,12 @@ if (!function_exists('glaaster_accepts_grades')) {
         if (empty($ltitype->toolproxyid)) {
             $typeconfig = glaaster_get_config($ltiinstance);
 
-            $typeacceptgrades = isset($typeconfig['acceptgrades']) ? $typeconfig['acceptgrades'] : GLAASTER_SETTING_DELEGATE;
+            $typeacceptgrades = isset($typeconfig['acceptgrades']) ? $typeconfig['acceptgrades'] : MOD_GLAASTER_SETTING_DELEGATE;
 
             if (
-                !($typeacceptgrades == GLAASTER_SETTING_ALWAYS ||
-                ($typeacceptgrades == GLAASTER_SETTING_DELEGATE &&
-                $ltiinstance->instructorchoiceacceptgrades == GLAASTER_SETTING_ALWAYS))
+                !($typeacceptgrades == MOD_GLAASTER_SETTING_ALWAYS ||
+                ($typeacceptgrades == MOD_GLAASTER_SETTING_DELEGATE &&
+                $ltiinstance->instructorchoiceacceptgrades == MOD_GLAASTER_SETTING_ALWAYS))
             ) {
                 $acceptsgrades = false;
             }
@@ -260,7 +260,7 @@ if (!function_exists('glaaster_update_grade')) {
         $grade->userid   = $userid;
         $grade->rawgrade = $gradeval;
 
-        $status = grade_update(LTI_SOURCE, $ltiinstance->course, LTI_ITEM_TYPE, LTI_ITEM_MODULE, $ltiinstance->id, 0, $grade, $params);
+        $status = grade_update(MOD_GLAASTER_SOURCE, $ltiinstance->course, MOD_GLAASTER_ITEM_TYPE, MOD_GLAASTER_ITEM_MODULE, $ltiinstance->id, 0, $grade, $params);
 
         $record = $DB->get_record('lti_submission', ['ltiid' => $ltiinstance->id, 'userid' => $userid,
         'launchid' => $launchid], 'id');
@@ -307,7 +307,7 @@ if (!function_exists('glaaster_read_grade')) {
         global $CFG;
         require_once($CFG->libdir . '/gradelib.php');
 
-        $grades = grade_get_grades($ltiinstance->course, LTI_ITEM_TYPE, LTI_ITEM_MODULE, $ltiinstance->id, $userid);
+        $grades = grade_get_grades($ltiinstance->course, MOD_GLAASTER_ITEM_TYPE, MOD_GLAASTER_ITEM_MODULE, $ltiinstance->id, $userid);
 
         $ltigrade = floatval($ltiinstance->grade);
 
@@ -339,7 +339,7 @@ if (!function_exists('glaaster_delete_grade')) {
         $grade->userid   = $userid;
         $grade->rawgrade = null;
 
-        $status = grade_update(LTI_SOURCE, $ltiinstance->course, LTI_ITEM_TYPE, LTI_ITEM_MODULE, $ltiinstance->id, 0, $grade);
+        $status = grade_update(MOD_GLAASTER_SOURCE, $ltiinstance->course, MOD_GLAASTER_ITEM_TYPE, MOD_GLAASTER_ITEM_MODULE, $ltiinstance->id, 0, $grade);
 
         return $status == GRADE_UPDATE_OK;
     }

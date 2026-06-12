@@ -394,7 +394,7 @@ final class externallib_test extends mod_glaaster_testcase {
 
         $this->assertEquals('Test proxy', $proxy->name);
         $this->assertEquals($this->getExternalTestFileUrl('/test.html'), $proxy->regurl);
-        $this->assertEquals(GLAASTER_TOOL_PROXY_STATE_PENDING, $proxy->state);
+        $this->assertEquals(MOD_GLAASTER_TOOL_PROXY_STATE_PENDING, $proxy->state);
         $this->assertEquals(implode("\n", $capabilities), $proxy->capabilityoffered);
     }
 
@@ -434,7 +434,7 @@ final class externallib_test extends mod_glaaster_testcase {
 
         $this->assertEquals('Test proxy', $proxy->name);
         $this->assertEquals($this->getExternalTestFileUrl('/test.html'), $proxy->regurl);
-        $this->assertEquals(GLAASTER_TOOL_PROXY_STATE_PENDING, $proxy->state);
+        $this->assertEquals(MOD_GLAASTER_TOOL_PROXY_STATE_PENDING, $proxy->state);
         $this->assertEmpty(glaaster_get_tool_proxy($proxy->id));
     }
 
@@ -467,7 +467,7 @@ final class externallib_test extends mod_glaaster_testcase {
         // Create a tool type, associated with that proxy.
         $type = new stdClass();
         $data = new stdClass();
-        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = MOD_GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->toolproxyid = $proxy->id;
@@ -539,7 +539,7 @@ final class externallib_test extends mod_glaaster_testcase {
         $type = external_api::clean_returnvalue(mod_glaaster_external::create_tool_type_returns(), $type);
 
         $type =
-            mod_glaaster_external::update_tool_type($type['id'], 'New name', 'New description', GLAASTER_TOOL_STATE_PENDING);
+            mod_glaaster_external::update_tool_type($type['id'], 'New name', 'New description', MOD_GLAASTER_TOOL_STATE_PENDING);
         $type = external_api::clean_returnvalue(mod_glaaster_external::update_tool_type_returns(), $type);
 
         $this->assertEquals('New name', $type['name']);

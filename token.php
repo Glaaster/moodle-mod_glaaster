@@ -93,7 +93,7 @@ if ($ok) {
 
 if ($ok) {
     $token = glaaster_new_access_token($tool->id, $scopes);
-    $expiry = GLAASTER_ACCESS_TOKEN_LIFE;
+    $expiry = MOD_GLAASTER_ACCESS_TOKEN_LIFE;
     $permittedscopes = implode(' ', $scopes);
     $body = <<<EOD
 {

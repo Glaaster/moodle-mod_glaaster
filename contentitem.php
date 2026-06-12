@@ -33,7 +33,7 @@ $title = optional_param('title', '', PARAM_TEXT);
 $text = optional_param('text', '', PARAM_ALPHANUMEXT);
 
 $config = glaaster_get_type_type_config($id);
-if ($config->lti_ltiversion === GLAASTER_VERSION_1P3) {
+if ($config->lti_ltiversion === MOD_GLAASTER_VERSION_1P3) {
     if (!isset($SESSION->lti_initiatelogin_status)) {
         echo glaaster_initiate_login($courseid, 0, null, $config, 'ContentItemSelectionRequest', $title, $text);
         exit;

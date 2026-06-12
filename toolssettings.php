@@ -77,10 +77,10 @@ if (!empty($returnurl)) {
 }
 
 if ($action == 'accept') {
-    glaaster_set_state_for_type($id, GLAASTER_TOOL_STATE_CONFIGURED);
+    glaaster_set_state_for_type($id, MOD_GLAASTER_TOOL_STATE_CONFIGURED);
     redirect($redirect);
 } else if (($action == 'reject') || ($action == 'delete')) {
-    glaaster_set_state_for_type($id, GLAASTER_TOOL_STATE_REJECTED);
+    glaaster_set_state_for_type($id, MOD_GLAASTER_TOOL_STATE_REJECTED);
     redirect($redirect);
 }
 
@@ -98,7 +98,7 @@ if ($data = $form->get_data()) {
         $type->id = $id;
         glaaster_update_type($type, $data);
     } else {
-        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = MOD_GLAASTER_TOOL_STATE_CONFIGURED;
         glaaster_add_type($type, $data);
     }
     redirect($redirect);

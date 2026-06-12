@@ -183,7 +183,7 @@ class memberships extends service_base {
         if (
             ($response->get_accept() === 'application/vnd.ims.lti-nrps.v2.membershipcontainer+json') ||
             (($response->get_accept() !== 'application/vnd.ims.lis.v2.membershipcontainer+json') &&
-                ($this->get_type()->ltiversion === GLAASTER_VERSION_1P3))
+                ($this->get_type()->ltiversion === MOD_GLAASTER_VERSION_1P3))
         ) {
             $json = $this->users_to_json(
                 $resource,

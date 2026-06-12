@@ -487,7 +487,7 @@ class mod_glaaster_external extends external_api {
 
         // Pending makes more sense than configured as the first state, since
         // the next step is to register, which requires the state be pending.
-        $toolproxy->state = GLAASTER_TOOL_PROXY_STATE_PENDING;
+        $toolproxy->state = MOD_GLAASTER_TOOL_PROXY_STATE_PENDING;
         glaaster_update_tool_proxy($toolproxy);
 
         return $toolproxy;
@@ -789,11 +789,11 @@ class mod_glaaster_external extends external_api {
         if (!empty($cartridgeurl)) {
             $type = new stdClass();
             $data = new stdClass();
-            $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
+            $type->state = MOD_GLAASTER_TOOL_STATE_CONFIGURED;
             $data->lti_coursevisible = 2;
-            $data->lti_sendname = GLAASTER_SETTING_DELEGATE;
-            $data->lti_sendemailaddr = GLAASTER_SETTING_DELEGATE;
-            $data->lti_acceptgrades = GLAASTER_SETTING_DELEGATE;
+            $data->lti_sendname = MOD_GLAASTER_SETTING_DELEGATE;
+            $data->lti_sendemailaddr = MOD_GLAASTER_SETTING_DELEGATE;
+            $data->lti_acceptgrades = MOD_GLAASTER_SETTING_DELEGATE;
             $data->lti_forcessl = 0;
 
             if (!empty($key)) {

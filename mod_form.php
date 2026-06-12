@@ -210,7 +210,7 @@ class mod_glaaster_mod_form extends moodleform_mod {
         if (
             in_array(
                 $config['launchcontainer'],
-                [GLAASTER_LAUNCH_CONTAINER_EMBED, GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS]
+                [MOD_GLAASTER_LAUNCH_CONTAINER_EMBED, MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS]
             )
         ) {
             $mform->addElement('checkbox', 'showtitlelaunch', get_string('display_name', 'glaaster'));
@@ -238,7 +238,7 @@ class mod_glaaster_mod_form extends moodleform_mod {
         if (
             in_array(
                 $config['launchcontainer'],
-                [GLAASTER_LAUNCH_CONTAINER_EMBED, GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS]
+                [MOD_GLAASTER_LAUNCH_CONTAINER_EMBED, MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS]
             )
         ) {
             $mform->addElement('checkbox', 'showdescriptionlaunch', get_string('display_description', 'glaaster'));
@@ -278,9 +278,9 @@ class mod_glaaster_mod_form extends moodleform_mod {
         $mform->addElement('hidden', 'lineitemsubreviewparams', '', ['id' => 'id_lineitemsubreviewparams']);
         $mform->setType('lineitemsubreviewparams', PARAM_TEXT);
 
-        // Launch container is set to 'GLAASTER_LAUNCH_CONTAINER_DEFAULT', meaning it'll delegate to the tool's configuration.
+        // Launch container is set to 'MOD_GLAASTER_LAUNCH_CONTAINER_DEFAULT', meaning it'll delegate to the tool's configuration.
         // Existing instances using values other than this can continue to use their existing value but cannot change it.
-        $mform->addElement('hidden', 'launchcontainer', GLAASTER_LAUNCH_CONTAINER_DEFAULT);
+        $mform->addElement('hidden', 'launchcontainer', MOD_GLAASTER_LAUNCH_CONTAINER_DEFAULT);
         $mform->setType('launchcontainer', PARAM_INT);
 
         // Included to support deep linking return, but hidden to avoid instructor modification.
@@ -465,11 +465,11 @@ class mod_glaaster_mod_form extends moodleform_mod {
         $mform->setType('lineitemsubreviewparams', PARAM_TEXT);
 
         $launchoptions = [
-            GLAASTER_LAUNCH_CONTAINER_DEFAULT => get_string('default', 'glaaster'),
-            GLAASTER_LAUNCH_CONTAINER_EMBED => get_string('embed', 'glaaster'),
-            GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS => get_string('embed_no_blocks', 'glaaster'),
-            GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW => get_string('existing_window', 'glaaster'),
-            GLAASTER_LAUNCH_CONTAINER_WINDOW => get_string('new_window', 'glaaster'),
+            MOD_GLAASTER_LAUNCH_CONTAINER_DEFAULT => get_string('default', 'glaaster'),
+            MOD_GLAASTER_LAUNCH_CONTAINER_EMBED => get_string('embed', 'glaaster'),
+            MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS => get_string('embed_no_blocks', 'glaaster'),
+            MOD_GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW => get_string('existing_window', 'glaaster'),
+            MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW => get_string('new_window', 'glaaster'),
         ];
         $mform->addElement('select', 'launchcontainer', get_string('launchinpopup', 'glaaster'), $launchoptions);
         $mform->addHelpButton('launchcontainer', 'launchinpopup', 'glaaster');

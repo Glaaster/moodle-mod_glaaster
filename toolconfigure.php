@@ -39,7 +39,7 @@ admin_externalpage_setup('glaastertoolconfigure');
 if ($cartridgeurl) {
     $type = new stdClass();
     $data = new stdClass();
-    $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
+    $type->state = MOD_GLAASTER_TOOL_STATE_CONFIGURED;
     $data->lti_coursevisible = 2;
     glaaster_load_type_from_cartridge($cartridgeurl, $data);
     glaaster_add_type($type, $data);
@@ -173,7 +173,7 @@ if ($needssetup && $tooldomain && $apiuser && $apitoken) {
 $isconnected = $DB->record_exists_select(
     'lti_types',
     'baseurl LIKE :domain AND state = :state',
-    ['domain' => '%' . $tooldomain . '%', 'state' => GLAASTER_TOOL_STATE_CONFIGURED]
+    ['domain' => '%' . $tooldomain . '%', 'state' => MOD_GLAASTER_TOOL_STATE_CONFIGURED]
 );
 
 echo $output->header();
