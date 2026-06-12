@@ -25,15 +25,15 @@
 use mod_glaaster\output\repost_crosssite_page;
 
 require_once(__DIR__ . '/../../config.php');
-global $_POST, $_SERVER, $CFG, $PAGE, $SESSION, $USER, $DB;
+global $CFG, $PAGE, $SESSION, $USER, $DB;
 require_once($CFG->dirroot . '/mod/glaaster/locallib.php');
 
-if (!isloggedin() && empty($_POST['repost'])) {
+if (!isloggedin() && !optional_param('repost', false, PARAM_BOOL)) {
     header_remove("Set-Cookie");
     $PAGE->set_pagelayout('popup');
     $PAGE->set_context(context_system::instance());
     $output = $PAGE->get_renderer('mod_glaaster');
-    $page = new repost_crosssite_page($_SERVER['REQUEST_URI'], $_POST);
+    $page = new repost_crosssite_page($_SERVER['REQUEST_URI'], (array) (data_submitted() ?: []));
     echo $output->header();
     echo $output->render($page);
     echo $output->footer();

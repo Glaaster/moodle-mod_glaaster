@@ -42,14 +42,12 @@ $PAGE->set_pagelayout('popup');
 $PAGE->set_context($context);
 
 // Cross-Site causes the cookie to be lost if not POSTed from same site.
-global $_POST;
-if (!empty($_POST["repost"])) {
-    // Unset the param so that LTI 1.1 signature validation passes.
-    unset($_POST["repost"]);
-} else if (!isloggedin()) {
+// The repost param is stripped before LTI 1.1 signature validation in
+// GlaasterOAuthRequest::from_request().
+if (!optional_param('repost', false, PARAM_BOOL) && !isloggedin()) {
     header_remove("Set-Cookie");
     $output = $PAGE->get_renderer('mod_glaaster');
-    $page = new repost_crosssite_page($_SERVER['REQUEST_URI'], $_POST);
+    $page = new repost_crosssite_page($_SERVER['REQUEST_URI'], (array) (data_submitted() ?: []));
     echo $output->header();
     echo $output->render($page);
     echo $output->footer();
