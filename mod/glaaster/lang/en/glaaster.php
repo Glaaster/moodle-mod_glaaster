@@ -730,3 +730,13 @@ $string['generalsettings'] = 'General configuration';
 $string['tooldomain'] = 'Tool domain';
 $string['tooldomain_desc'] =
     'Domain used to retrieve Glaaster instance. This allows testing with different environments.';
+
+// Page title strings (view.php).
+$string['pageheading'] = 'Glaaster: {$a}';
+$string['pagetitle'] = '{$a->course} - Glaaster: {$a->name}';
+
+// moodle_exception error codes (locallib.php).
+$string['errorjwtlti2unsupported'] = 'JWT security is not supported with LTI 2.';
+$string['errornopublickey'] = 'No public key configured.';
+$string['errornopublickeyset'] = 'No public keyset configured.';
+$string['errorinvalidkeytype'] = 'Invalid public key type.';

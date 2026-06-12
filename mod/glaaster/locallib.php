@@ -1473,7 +1473,7 @@ function glaaster_verify_jwt_signature($typeid, $consumerkey, $jwtparam) {
         throw new moodle_exception('errortooltypenotfound', 'mod_glaaster');
     }
     if (isset($tool->toolproxyid)) {
-        throw new moodle_exception('JWT security not supported with LTI 2');
+        throw new moodle_exception('errorjwtlti2unsupported', 'mod_glaaster');
     }
 
     $typeconfig = glaaster_get_type_config($typeid);
@@ -1487,19 +1487,19 @@ function glaaster_verify_jwt_signature($typeid, $consumerkey, $jwtparam) {
     if (empty($typeconfig['keytype']) || $typeconfig['keytype'] === MOD_GLAASTER_RSA_KEY) {
         $publickey = $typeconfig['publickey'] ?? '';
         if (empty($publickey)) {
-            throw new moodle_exception('No public key configured');
+            throw new moodle_exception('errornopublickey', 'mod_glaaster');
         }
         // Attemps to verify jwt with RSA key.
         JWT::decode($jwtparam, new Key($publickey, 'RS256'));
     } else if ($typeconfig['keytype'] === MOD_GLAASTER_JWK_KEYSET) {
         $keyseturl = $typeconfig['publickeyset'] ?? '';
         if (empty($keyseturl)) {
-            throw new moodle_exception('No public keyset configured');
+            throw new moodle_exception('errornopublickeyset', 'mod_glaaster');
         }
         // Attempts to verify jwt with jwk keyset.
         glaaster_verify_with_keyset($jwtparam, $keyseturl, $tool->clientid);
     } else {
-        throw new moodle_exception('Invalid public key type');
+        throw new moodle_exception('errorinvalidkeytype', 'mod_glaaster');
     }
 
     return $tool;
