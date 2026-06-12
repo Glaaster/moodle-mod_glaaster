@@ -71,7 +71,7 @@ require_sesskey();
 if (!empty($id)) {
     $type = glaaster_get_type_type_config($id);
     if (!empty($type->toolproxyid)) {
-        $sesskey = required_param('sesskey', PARAM_RAW);
+        $sesskey = required_param('sesskey', PARAM_ALPHANUM);
         $params = ['action' => $action, 'id' => $id, 'sesskey' => $sesskey, 'tab' => $tab];
         if (!empty($returnto)) {
             $params['returnto'] = $returnto;
