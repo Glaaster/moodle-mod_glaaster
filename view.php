@@ -87,8 +87,9 @@ if ($coursemoduleid !== 0 && empty($filename) && empty($filepath)) {
     $PAGE->set_cm($coursemoduleorigin, $courseorigin); // Set's up global $COURSE.
     $PAGE->set_context($contextresource);
     $PAGE->set_url('/mod/resource/view.php', ['id' => $coursemoduleorigin->id]);
-    $PAGE->set_title($courseorigin->fullname . ' - Glaaster : ' . $instance->name);
-    $PAGE->set_heading('Glaaster : ' . $instance->name);
+    $titledata = (object)['course' => $courseorigin->fullname, 'name' => $instance->name];
+    $PAGE->set_title(get_string('pagetitle', 'mod_glaaster', $titledata));
+    $PAGE->set_heading(get_string('pageheading', 'mod_glaaster', $instance->name));
 } else if ($coursemoduleid !== 0 && !empty($filename) && !empty($filepath)) {
     [$courseorigin, $coursemoduleorigin] = get_course_and_cm_from_cmid($coursemoduleid, 'folder');
     $contextfolder = context_module::instance($coursemoduleorigin->id);
@@ -104,8 +105,9 @@ if ($coursemoduleid !== 0 && empty($filename) && empty($filepath)) {
     $PAGE->set_cm($coursemoduleorigin, $courseorigin);
     $PAGE->set_context($contextfolder);
     $PAGE->set_url('/mod/folder/view.php', ['id' => $coursemoduleorigin->id]);
-    $PAGE->set_title($courseorigin->fullname . ' - Glaaster : ' . $targetfilename);
-    $PAGE->set_heading('Glaaster : ' . $targetfilename);
+    $titledata = (object)['course' => $courseorigin->fullname, 'name' => $targetfilename];
+    $PAGE->set_title(get_string('pagetitle', 'mod_glaaster', $titledata));
+    $PAGE->set_heading(get_string('pageheading', 'mod_glaaster', $targetfilename));
 
     $fs = get_file_storage();
     $files = $fs->get_area_files($contextfolder->id, 'mod_folder', 'content', 0, 'filepath, filename', false);

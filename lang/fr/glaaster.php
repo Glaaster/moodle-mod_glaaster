@@ -674,3 +674,13 @@ $string['connect_status_validated'] = 'Validé';
 $string['connect_status_error'] = 'Erreur';
 $string['connect_status_api_pending'] = 'En attente de validation de Glaaster';
 $string['connect_support_info'] = 'En cas de problème de connexion, veuillez contacter <a href="mailto:system@glaaster.com">system@glaaster.com</a> pour obtenir de l\'aide.';
+
+// Titres de page (view.php).
+$string['pageheading'] = 'Glaaster : {$a}';
+$string['pagetitle'] = '{$a->course} - Glaaster : {$a->name}';
+
+// Codes d'erreur moodle_exception (locallib.php).
+$string['errorjwtlti2unsupported'] = 'La sécurité JWT n\'est pas supportée avec LTI 2.';
+$string['errornopublickey'] = 'Aucune clé publique configurée.';
+$string['errornopublickeyset'] = 'Aucun jeu de clés publiques configuré.';
+$string['errorinvalidkeytype'] = 'Type de clé publique invalide.';
