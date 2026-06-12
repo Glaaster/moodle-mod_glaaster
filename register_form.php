@@ -64,7 +64,7 @@ class mod_glaaster_register_types_form extends moodleform {
 
         // LTI Capabilities.
 
-        $options = array_keys(lti_glaaster_get_capabilities());
+        $options = array_keys(glaaster_get_capabilities());
         natcasesort($options);
         $attributes = ['multiple' => 1, 'size' => min(count($options), 10)];
         $mform->addElement(
@@ -80,7 +80,7 @@ class mod_glaaster_register_types_form extends moodleform {
 
         // LTI Services.
 
-        $services = lti_glaaster_get_services();
+        $services = glaaster_get_services();
         $options = [];
         foreach ($services as $service) {
             $options[$service->get_id()] = $service->get_name();

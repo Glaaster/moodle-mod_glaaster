@@ -60,12 +60,12 @@ final class lib_test extends advanced_testcase {
     }
 
     /**
-     * Test lti_glaaster_view
+     * Test glaaster_view
      *
      * @covers ::glaaster_view
      * @return void
      */
-    public function test_lti_glaaster_view(): void {
+    public function test_glaaster_view(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
@@ -111,7 +111,7 @@ final class lib_test extends advanced_testcase {
      *
      * @covers ::glaaster_delete_instance
      */
-    public function test_lti_glaaster_delete_instance(): void {
+    public function test_glaaster_delete_instance(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -404,7 +404,7 @@ final class lib_test extends advanced_testcase {
     }
 
     /**
-     * Test verifying the output of the lti_glaaster_get_course_content_items and lti_glaaster_get_all_content_items callbacks.
+     * Test verifying the output of the glaaster_get_course_content_items and glaaster_get_all_content_items callbacks.
      *
      * @covers ::glaaster_get_course_content_items
      * @covers ::glaaster_get_all_content_items
@@ -430,8 +430,8 @@ final class lib_test extends advanced_testcase {
             'ltiversion' => 'LTI-1p0',
             'timecreated' => $time,
             'timemodified' => $time,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
         ];
         $sitetoolrecordnonchooser = (object) [
             'name' => 'Site level tool which is NOT available in the course activity chooser',
@@ -441,8 +441,8 @@ final class lib_test extends advanced_testcase {
             'ltiversion' => 'LTI-1p0',
             'timecreated' => $time,
             'timemodified' => $time,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_PRECONFIGURED,
         ];
         $course1toolrecord = (object) [
             'name' => 'Course created tool which is available in the activity chooser',
@@ -452,8 +452,8 @@ final class lib_test extends advanced_testcase {
             'ltiversion' => 'LTI-1p0',
             'timecreated' => $time,
             'timemodified' => $time,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
         ];
         $course2toolrecord = (object) [
             'name' => 'Course created tool which is available in the activity chooser',
@@ -463,8 +463,8 @@ final class lib_test extends advanced_testcase {
             'ltiversion' => 'LTI-1p0',
             'timecreated' => $time,
             'timemodified' => $time,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
         ];
         $tool1id = $DB->insert_record('glaaster_types', $sitetoolrecord);
         $tool2id = $DB->insert_record('glaaster_types', $sitetoolrecordnonchooser);
@@ -487,7 +487,7 @@ final class lib_test extends advanced_testcase {
             MOD_PURPOSE_CONTENT
         );
 
-        // The lti_glaaster_get_lti_types_by_course method (used by the callbacks) assumes the global user.
+        // The glaaster_get_lti_types_by_course method (used by the callbacks) assumes the global user.
         $this->setUser($teacher);
 
         // Teacher in course1 should be able to see the site preconfigured tool and the tool created in course1.

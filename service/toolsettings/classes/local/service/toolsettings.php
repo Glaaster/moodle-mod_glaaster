@@ -196,7 +196,7 @@ class toolsettings extends service_base {
      */
     public function get_launch_parameters($messagetype, $courseid, $user, $typeid, $modlti = null) {
         $launchparameters = [];
-        $tool = lti_glaaster_get_type_type_config($typeid);
+        $tool = glaaster_get_type_type_config($typeid);
         if (isset($tool->{$this->get_component_id()})) {
             if (
                 $tool->{$this->get_component_id()} == self::SERVICE_ENABLED &&

@@ -101,9 +101,9 @@ class course_external_tools_list extends system_report {
         $params = array_merge(
             $params,
             [
-                $coursevisibleparam => LTI_GLAASTER_COURSEVISIBLE_NO,
+                $coursevisibleparam => GLAASTER_COURSEVISIBLE_NO,
                 $categoryparam => $this->course->category,
-                $toolstateparam => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+                $toolstateparam => GLAASTER_TOOL_STATE_CONFIGURED,
             ]
         );
         $this->add_base_condition_sql($wheresql, $params);
@@ -164,7 +164,7 @@ class course_external_tools_list extends system_report {
                     $coursevisible = $row->coursevisibleoverridden;
                 }
 
-                if ($coursevisible == LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER) {
+                if ($coursevisible == GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER) {
                     $coursevisible = true;
                 } else {
                     $coursevisible = false;

@@ -67,7 +67,7 @@ class profile extends resource_base {
             $ok = false;
             $response->set_code(400);
         } else {
-            $toolproxy = lti_glaaster_glaaster_get_tool_proxy_from_guid($params['tool_proxy_id']);
+            $toolproxy = glaaster_get_tool_proxy_from_guid($params['tool_proxy_id']);
             $ok = $toolproxy !== false;
         }
         if ($ok) {

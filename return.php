@@ -35,7 +35,7 @@ $errormsg = optional_param('lti_errormsg', '', PARAM_TEXT);
 $msg = optional_param('lti_msg', '', PARAM_TEXT);
 $unsigned = optional_param('unsigned', '0', PARAM_INT);
 
-$launchcontainer = optional_param('launch_container', LTI_GLAASTER_LAUNCH_CONTAINER_WINDOW, PARAM_INT);
+$launchcontainer = optional_param('launch_container', GLAASTER_LAUNCH_CONTAINER_WINDOW, PARAM_INT);
 
 $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 $lti = null;
@@ -59,8 +59,8 @@ if (!empty($errormsg) || !empty($msg)) {
 
     // Avoid frame-in-frame action.
     if (
-        $launchcontainer == LTI_GLAASTER_LAUNCH_CONTAINER_EMBED ||
-        $launchcontainer == LTI_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS
+        $launchcontainer == GLAASTER_LAUNCH_CONTAINER_EMBED ||
+        $launchcontainer == GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS
     ) {
         $PAGE->set_pagelayout('embedded');
     } else {
@@ -108,8 +108,8 @@ if (!empty($errormsg)) {
 
     // Avoid frame-in-frame action.
     if (
-        $launchcontainer == LTI_GLAASTER_LAUNCH_CONTAINER_EMBED ||
-        $launchcontainer == LTI_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS
+        $launchcontainer == GLAASTER_LAUNCH_CONTAINER_EMBED ||
+        $launchcontainer == GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS
     ) {
         // Output a page containing some script to break out of frames and redirect them.
 

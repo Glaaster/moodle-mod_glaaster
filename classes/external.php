@@ -73,7 +73,7 @@ class mod_glaaster_external extends external_api {
         self::validate_context($context);
         require_capability('moodle/site:config', $context);
 
-        return lti_glaaster_get_tool_proxies($orphanedonly);
+        return glaaster_get_tool_proxies($orphanedonly);
     }
 
     /**
@@ -157,7 +157,7 @@ class mod_glaaster_external extends external_api {
         require_capability('mod/glaaster:view', $context);
 
         $lti->cmid = $cm->id;
-        [$endpoint, $parms] = lti_glaaster_get_launch_data($lti);
+        [$endpoint, $parms] = glaaster_get_launch_data($lti);
 
         $parameters = [];
         foreach ($parms as $name => $value) {
@@ -462,7 +462,7 @@ class mod_glaaster_external extends external_api {
         require_capability('moodle/site:config', $context);
 
         // Can't create duplicate proxies with the same URL.
-        $duplicates = lti_glaaster_get_tool_proxies_from_registration_url($registrationurl);
+        $duplicates = glaaster_get_tool_proxies_from_registration_url($registrationurl);
         if (!empty($duplicates)) {
             throw new moodle_exception('duplicateregurl', 'mod_glaaster');
         }
@@ -482,13 +482,13 @@ class mod_glaaster_external extends external_api {
             $config->lti_services = $serviceoffered;
         }
 
-        $id = lti_glaaster_add_tool_proxy($config);
-        $toolproxy = lti_glaaster_get_tool_proxy($id);
+        $id = glaaster_add_tool_proxy($config);
+        $toolproxy = glaaster_get_tool_proxy($id);
 
         // Pending makes more sense than configured as the first state, since
         // the next step is to register, which requires the state be pending.
-        $toolproxy->state = LTI_GLAASTER_TOOL_PROXY_STATE_PENDING;
-        lti_glaaster_update_tool_proxy($toolproxy);
+        $toolproxy->state = GLAASTER_TOOL_PROXY_STATE_PENDING;
+        glaaster_update_tool_proxy($toolproxy);
 
         return $toolproxy;
     }
@@ -551,9 +551,9 @@ class mod_glaaster_external extends external_api {
         self::validate_context($context);
         require_capability('moodle/site:config', $context);
 
-        $toolproxy = lti_glaaster_get_tool_proxy($id);
+        $toolproxy = glaaster_get_tool_proxy($id);
 
-        lti_glaaster_delete_tool_proxy($id);
+        glaaster_delete_tool_proxy($id);
 
         return $toolproxy;
     }
@@ -603,8 +603,8 @@ class mod_glaaster_external extends external_api {
         self::validate_context($context);
         require_capability('moodle/site:config', $context);
 
-        $toolproxy = lti_glaaster_get_tool_proxy($id);
-        return lti_glaaster_build_registration_request($toolproxy);
+        $toolproxy = glaaster_get_tool_proxy($id);
+        return glaaster_build_registration_request($toolproxy);
     }
 
     /**
@@ -668,9 +668,9 @@ class mod_glaaster_external extends external_api {
         require_capability('moodle/site:config', $context);
 
         if (!empty($toolproxyid)) {
-            $types = lti_glaaster_get_lti_types_from_proxy_id($toolproxyid);
+            $types = glaaster_get_lti_types_from_proxy_id($toolproxyid);
         } else {
-            $types = lti_glaaster_get_lti_types();
+            $types = glaaster_get_lti_types();
         }
 
         return array_map("glaaster_serialise_tool_type", array_values($types));
@@ -789,11 +789,11 @@ class mod_glaaster_external extends external_api {
         if (!empty($cartridgeurl)) {
             $type = new stdClass();
             $data = new stdClass();
-            $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+            $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
             $data->lti_coursevisible = 2;
-            $data->lti_sendname = LTI_GLAASTER_SETTING_DELEGATE;
-            $data->lti_sendemailaddr = LTI_GLAASTER_SETTING_DELEGATE;
-            $data->lti_acceptgrades = LTI_GLAASTER_SETTING_DELEGATE;
+            $data->lti_sendname = GLAASTER_SETTING_DELEGATE;
+            $data->lti_sendemailaddr = GLAASTER_SETTING_DELEGATE;
+            $data->lti_acceptgrades = GLAASTER_SETTING_DELEGATE;
             $data->lti_forcessl = 0;
 
             if (!empty($key)) {
@@ -804,16 +804,16 @@ class mod_glaaster_external extends external_api {
                 $data->lti_password = $secret;
             }
 
-            lti_glaaster_load_type_from_cartridge($cartridgeurl, $data);
+            glaaster_load_type_from_cartridge($cartridgeurl, $data);
             if (empty($data->lti_toolurl)) {
                 throw new moodle_exception('unabletocreatetooltype', 'mod_glaaster');
             } else {
-                $id = lti_glaaster_add_type($type, $data);
+                $id = glaaster_add_type($type, $data);
             }
         }
 
         if (!empty($id)) {
-            $type = lti_glaaster_get_type($id);
+            $type = glaaster_get_type($id);
             return glaaster_serialise_tool_type($type);
         } else {
             throw new moodle_exception('unabletocreatetooltype', 'mod_glaaster');
@@ -881,7 +881,7 @@ class mod_glaaster_external extends external_api {
         self::validate_context($context);
         require_capability('moodle/site:config', $context);
 
-        $type = lti_glaaster_get_type($id);
+        $type = glaaster_get_type($id);
 
         if (empty($type)) {
             throw new moodle_exception('unabletofindtooltype', 'mod_glaaster', '', ['id' => $id]);
@@ -904,7 +904,7 @@ class mod_glaaster_external extends external_api {
             }
         }
 
-        lti_glaaster_update_type($type, new stdClass());
+        glaaster_update_type($type, new stdClass());
 
         return glaaster_serialise_tool_type($type);
     }
@@ -957,16 +957,16 @@ class mod_glaaster_external extends external_api {
         self::validate_context($context);
         require_capability('moodle/site:config', $context);
 
-        $type = lti_glaaster_get_type($id);
+        $type = glaaster_get_type($id);
 
         if (!empty($type)) {
-            lti_glaaster_delete_type($id);
+            glaaster_delete_type($id);
 
             // If this is the last type for this proxy then remove the proxy
             // as well so that it isn't orphaned.
-            $types = lti_glaaster_get_lti_types_from_proxy_id($type->toolproxyid);
+            $types = glaaster_get_lti_types_from_proxy_id($type->toolproxyid);
             if (empty($types)) {
-                lti_glaaster_delete_tool_proxy($type->toolproxyid);
+                glaaster_delete_tool_proxy($type->toolproxyid);
             }
         }
 
@@ -1022,7 +1022,7 @@ class mod_glaaster_external extends external_api {
         self::validate_context($context);
         require_capability('moodle/site:config', $context);
 
-        $iscartridge = lti_glaaster_is_cartridge($url);
+        $iscartridge = glaaster_is_cartridge($url);
 
         return ['iscartridge' => $iscartridge];
     }

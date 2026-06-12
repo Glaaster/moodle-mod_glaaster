@@ -25,7 +25,7 @@
 /**
  * @deprecated since 3.9
  **/
-function lti_glaaster_get_shortcuts() {
+function glaaster_get_shortcuts() {
     throw new coding_exception(
         'The callback get_shortcuts() is now removed. Please use get_course_content_items and get_all_content_items instead.'
     );

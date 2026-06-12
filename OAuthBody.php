@@ -45,13 +45,19 @@ namespace moodle\mod\glaaster;
 // This file contains functions to handle OAuth requests and verify signatures.
 
 use Exception;
+use moodle\mod\lti\OAuthUtil;
+use moodle\mod\lti\OAuthException;
+use moodle\mod\lti\OAuthServer;
+use moodle\mod\lti\OAuthSignatureMethod_HMAC_SHA1;
+use moodle\mod\lti\OAuthRequest;
+use moodle\mod\lti\TrivialOAuthDataStore;
 
 defined('MOODLE_INTERNAL') || die;
 
 global $CFG;
 
-require_once($CFG->dirroot . '/mod/glaaster/OAuth.php');
-require_once($CFG->dirroot . '/mod/glaaster/TrivialStore.php');
+require_once($CFG->dirroot . '/mod/lti/OAuth.php');
+require_once($CFG->dirroot . '/mod/lti/TrivialStore.php');
 
 /**
  * Get the OAuth consumer key from the request headers.
@@ -64,16 +70,16 @@ require_once($CFG->dirroot . '/mod/glaaster/TrivialStore.php');
  * @return string|int|boolean  The OAuth consumer key, the LTI type ID for the validated bearer token,
  * true for requests not requiring a scope, otherwise false.
  */
-function get_oauth_key_from_headers($typeid = null, $scopes = null) {
+function glaaster_get_oauth_key_from_headers($typeid = null, $scopes = null) {
     global $DB;
 
     $now = time();
 
-    $requestheaders = GlaasterOAuthUtil::get_headers();
+    $requestheaders = OAuthUtil::get_headers();
 
     if (isset($requestheaders['Authorization'])) {
         if (substr($requestheaders['Authorization'], 0, 6) == "OAuth ") {
-            $headerparameters = GlaasterOAuthUtil::split_header($requestheaders['Authorization']);
+            $headerparameters = OAuthUtil::split_header($requestheaders['Authorization']);
 
             return format_string($headerparameters['oauth_consumer_key']);
         } else if (empty($scopes)) {
@@ -107,47 +113,47 @@ function get_oauth_key_from_headers($typeid = null, $scopes = null) {
  * @param array|null $requestheaders Optional request headers, if not provided they will be fetched.
  *
  * @return string The post data after verifying the OAuth signature and body hash.
- * @throws GlaasterOAuthException If the OAuth signature verification fails or the body hash does not match.
+ * @throws OAuthException If the OAuth signature verification fails or the body hash does not match.
  *
  * @package mod_glaaster
  */
-function handle_oauth_body_post($oauthconsumerkey, $oauthconsumersecret, $body, $requestheaders = null) {
+function glaaster_handle_oauth_body_post($oauthconsumerkey, $oauthconsumersecret, $body, $requestheaders = null) {
 
     if ($requestheaders == null) {
-        $requestheaders = GlaasterOAuthUtil::get_headers();
+        $requestheaders = OAuthUtil::get_headers();
     }
 
     // Must reject application/x-www-form-urlencoded.
     if (isset($requestheaders['Content-type'])) {
         if ($requestheaders['Content-type'] == 'application/x-www-form-urlencoded') {
-            throw new GlaasterOAuthException("OAuth request body signing must not use application/x-www-form-urlencoded");
+            throw new OAuthException("OAuth request body signing must not use application/x-www-form-urlencoded");
         }
     }
 
     if (isset($requestheaders['Authorization']) && (substr($requestheaders['Authorization'], 0, 6) == "OAuth ")) {
-        $headerparameters = GlaasterOAuthUtil::split_header($requestheaders['Authorization']);
+        $headerparameters = OAuthUtil::split_header($requestheaders['Authorization']);
         $oauthbodyhash = $headerparameters['oauth_body_hash'];
     }
 
     if (!isset($oauthbodyhash)) {
-        throw new GlaasterOAuthException("OAuth request body signing requires oauth_body_hash body");
+        throw new OAuthException("OAuth request body signing requires oauth_body_hash body");
     }
 
     // Verify the message signature.
-    $store = new TrivialGlaasterOAuthDataStore();
+    $store = new TrivialOAuthDataStore();
     $store->add_consumer($oauthconsumerkey, $oauthconsumersecret);
 
-    $server = new GlaasterOAuthServer($store);
+    $server = new OAuthServer($store);
 
-    $method = new GlaasterOAuthSignatureMethod_HMAC_SHA1();
+    $method = new OAuthSignatureMethod_HMAC_SHA1();
     $server->add_signature_method($method);
-    $request = GlaasterOAuthRequest::from_request();
+    $request = OAuthRequest::from_request();
 
     try {
         $server->verify_request($request);
     } catch (Exception $e) {
         $message = $e->getMessage();
-        throw new GlaasterOAuthException("OAuth signature failed: " . $message);
+        throw new OAuthException("OAuth signature failed: " . $message);
     }
 
     $postdata = $body;
@@ -155,7 +161,7 @@ function handle_oauth_body_post($oauthconsumerkey, $oauthconsumersecret, $body, 
     $hash = base64_encode(sha1($postdata, true));
 
     if ($hash != $oauthbodyhash) {
-        throw new GlaasterOAuthException("OAuth oauth_body_hash mismatch");
+        throw new OAuthException("OAuth oauth_body_hash mismatch");
     }
 
     return $postdata;

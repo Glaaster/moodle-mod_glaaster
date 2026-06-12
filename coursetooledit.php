@@ -35,7 +35,7 @@ $typeid = optional_param('typeid', null, PARAM_INT);
 require_login($courseid, false);
 require_capability('mod/glaaster:addcoursetool', context_course::instance($courseid));
 if (!empty($typeid)) {
-    $type = lti_glaaster_get_type_type_config($typeid);
+    $type = glaaster_get_type_type_config($typeid);
     if ($type->course != $courseid || $type->course == get_site()->id) {
         throw new moodle_exception('You do not have permissions to edit this tool type.');
     }
@@ -63,14 +63,14 @@ if ($form->is_cancelled()) {
 
     if (!empty($data->typeid)) {
         $type = (object) ['id' => $data->typeid];
-        lti_glaaster_load_type_if_cartridge($data);
-        lti_glaaster_update_type($type, $data);
+        glaaster_load_type_if_cartridge($data);
+        glaaster_update_type($type, $data);
         $redirecturl = new moodle_url('/mod/glaaster/coursetools.php', ['id' => $courseid]);
         $notice = get_string('courseexternaltooleditsuccess', 'mod_glaaster');
     } else {
-        $type = (object) ['state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED, 'course' => $data->course];
-        lti_glaaster_load_type_if_cartridge($data);
-        lti_glaaster_add_type($type, $data);
+        $type = (object) ['state' => GLAASTER_TOOL_STATE_CONFIGURED, 'course' => $data->course];
+        glaaster_load_type_if_cartridge($data);
+        glaaster_add_type($type, $data);
         $redirecturl = new moodle_url('/mod/glaaster/coursetools.php', ['id' => $courseid]);
         $notice = get_string('courseexternaltooladdsuccess', 'mod_glaaster', $type->name);
     }

@@ -100,7 +100,7 @@ class linksettings extends resource_base {
                 $id = -$this->get_service()->get_type()->id;
             }
             if ($response->get_request_method() == 'GET') {
-                $linksettings = lti_glaaster_get_tool_settings($id, $lti->course, $linkid);
+                $linksettings = glaaster_get_tool_settings($id, $lti->course, $linkid);
                 if (!empty($bubble)) {
                     $contextsetting = new contextsettings($this->get_service());
                     if ($COURSE == 'site') {
@@ -115,7 +115,7 @@ class linksettings extends resource_base {
                         $contextsetting->params['vendor_code'] = 'tool';
                     }
                     $contextsetting->params['product_code'] = abs($id);
-                    $contextsettings = lti_glaaster_get_tool_settings($id, $lti->course);
+                    $contextsettings = glaaster_get_tool_settings($id, $lti->course);
                     $systemsetting = new systemsettings($this->get_service());
                     if ($id >= 0) {
                         $systemsetting->params['config_type'] = 'toolproxy';
@@ -123,7 +123,7 @@ class linksettings extends resource_base {
                         $systemsetting->params['config_type'] = 'tool';
                     }
                     $systemsetting->params['tool_proxy_id'] = abs($id);
-                    $systemsettings = lti_glaaster_get_tool_settings($id);
+                    $systemsettings = glaaster_get_tool_settings($id);
                     if ($bubble == 'distinct') {
                         toolsettings::distinct_settings($systemsettings, $contextsettings, $linksettings);
                     }
@@ -197,7 +197,7 @@ class linksettings extends resource_base {
                     }
                 }
                 if ($ok) {
-                    lti_glaaster_set_tool_settings($settings, $id, $lti->course, $linkid);
+                    glaaster_set_tool_settings($settings, $id, $lti->course, $linkid);
                 } else {
                     $response->set_code(406);
                 }

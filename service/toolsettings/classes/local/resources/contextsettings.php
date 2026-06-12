@@ -102,7 +102,7 @@ class contextsettings extends resource_base {
                 $response->set_code(404);
             } else {
                 $systemsetting = null;
-                $contextsettings = lti_glaaster_get_tool_settings($id, $contextid);
+                $contextsettings = glaaster_get_tool_settings($id, $contextid);
                 if (!empty($bubble)) {
                     $systemsetting = new systemsettings($this->get_service());
                     $systemsetting->params['tool_proxy_id'] = $productcode;
@@ -111,7 +111,7 @@ class contextsettings extends resource_base {
                     } else {
                         $systemsetting->params['config_type'] = 'tool';
                     }
-                    $systemsettings = lti_glaaster_get_tool_settings($id);
+                    $systemsettings = glaaster_get_tool_settings($id);
                     if ($bubble == 'distinct') {
                         toolsettings::distinct_settings($systemsettings, $contextsettings, null);
                     }
@@ -168,7 +168,7 @@ class contextsettings extends resource_base {
                         }
                     }
                     if ($ok) {
-                        lti_glaaster_set_tool_settings($settings, $id, $contextid);
+                        glaaster_set_tool_settings($settings, $id, $contextid);
                     } else {
                         $response->set_code(406);
                     }

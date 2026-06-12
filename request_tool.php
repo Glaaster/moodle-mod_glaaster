@@ -40,7 +40,7 @@ require_sesskey();
 
 require_capability('mod/glaaster:requesttooladd', context_course::instance($lti->course));
 
-$baseurl = lti_glaaster_get_domain_from_url($lti->toolurl);
+$baseurl = glaaster_get_domain_from_url($lti->toolurl);
 
 $url = new moodle_url('/mod/glaaster/request_tool.php', ['instanceid' => $instanceid]);
 $PAGE->set_url($url);
@@ -55,15 +55,15 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($lti->name, true, ['context' => $context]));
 
 // Add a tool type if one does not exist already.
-if (!lti_glaaster_get_tool_by_url_match($lti->toolurl, $lti->course, LTI_GLAASTER_TOOL_STATE_ANY)) {
+if (!glaaster_get_tool_by_url_match($lti->toolurl, $lti->course, GLAASTER_TOOL_STATE_ANY)) {
     // There are no tools (active, pending, or rejected) for the launch URL. Create a new pending tool.
     $tooltype = new stdClass();
     $toolconfig = new stdClass();
 
-    $toolconfig->lti_toolurl = lti_glaaster_get_domain_from_url($lti->toolurl);
+    $toolconfig->lti_toolurl = glaaster_get_domain_from_url($lti->toolurl);
     $toolconfig->lti_typename = $toolconfig->lti_toolurl;
 
-    lti_glaaster_add_type($tooltype, $toolconfig);
+    glaaster_add_type($tooltype, $toolconfig);
 
     echo get_string('lti_tool_request_added', 'glaaster');
 } else {

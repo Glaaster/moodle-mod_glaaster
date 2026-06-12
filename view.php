@@ -132,11 +132,11 @@ if ($coursemoduleid !== 0 && empty($filename) && empty($filepath)) {
 }
 
 $typeid = $lti->typeid;
-if (empty($typeid) && ($tool = lti_glaaster_get_tool_by_url_match($lti->toolurl))) {
+if (empty($typeid) && ($tool = glaaster_get_tool_by_url_match($lti->toolurl))) {
     $typeid = $tool->id;
 }
 if ($typeid) {
-    $toolconfig = lti_glaaster_get_type_config($typeid);
+    $toolconfig = glaaster_get_type_config($typeid);
     $missingtooltype = empty($toolconfig);
     if (!$missingtooltype) {
         $toolurl = $toolconfig['toolurl'];
@@ -163,12 +163,12 @@ if (!empty($missingtooltype)) {
     throw new moodle_exception('tooltypenotfounderror', 'mod_glaaster');
 }
 
-$launchcontainer = lti_glaaster_get_launch_container($lti, $toolconfig);
+$launchcontainer = glaaster_get_launch_container($lti, $toolconfig);
 
-if ($launchcontainer == LTI_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
+if ($launchcontainer == GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
     $PAGE->set_pagelayout('incourse');
     $PAGE->blocks->show_only_fake_blocks(); // Disable blocks for layouts which do include pre-post blocks.
-} else if ($launchcontainer == LTI_GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW) {
+} else if ($launchcontainer == GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW) {
     if (!$forceview) {
         // Build base parameters.
         $params = [
@@ -197,8 +197,8 @@ if ($launchcontainer == LTI_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
         redirect($url);
     }
 } else {
-    // Handles LTI_GLAASTER_LAUNCH_CONTAINER_DEFAULT, LTI_GLAASTER_LAUNCH_CONTAINER_EMBED,
-    // LTI_GLAASTER_LAUNCH_CONTAINER_WINDOW.
+    // Handles GLAASTER_LAUNCH_CONTAINER_DEFAULT, GLAASTER_LAUNCH_CONTAINER_EMBED,
+    // GLAASTER_LAUNCH_CONTAINER_WINDOW.
     $PAGE->set_pagelayout('incourse');
 }
 
@@ -223,10 +223,10 @@ $activityheader->set_attrs($header ?? []);
 echo $OUTPUT->header();
 
 if ($typeid) {
-    $config = lti_glaaster_get_type_type_config($typeid);
+    $config = glaaster_get_type_type_config($typeid);
 } else {
     $config = new stdClass();
-    $config->lti_ltiversion = LTI_GLAASTER_VERSION_1;
+    $config->lti_ltiversion = GLAASTER_VERSION_1;
 }
 // Build base parameters.
 $params = [
@@ -260,7 +260,7 @@ if ($foruserid) {
     $launchurl->param('user', $foruserid);
 }
 unset($SESSION->lti_initiatelogin_status);
-if (($launchcontainer == LTI_GLAASTER_LAUNCH_CONTAINER_WINDOW)) {
+if (($launchcontainer == GLAASTER_LAUNCH_CONTAINER_WINDOW)) {
     if (!$forceview) {
         echo "<script language=\"javascript\">//<![CDATA[\n";
         echo "window.open('{$launchurl->out(true)}','lti-$cm->id');";

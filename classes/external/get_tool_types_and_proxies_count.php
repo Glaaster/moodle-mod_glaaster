@@ -60,7 +60,7 @@ class get_tool_types_and_proxies_count extends external_api {
         require_capability('moodle/site:config', $context);
 
         return [
-            'count' => lti_glaaster_get_lti_types_and_proxies_count($orphanedonly, $toolproxyid),
+            'count' => glaaster_get_lti_types_and_proxies_count($orphanedonly, $toolproxyid),
         ];
     }
 

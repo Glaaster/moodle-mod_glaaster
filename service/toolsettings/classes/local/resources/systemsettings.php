@@ -100,7 +100,7 @@ class systemsettings extends resource_base {
         }
 
         if ($ok) {
-            $systemsettings = lti_glaaster_get_tool_settings($id);
+            $systemsettings = glaaster_get_tool_settings($id);
             if ($response->get_request_method() == 'GET') {
                 $json = '';
                 if ($simpleformat) {
@@ -147,7 +147,7 @@ class systemsettings extends resource_base {
                     }
                 }
                 if ($ok) {
-                    lti_glaaster_set_tool_settings($settings, $id);
+                    glaaster_set_tool_settings($settings, $id);
                 } else {
                     $response->set_code(406);
                 }

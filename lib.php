@@ -60,7 +60,7 @@ use mod_glaaster\event\course_module_viewed;
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
-function lti_glaaster_supports($feature) {
+function glaaster_supports($feature) {
     switch ($feature) {
         case FEATURE_GROUPS:
         case FEATURE_GROUPINGS:
@@ -96,7 +96,7 @@ function glaaster_add_instance($lti, $mform) {
         $lti->toolurl = '';
     }
 
-    lti_glaaster_load_tool_if_cartridge($lti);
+    glaaster_load_tool_if_cartridge($lti);
 
     $lti->timecreated = time();
     $lti->timemodified = $lti->timecreated;
@@ -105,7 +105,7 @@ function glaaster_add_instance($lti, $mform) {
         $lti->typeid = null;
     }
 
-    lti_glaaster_force_type_config_settings($lti, lti_glaaster_get_type_config_by_instance($lti));
+    glaaster_force_type_config_settings($lti, glaaster_get_type_config_by_instance($lti));
 
     if (empty($lti->typeid) && isset($lti->urlmatchedtypeid)) {
         $lti->typeid = $lti->urlmatchedtypeid;
@@ -113,7 +113,7 @@ function glaaster_add_instance($lti, $mform) {
 
     $lti->id = $DB->insert_record('glaaster', $lti);
 
-    $services = lti_glaaster_get_services();
+    $services = glaaster_get_services();
     foreach ($services as $service) {
         $service->instance_added($lti);
     }
@@ -137,7 +137,7 @@ function glaaster_update_instance($lti, $mform) {
     global $DB, $CFG;
     require_once($CFG->dirroot . '/mod/glaaster/locallib.php');
 
-    lti_glaaster_load_tool_if_cartridge($lti);
+    glaaster_load_tool_if_cartridge($lti);
 
     $lti->timemodified = time();
     $lti->id = $lti->instance;
@@ -150,13 +150,13 @@ function glaaster_update_instance($lti, $mform) {
         $lti->showdescriptionlaunch = 0;
     }
 
-    lti_glaaster_force_type_config_settings($lti, lti_glaaster_get_type_config_by_instance($lti));
+    glaaster_force_type_config_settings($lti, glaaster_get_type_config_by_instance($lti));
 
     if ($lti->typeid == 0 && isset($lti->urlmatchedtypeid)) {
         $lti->typeid = $lti->urlmatchedtypeid;
     }
 
-    $services = lti_glaaster_get_services();
+    $services = glaaster_get_services();
     foreach ($services as $service) {
         $service->instance_updated($lti);
     }
@@ -198,7 +198,7 @@ function glaaster_delete_instance($id) {
 
     // We must delete the module record after we delete the grade item.
     if ($DB->delete_records("glaaster", ["id" => $basiclti->id])) {
-        $services = lti_glaaster_get_services();
+        $services = glaaster_get_services();
         foreach ($services as $service) {
             $service->instance_deleted($id);
         }
@@ -277,8 +277,8 @@ function glaaster_get_all_content_items(content_item $defaultmodulecontentitem):
 
     $types = [];
 
-    foreach (lti_glaaster_get_lti_types() as $ltitype) {
-        if ($ltitype->coursevisible != LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER) {
+    foreach (glaaster_get_lti_types() as $ltitype) {
+        if ($ltitype->coursevisible != GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER) {
             continue;
         }
         $type = new stdClass();
@@ -353,9 +353,9 @@ function glaaster_get_coursemodule_info($coursemodule) {
     }
 
     if (!empty($lti->typeid)) {
-        $toolconfig = lti_glaaster_get_type_config($lti->typeid);
-    } else if ($tool = lti_glaaster_get_tool_by_url_match($lti->toolurl)) {
-        $toolconfig = lti_glaaster_get_type_config($tool->id);
+        $toolconfig = glaaster_get_type_config($lti->typeid);
+    } else if ($tool = glaaster_get_tool_by_url_match($lti->toolurl)) {
+        $toolconfig = glaaster_get_type_config($tool->id);
     } else {
         $toolconfig = [];
     }
@@ -363,7 +363,7 @@ function glaaster_get_coursemodule_info($coursemodule) {
     // We want to use the right icon based on whether the
     // current page is being requested over http or https.
     if (
-        lti_glaaster_request_is_using_ssl() &&
+        glaaster_request_is_using_ssl() &&
         (!empty($lti->secureicon) || (isset($toolconfig['secureicon']) && !empty($toolconfig['secureicon'])))
     ) {
         if (!empty($lti->secureicon)) {
@@ -378,8 +378,8 @@ function glaaster_get_coursemodule_info($coursemodule) {
     }
 
     // Does the link open in a new window?
-    $launchcontainer = lti_glaaster_get_launch_container($lti, $toolconfig);
-    if ($launchcontainer == LTI_GLAASTER_LAUNCH_CONTAINER_WINDOW) {
+    $launchcontainer = glaaster_get_launch_container($lti, $toolconfig);
+    if ($launchcontainer == GLAASTER_LAUNCH_CONTAINER_WINDOW) {
         $launchurl = new moodle_url('/mod/glaaster/launch.php', ['id' => $coursemodule->id]);
         $info->onclick =
             "window.open('" . $launchurl->out(false) . "', 'lti-" . $coursemodule->id . "'); return false;";
@@ -473,7 +473,7 @@ function glaaster_uninstall() {
  *
  * @return array of basicLTI types
  */
-function lti_glaaster_get_lti_types() {
+function glaaster_get_lti_types() {
     global $DB;
 
     return $DB->get_records('glaaster_types', null, 'state DESC, timemodified DESC');
@@ -486,7 +486,7 @@ function lti_glaaster_get_lti_types() {
  * @param int $toolproxyid Tool proxy id
  * @return array of basicLTI types
  */
-function lti_glaaster_get_lti_types_from_proxy_id($toolproxyid) {
+function glaaster_get_lti_types_from_proxy_id($toolproxyid) {
     global $DB;
 
     return $DB->get_records('glaaster_types', ['toolproxyid' => $toolproxyid], 'state DESC, timemodified DESC');

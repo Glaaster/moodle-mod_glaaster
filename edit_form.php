@@ -105,30 +105,30 @@ class mod_glaaster_edit_types_form extends moodleform {
 
         if (!$istool) {
             $options = [
-                LTI_GLAASTER_VERSION_1 => get_string('oauthsecurity', 'glaaster'),
-                LTI_GLAASTER_VERSION_1P3 => get_string('jwtsecurity', 'glaaster'),
+                GLAASTER_VERSION_1 => get_string('oauthsecurity', 'glaaster'),
+                GLAASTER_VERSION_1P3 => get_string('jwtsecurity', 'glaaster'),
             ];
             $mform->addElement('select', 'lti_ltiversion', get_string('ltiversion', 'glaaster'), $options);
             $mform->setType('lti_ltiversion', PARAM_TEXT);
             $mform->addHelpButton('lti_ltiversion', 'ltiversion', 'glaaster');
-            $mform->setDefault('lti_ltiversion', LTI_GLAASTER_VERSION_1);
+            $mform->setDefault('lti_ltiversion', GLAASTER_VERSION_1);
 
             $mform->addElement('text', 'lti_resourcekey', get_string('resourcekey_admin', 'glaaster'));
             $mform->setType('lti_resourcekey', PARAM_TEXT);
             $mform->addHelpButton('lti_resourcekey', 'resourcekey_admin', 'glaaster');
-            $mform->hideIf('lti_resourcekey', 'lti_ltiversion', 'eq', LTI_GLAASTER_VERSION_1P3);
+            $mform->hideIf('lti_resourcekey', 'lti_ltiversion', 'eq', GLAASTER_VERSION_1P3);
             $mform->setForceLtr('lti_resourcekey');
 
             $mform->addElement('passwordunmask', 'lti_password', get_string('password_admin', 'glaaster'));
             $mform->setType('lti_password', PARAM_RAW);
             $mform->addHelpButton('lti_password', 'password_admin', 'glaaster');
-            $mform->hideIf('lti_password', 'lti_ltiversion', 'eq', LTI_GLAASTER_VERSION_1P3);
+            $mform->hideIf('lti_password', 'lti_ltiversion', 'eq', GLAASTER_VERSION_1P3);
 
             if (!empty($typeid)) {
                 $mform->addElement('text', 'lti_clientid_disabled', get_string('clientidadmin', 'glaaster'));
                 $mform->setType('lti_clientid_disabled', PARAM_TEXT);
                 $mform->addHelpButton('lti_clientid_disabled', 'clientidadmin', 'glaaster');
-                $mform->hideIf('lti_clientid_disabled', 'lti_ltiversion', 'neq', LTI_GLAASTER_VERSION_1P3);
+                $mform->hideIf('lti_clientid_disabled', 'lti_ltiversion', 'neq', GLAASTER_VERSION_1P3);
                 $mform->disabledIf('lti_clientid_disabled', null);
                 $mform->setForceLtr('lti_clientid_disabled');
                 $mform->addElement('hidden', 'lti_clientid');
@@ -136,14 +136,14 @@ class mod_glaaster_edit_types_form extends moodleform {
             }
 
             $keyoptions = [
-                LTI_GLAASTER_RSA_KEY => get_string('keytype_rsa', 'glaaster'),
-                LTI_GLAASTER_JWK_KEYSET => get_string('keytype_keyset', 'glaaster'),
+                GLAASTER_RSA_KEY => get_string('keytype_rsa', 'glaaster'),
+                GLAASTER_JWK_KEYSET => get_string('keytype_keyset', 'glaaster'),
             ];
             $mform->addElement('select', 'lti_keytype', get_string('keytype', 'glaaster'), $keyoptions);
             $mform->setType('lti_keytype', PARAM_TEXT);
             $mform->addHelpButton('lti_keytype', 'keytype', 'glaaster');
-            $mform->setDefault('lti_keytype', LTI_GLAASTER_JWK_KEYSET);
-            $mform->hideIf('lti_keytype', 'lti_ltiversion', 'neq', LTI_GLAASTER_VERSION_1P3);
+            $mform->setDefault('lti_keytype', GLAASTER_JWK_KEYSET);
+            $mform->hideIf('lti_keytype', 'lti_ltiversion', 'neq', GLAASTER_VERSION_1P3);
 
             $mform->addElement(
                 'textarea',
@@ -153,21 +153,21 @@ class mod_glaaster_edit_types_form extends moodleform {
             );
             $mform->setType('lti_publickey', PARAM_TEXT);
             $mform->addHelpButton('lti_publickey', 'publickey', 'glaaster');
-            $mform->hideIf('lti_publickey', 'lti_keytype', 'neq', LTI_GLAASTER_RSA_KEY);
-            $mform->hideIf('lti_publickey', 'lti_ltiversion', 'neq', LTI_GLAASTER_VERSION_1P3);
+            $mform->hideIf('lti_publickey', 'lti_keytype', 'neq', GLAASTER_RSA_KEY);
+            $mform->hideIf('lti_publickey', 'lti_ltiversion', 'neq', GLAASTER_VERSION_1P3);
             $mform->setForceLtr('lti_publickey');
 
             $mform->addElement('text', 'lti_publickeyset', get_string('publickeyset', 'glaaster'), ['size' => '64']);
             $mform->setType('lti_publickeyset', PARAM_TEXT);
             $mform->addHelpButton('lti_publickeyset', 'publickeyset', 'glaaster');
-            $mform->hideIf('lti_publickeyset', 'lti_keytype', 'neq', LTI_GLAASTER_JWK_KEYSET);
-            $mform->hideIf('lti_publickeyset', 'lti_ltiversion', 'neq', LTI_GLAASTER_VERSION_1P3);
+            $mform->hideIf('lti_publickeyset', 'lti_keytype', 'neq', GLAASTER_JWK_KEYSET);
+            $mform->hideIf('lti_publickeyset', 'lti_ltiversion', 'neq', GLAASTER_VERSION_1P3);
             $mform->setForceLtr('lti_publickeyset');
 
             $mform->addElement('text', 'lti_initiatelogin', get_string('initiatelogin', 'glaaster'), ['size' => '64']);
             $mform->setType('lti_initiatelogin', PARAM_URL);
             $mform->addHelpButton('lti_initiatelogin', 'initiatelogin', 'glaaster');
-            $mform->hideIf('lti_initiatelogin', 'lti_ltiversion', 'neq', LTI_GLAASTER_VERSION_1P3);
+            $mform->hideIf('lti_initiatelogin', 'lti_ltiversion', 'neq', GLAASTER_VERSION_1P3);
 
             $mform->addElement(
                 'textarea',
@@ -177,7 +177,7 @@ class mod_glaaster_edit_types_form extends moodleform {
             );
             $mform->setType('lti_redirectionuris', PARAM_TEXT);
             $mform->addHelpButton('lti_redirectionuris', 'redirectionuris', 'glaaster');
-            $mform->hideIf('lti_redirectionuris', 'lti_ltiversion', 'neq', LTI_GLAASTER_VERSION_1P3);
+            $mform->hideIf('lti_redirectionuris', 'lti_ltiversion', 'neq', GLAASTER_VERSION_1P3);
             $mform->setForceLtr('lti_redirectionuris');
         }
 
@@ -208,16 +208,16 @@ class mod_glaaster_edit_types_form extends moodleform {
             // Only site-level preconfigured tools allow the control of course visibility in the site admin tool type form.
             if (empty($this->_customdata->iscoursetool) || !$this->_customdata->iscoursetool) {
                 $options = [
-                    LTI_GLAASTER_COURSEVISIBLE_NO => get_string('show_in_course_no', 'glaaster'),
-                    LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED => get_string('show_in_course_preconfigured', 'glaaster'),
-                    LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER => get_string(
+                    GLAASTER_COURSEVISIBLE_NO => get_string('show_in_course_no', 'glaaster'),
+                    GLAASTER_COURSEVISIBLE_PRECONFIGURED => get_string('show_in_course_preconfigured', 'glaaster'),
+                    GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER => get_string(
                         'show_in_course_activity_chooser',
                         'glaaster'
                     ),
                 ];
                 if ($istool) {
                     // LTI2 tools can not be matched by URL, they have to be either in preconfigured tools or in activity chooser.
-                    unset($options[LTI_GLAASTER_COURSEVISIBLE_NO]);
+                    unset($options[GLAASTER_COURSEVISIBLE_NO]);
                     $stringname = 'show_in_course_lti2';
                 } else {
                     $stringname = 'show_in_course_lti1';
@@ -227,7 +227,7 @@ class mod_glaaster_edit_types_form extends moodleform {
                 $mform->setDefault('lti_coursevisible', '2');
             }
         } else {
-            $mform->addElement('hidden', 'lti_coursevisible', LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER);
+            $mform->addElement('hidden', 'lti_coursevisible', GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER);
         }
         $mform->setType('lti_coursevisible', PARAM_INT);
 
@@ -235,10 +235,10 @@ class mod_glaaster_edit_types_form extends moodleform {
         $mform->setType('typeid', PARAM_INT);
 
         $launchoptions = [];
-        $launchoptions[LTI_GLAASTER_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'glaaster');
-        $launchoptions[LTI_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS] = get_string('embed_no_blocks', 'glaaster');
-        $launchoptions[LTI_GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW] = get_string('existing_window', 'glaaster');
-        $launchoptions[LTI_GLAASTER_LAUNCH_CONTAINER_WINDOW] = get_string('new_window', 'glaaster');
+        $launchoptions[GLAASTER_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'glaaster');
+        $launchoptions[GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS] = get_string('embed_no_blocks', 'glaaster');
+        $launchoptions[GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW] = get_string('existing_window', 'glaaster');
+        $launchoptions[GLAASTER_LAUNCH_CONTAINER_WINDOW] = get_string('new_window', 'glaaster');
 
         $mform->addElement(
             'select',
@@ -246,7 +246,7 @@ class mod_glaaster_edit_types_form extends moodleform {
             get_string('default_launch_container', 'glaaster'),
             $launchoptions
         );
-        $mform->setDefault('lti_launchcontainer', LTI_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS);
+        $mform->setDefault('lti_launchcontainer', GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS);
         $mform->addHelpButton('lti_launchcontainer', 'default_launch_container', 'glaaster');
         $mform->setType('lti_launchcontainer', PARAM_INT);
 
@@ -292,7 +292,7 @@ class mod_glaaster_edit_types_form extends moodleform {
             $mform->addHelpButton('coursecategory', 'restricttocategory', 'glaaster');
             $records = $DB->get_records('course_categories', [], 'sortorder, id', 'id,parent,name');
             // Convert array of objects to two dimentional array.
-            $tree = $this->lti_glaaster_build_category_tree(array_map(fn($record) => (array) $record, $records));
+            $tree = $this->glaaster_build_category_tree(array_map(fn($record) => (array) $record, $records));
             $mform->addElement('html', $OUTPUT->render_from_template('mod_glaaster/categorynode', ['nodes' => $tree]));
             $mform->addElement('hidden', 'lti_coursecategories');
             $mform->setType('lti_coursecategories', PARAM_TEXT);
@@ -336,8 +336,8 @@ class mod_glaaster_edit_types_form extends moodleform {
                 $mform->addElement('header', 'setupoptions', get_string('miscellaneous', 'glaaster'));
 
                 $options = [
-                    LTI_GLAASTER_DEFAULT_ORGID_SITEID => get_string('siteid', 'glaaster'),
-                    LTI_GLAASTER_DEFAULT_ORGID_SITEHOST => get_string('sitehost', 'glaaster'),
+                    GLAASTER_DEFAULT_ORGID_SITEID => get_string('siteid', 'glaaster'),
+                    GLAASTER_DEFAULT_ORGID_SITEHOST => get_string('sitehost', 'glaaster'),
                 ];
 
                 $mform->addElement(
@@ -347,7 +347,7 @@ class mod_glaaster_edit_types_form extends moodleform {
                     $options
                 );
                 $mform->setType('lti_organizationid_default', PARAM_TEXT);
-                $mform->setDefault('lti_organizationid_default', LTI_GLAASTER_DEFAULT_ORGID_SITEID);
+                $mform->setDefault('lti_organizationid_default', GLAASTER_DEFAULT_ORGID_SITEID);
                 $mform->addHelpButton('lti_organizationid_default', 'organizationid_default', 'glaaster');
 
                 $mform->addElement('text', 'lti_organizationid', get_string('organizationidguid', 'glaaster'));
@@ -379,12 +379,12 @@ class mod_glaaster_edit_types_form extends moodleform {
      * @param int $parentid
      * @return array category tree
      */
-    public function lti_glaaster_build_category_tree(array $elements, int $parentid = 0): array {
+    public function glaaster_build_category_tree(array $elements, int $parentid = 0): array {
         $branch = [];
 
         foreach ($elements as $element) {
             if ($element['parent'] == $parentid) {
-                $children = $this->lti_glaaster_build_category_tree($elements, $element['id']);
+                $children = $this->glaaster_build_category_tree($elements, $element['id']);
                 if ($children) {
                     $element['nodes'] = $children;
                     $element['haschildren'] = true;
@@ -405,7 +405,7 @@ class mod_glaaster_edit_types_form extends moodleform {
      */
     public function get_lti_advantage_services(&$mform) {
         // For each service add the label and get the array of configuration.
-        $services = lti_glaaster_get_services();
+        $services = glaaster_get_services();
         $mform->addElement('header', 'services', get_string('services', 'glaaster'));
         foreach ($services as $service) {
             /** @var service_base $service */
@@ -440,7 +440,7 @@ class mod_glaaster_edit_types_form extends moodleform {
         $errors = parent::validation($data, $files);
 
         // LTI2 tools do not contain a ltiversion field.
-        if (isset($data['lti_ltiversion']) && $data['lti_ltiversion'] == LTI_GLAASTER_VERSION_1P3) {
+        if (isset($data['lti_ltiversion']) && $data['lti_ltiversion'] == GLAASTER_VERSION_1P3) {
             require_once($CFG->dirroot . '/mod/glaaster/upgradelib.php');
 
             $warning = mod_glaaster_verify_private_key();
@@ -467,7 +467,7 @@ class mod_glaaster_edit_types_form extends moodleform {
         foreach (['lti_sendname', 'lti_sendemailaddr'] as $elementname) {
             if (
                 !empty($this->_form->_defaultValues[$elementname])
-                && $this->_form->_defaultValues[$elementname] == LTI_GLAASTER_SETTING_DELEGATE
+                && $this->_form->_defaultValues[$elementname] == GLAASTER_SETTING_DELEGATE
             ) {
                 $elementarr = array_filter($this->_form->_elements, function ($element) use ($elementname) {
                     return !empty($element->_attributes['name']) && $element->_attributes['name'] == $elementname;
@@ -477,7 +477,7 @@ class mod_glaaster_edit_types_form extends moodleform {
 
                 $element->addOption(
                     get_string('delegate', 'mod_glaaster'),
-                    LTI_GLAASTER_SETTING_DELEGATE,
+                    GLAASTER_SETTING_DELEGATE,
                     ['disabled' => 'disabled', 'selected' => 'selected']
                 );
             }

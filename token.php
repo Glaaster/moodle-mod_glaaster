@@ -69,7 +69,7 @@ if ($ok) {
     $tool = $DB->get_record('glaaster_types', ['clientid' => $claims['sub']]);
     if ($tool) {
         try {
-            lti_glaaster_verify_jwt_signature($tool->id, $claims['sub'], $clientassertion);
+            glaaster_verify_jwt_signature($tool->id, $claims['sub'], $clientassertion);
             $ok = true;
         } catch (Exception $e) {
             $error = $e->getMessage();
@@ -84,16 +84,16 @@ if ($ok) {
 if ($ok) {
     $scopes = [];
     $requestedscopes = explode(' ', $scope);
-    $typeconfig = lti_glaaster_get_type_config($tool->id);
-    $permittedscopes = lti_glaaster_get_permitted_service_scopes($tool, $typeconfig);
+    $typeconfig = glaaster_get_type_config($tool->id);
+    $permittedscopes = glaaster_get_permitted_service_scopes($tool, $typeconfig);
     $scopes = array_intersect($requestedscopes, $permittedscopes);
     $ok = !empty($scopes);
     $error = 'invalid_scope';
 }
 
 if ($ok) {
-    $token = lti_glaaster_new_access_token($tool->id, $scopes);
-    $expiry = LTI_GLAASTER_ACCESS_TOKEN_LIFE;
+    $token = glaaster_new_access_token($tool->id, $scopes);
+    $expiry = GLAASTER_ACCESS_TOKEN_LIFE;
     $permittedscopes = implode(' ', $scopes);
     $body = <<<EOD
 {

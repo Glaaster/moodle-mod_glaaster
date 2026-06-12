@@ -64,7 +64,7 @@ if (!empty($returnurl)) {
 require_sesskey();
 
 if ($action == 'delete') {
-    lti_glaaster_delete_tool_proxy($id);
+    glaaster_delete_tool_proxy($id);
     redirect($redirect);
 }
 
@@ -81,7 +81,7 @@ $form = new mod_glaaster_register_types_form($pageurl, (object) $data);
 if ($form->is_cancelled()) {
     redirect($redirect);
 } else if ($data = $form->get_data()) {
-    $id = lti_glaaster_add_tool_proxy($data);
+    $id = glaaster_add_tool_proxy($data);
     redirect($redirect);
 } else {
     $PAGE->set_title(get_string('toolregistration', 'glaaster'));
@@ -91,9 +91,9 @@ if ($form->is_cancelled()) {
     echo $OUTPUT->heading(get_string('toolregistration', 'glaaster'));
     echo $OUTPUT->box_start('generalbox');
     if ($action == 'update') {
-        $toolproxy = lti_glaaster_glaaster_get_tool_proxy_config($id);
+        $toolproxy = glaaster_get_tool_proxy_config($id);
         $form->set_data($toolproxy);
-        if ($toolproxy->state == LTI_GLAASTER_TOOL_PROXY_STATE_ACCEPTED) {
+        if ($toolproxy->state == GLAASTER_TOOL_PROXY_STATE_ACCEPTED) {
             $form->disable_fields();
         }
     }

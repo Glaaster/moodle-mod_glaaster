@@ -56,3 +56,4 @@ $plugin->release = '4.5.3';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->supported = [405, 405];
 $plugin->cron = 0;
+$plugin->dependencies = ['mod_lti' => ANY_VERSION];

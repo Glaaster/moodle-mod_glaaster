@@ -27,12 +27,11 @@ namespace ltiglaasterservice_toolproxy\local\resources;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/glaaster/OAuth.php');
-require_once($CFG->dirroot . '/mod/glaaster/TrivialStore.php');
+require_once($CFG->dirroot . '/mod/lti/OAuth.php');
+require_once($CFG->dirroot . '/mod/lti/TrivialStore.php');
 
-// TODO: Switch to core oauthlib once implemented - MDL-30149.
 use mod_glaaster\local\ltiglaasterservice\resource_base;
-use moodle\mod\glaaster as lti;
+use moodle\mod\lti as lti;
 use stdClass;
 
 /**
@@ -119,22 +118,22 @@ class toolproxy extends resource_base {
         // Check all services requested were offered (only tool services currently supported).
         $requestsbasicoutcomes = false;
         if ($ok && isset($toolproxyjson->security_contract->tool_service)) {
-            $contexts = lti_glaaster_get_contexts($toolproxyjson);
-            $profileservice = lti_glaaster_get_service_by_name('profile');
+            $contexts = glaaster_get_contexts($toolproxyjson);
+            $profileservice = glaaster_get_service_by_name('profile');
             $profileservice->set_tool_proxy($toolproxy);
             $context = $profileservice->get_service_path() . $profileservice->get_resources()[0]->get_path() . '#';
             $offeredservices = explode("\n", $toolproxy->serviceoffered);
-            $services = lti_glaaster_get_services();
+            $services = glaaster_get_services();
             $tpservices = $toolproxyjson->security_contract->tool_service;
             $errors = [];
             foreach ($tpservices as $service) {
-                $fqid = lti_glaaster_get_fqid($contexts, $service->service);
+                $fqid = glaaster_get_fqid($contexts, $service->service);
                 $requestsbasicoutcomes = $requestsbasicoutcomes || (substr($fqid, -13) === 'Outcomes.LTI1');
                 if (substr($fqid, 0, strlen($context)) !== $context) {
                     $errors[] = $service->service;
                 } else {
                     $id = explode('#', $fqid, 2);
-                    $aservice = lti_glaaster_get_service_by_resource_id($services, $id[1]);
+                    $aservice = glaaster_get_service_by_resource_id($services, $id[1]);
                     $classname = explode('\\', get_class($aservice));
                     if (empty($aservice) || !in_array($classname[count($classname) - 1], $offeredservices)) {
                         $errors[] = $service->service;
@@ -219,8 +218,8 @@ class toolproxy extends resource_base {
                 }
 
                 $type = new stdClass();
-                $type->state = LTI_GLAASTER_TOOL_STATE_PENDING;
-                $type->ltiversion = LTI_GLAASTER_VERSION_2;
+                $type->state = GLAASTER_TOOL_STATE_PENDING;
+                $type->ltiversion = GLAASTER_VERSION_2;
                 $type->toolproxyid = $toolproxy->id;
                 // Ensure gradebook column is created.
                 if ($requestsbasicoutcomes && !in_array('BasicOutcome.url', $launchrequest->enabled_capability)) {
@@ -239,17 +238,17 @@ class toolproxy extends resource_base {
                     }
                 }
 
-                $ok = $ok && (lti_glaaster_add_type($type, $config) !== false);
+                $ok = $ok && (glaaster_add_type($type, $config) !== false);
             }
             if (isset($toolproxyjson->custom)) {
-                lti_glaaster_set_tool_settings($toolproxyjson->custom, $toolproxy->id);
+                glaaster_set_tool_settings($toolproxyjson->custom, $toolproxy->id);
             }
         }
 
         if (!empty($toolproxy)) {
             if ($ok) {
                 // If all went OK accept the tool proxy.
-                $toolproxy->state = LTI_GLAASTER_TOOL_PROXY_STATE_ACCEPTED;
+                $toolproxy->state = GLAASTER_TOOL_PROXY_STATE_ACCEPTED;
                 $toolproxy->toolproxy = $response->get_request_data();
                 $toolproxy->secret = $toolproxyjson->security_contract->shared_secret;
                 $toolproxy->vendorcode = $toolproxyjson->tool_profile->product_instance->product_info->product_family->vendor->code;
@@ -268,10 +267,10 @@ EOD;
                 $response->set_body($body);
             } else {
                 // Otherwise reject the tool proxy.
-                $toolproxy->state = LTI_GLAASTER_TOOL_PROXY_STATE_REJECTED;
+                $toolproxy->state = GLAASTER_TOOL_PROXY_STATE_REJECTED;
                 $response->set_code(400);
             }
-            lti_glaaster_update_tool_proxy($toolproxy);
+            glaaster_update_tool_proxy($toolproxy);
         } else {
             $response->set_code(400);
         }

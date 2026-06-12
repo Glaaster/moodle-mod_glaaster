@@ -76,7 +76,7 @@ if ($ok) {
     $launchid = $ltimessagehint->launchid;
     [$courseid, $typeid, $id, $messagetype, $foruserid, $titleb64, $textb64] = explode(',', $SESSION->$launchid, 7);
     unset($SESSION->$launchid);
-    $config = lti_glaaster_get_type_type_config($typeid);
+    $config = glaaster_get_type_type_config($typeid);
     $ok = ($clientid === $config->lti_clientid);
     if (!$ok) {
         $error = 'unauthorized_client';
@@ -129,7 +129,7 @@ if ($ok) {
         $foldercmid = $ltimessagehint->folderCmid ?? 0;
         $foldercourseid = $ltimessagehint->folderCourseId ?? 0;
         [$endpoint, $params] =
-            lti_glaaster_get_launch_data(
+            glaaster_get_launch_data(
                 $lti,
                 $nonce,
                 $messagetype,
@@ -156,7 +156,7 @@ if ($ok) {
         // Prepare the request.
         $title = base64_decode($titleb64);
         $text = base64_decode($textb64);
-        $request = lti_glaaster_build_content_item_selection_request(
+        $request = glaaster_build_content_item_selection_request(
             $typeid,
             $course,
             $returnurl,
