@@ -33,7 +33,7 @@
 // Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu.
 
 /**
- * Defines backup_lti_activity_task class
+ * Defines backup_glaaster_activity_task class
  *
  * @package     mod_glaaster
  * @category    backup
@@ -47,12 +47,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot . '/mod/glaaster/backup/moodle2/backup_lti_stepslib.php');
+require_once($CFG->dirroot . '/mod/glaaster/backup/moodle2/backup_glaaster_stepslib.php');
 
 /**
  * Provides the steps to perform one complete backup of the LTI instance
  */
-class backup_lti_activity_task extends backup_activity_task {
+class backup_glaaster_activity_task extends backup_activity_task {
     /**
      * Encodes URLs to the index.php and view.php scripts
      *
@@ -82,9 +82,9 @@ class backup_lti_activity_task extends backup_activity_task {
     }
 
     /**
-     * Defines a backup step to store the instance data in the lti.xml file
+     * Defines a backup step to store the instance data in the glaaster.xml file
      */
     protected function define_my_steps() {
-        $this->add_step(new backup_lti_activity_structure_step('lti_structure', 'lti.xml'));
+        $this->add_step(new backup_glaaster_activity_structure_step('glaaster_structure', 'glaaster.xml'));
     }
 }

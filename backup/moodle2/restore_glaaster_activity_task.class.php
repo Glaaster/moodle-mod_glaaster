@@ -47,13 +47,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/glaaster/backup/moodle2/restore_lti_stepslib.php');
+require_once($CFG->dirroot . '/mod/glaaster/backup/moodle2/restore_glaaster_stepslib.php');
 
 /**
  * basiclti restore task that provides all the settings and steps to perform one
  * complete restore of the activity
  */
-class restore_lti_activity_task extends restore_activity_task {
+class restore_glaaster_activity_task extends restore_activity_task {
     /**
      * Define the contents in the activity that must be
      * processed by the link decoder
@@ -124,7 +124,6 @@ class restore_lti_activity_task extends restore_activity_task {
      * Define (add) particular steps this activity can have
      */
     protected function define_my_steps() {
-        // Label only has one structure step.
-        $this->add_step(new restore_lti_activity_structure_step('lti_structure', 'lti.xml'));
+        $this->add_step(new restore_glaaster_activity_structure_step('glaaster_structure', 'glaaster.xml'));
     }
 }

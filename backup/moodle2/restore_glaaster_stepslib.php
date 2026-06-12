@@ -34,7 +34,7 @@
 
 /**
  * This file contains all the restore steps that will be used
- * by the restore_lti_activity_task
+ * by the restore_glaaster_activity_task
  *
  * @package mod_glaaster
  * @copyright  2009 Marc Alier, Jordi Piguillem, Nikolas Galanis
@@ -46,18 +46,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace backup\moodle2;
-
-use dml_exception;
 use mod_glaaster\local\ltiopenid\registration_helper;
-use restore_activity_structure_step;
-use restore_path_element;
-use stdClass;
 
 /**
  * Structure step to restore one lti activity
  */
-class restore_lti_activity_structure_step extends restore_activity_structure_step {
+class restore_glaaster_activity_structure_step extends restore_activity_structure_step {
     /** @var bool */
     protected $newltitype = false;
 
@@ -71,21 +65,21 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
         // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
 
-        $lti = new restore_path_element('glaaster', '/activity/lti');
+        $lti = new restore_path_element('glaaster', '/activity/glaaster');
         $paths[] = $lti;
-        $paths[] = new restore_path_element('ltitype', '/activity/lti/ltitype');
-        $paths[] = new restore_path_element('ltitypesconfig', '/activity/lti/ltitype/ltitypesconfigs/ltitypesconfig');
+        $paths[] = new restore_path_element('ltitype', '/activity/glaaster/ltitype');
+        $paths[] = new restore_path_element('ltitypesconfig', '/activity/glaaster/ltitype/ltitypesconfigs/ltitypesconfig');
         $paths[] = new restore_path_element(
             'ltitypesconfigencrypted',
-            '/activity/lti/ltitype/ltitypesconfigs/ltitypesconfigencrypted'
+            '/activity/glaaster/ltitype/ltitypesconfigs/ltitypesconfigencrypted'
         );
-        $paths[] = new restore_path_element('ltitoolproxy', '/activity/lti/ltitype/ltitoolproxy');
+        $paths[] = new restore_path_element('ltitoolproxy', '/activity/glaaster/ltitype/ltitoolproxy');
         $paths[] = new restore_path_element(
             'ltitoolsetting',
-            '/activity/lti/ltitype/ltitoolproxy/ltitoolsettings/ltitoolsetting'
+            '/activity/glaaster/ltitype/ltitoolproxy/ltitoolsettings/ltitoolsetting'
         );
 
-        $paths[] = new restore_path_element('lticoursevisible', '/activity/lti/lticoursevisible');
+        $paths[] = new restore_path_element('lticoursevisible', '/activity/glaaster/lticoursevisible');
 
         // Add support for subplugin structures.
         $this->add_subplugin_structure('ltiglaastersource', $lti);
@@ -102,7 +96,7 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
      * @return void
      * @throws dml_exception
      */
-    protected function process_lti($data) {
+    protected function process_glaaster($data) {
         global $DB;
 
         $data = (object) $data;
@@ -243,7 +237,7 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
             if ($data->name == 'servicesalt') {
                 $data->value = uniqid('', true);
             }
-            $DB->insert_record('{glaaster_types_config}', $data);
+            $DB->insert_record('glaaster_types_config', $data);
         }
     }
 
@@ -262,7 +256,7 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
         if ($data->typeid && $this->newltitype) {
             $data->value = $this->decrypt($data->value);
             if (!is_null($data->value)) {
-                $DB->insert_record('{glaaster_types_config}', $data);
+                $DB->insert_record('glaaster_types_config', $data);
             }
         }
     }
@@ -289,9 +283,9 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
     }
 
     /**
-     * Decrypts the given value using the current context's encryption key.
+     * Add related files after restore execution
      *
-     * @return void The decrypted value or null if decryption fails.
+     * @return void
      */
     protected function after_execute() {
         // Add lti related files, no need to match by itemname (just internally handled context).

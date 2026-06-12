@@ -34,7 +34,7 @@
 
 /**
  * This file contains all the backup steps that will be used
- * by the backup_lti_activity_task
+ * by the backup_glaaster_activity_task
  *
  * @package mod_glaaster
  * @copyright  2009 Marc Alier, Jordi Piguillem, Nikolas Galanis
@@ -49,7 +49,7 @@
 /**
  * Define the complete assignment structure for backup, with file and id annotations
  */
-class backup_lti_activity_structure_step extends backup_activity_structure_step {
+class backup_glaaster_activity_structure_step extends backup_activity_structure_step {
     /**
      * Defines structure of activity backup
      *
