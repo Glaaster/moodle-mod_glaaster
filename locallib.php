@@ -5112,23 +5112,34 @@ function mod_glaaster_inject_instance_js() {
 }
 
 /**
- * Loads the appropriate Glaaster JavaScript file based on the Moodle version.
+ * Returns configuration array for the before_footer AMD module.
  *
- * This function checks the Moodle branch and loads the corresponding JS file.
- *
- * @return void
+ * @return array
  */
-function mod_glaaster_load_js() {
-    global $PAGE;
-    // Retrieve the Moodle branch/version from configuration.
-    $branch = get_config('moodle', 'branch');
-    $branchint = intval($branch);
-    // Load the appropriate JS file based on the Moodle version.
-    if ($branchint < 400) {
-        $PAGE->requires->js('/mod/glaaster/assets/js/before_footer_3.js');
-    } else {
-        $PAGE->requires->js('/mod/glaaster/assets/js/before_footer_4.js');
+function mod_glaaster_get_js_config(): array {
+    global $CFG, $DB;
+
+    $dbman = $DB->get_manager();
+    if (!$dbman->table_exists('glaaster_types')) {
+        return [
+            'instanceId'           => '',
+            'webservicesEnabled'   => false,
+            'webserviceConfigured' => false,
+            'debugEnabled'         => false,
+        ];
     }
+
+    $instanceid = glaaster_retrieve_instance_from_tooldomain();
+    if ($instanceid === false) {
+        $instanceid = '';
+    }
+
+    return [
+        'instanceId'           => (string)$instanceid,
+        'webservicesEnabled'   => glaaster_check_webservices_enabled(),
+        'webserviceConfigured' => glaaster_check_webservice_configured(),
+        'debugEnabled'         => (!empty($CFG->debug) && $CFG->debug >= 15),
+    ];
 }
 
 /**
