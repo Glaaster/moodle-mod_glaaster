@@ -160,9 +160,8 @@ function xmldb_glaaster_upgrade($oldversion) {
                     $dbman->drop_table($table);
                 }
             }
-            // Remove plugin version and config records so Moodle no longer reports it as missing.
-            unset_config('version', $pluginname);
-            $DB->delete_records('config_plugins', ['plugin' => $pluginname]);
+            // Remove all plugin config records so Moodle no longer reports it as missing.
+            unset_all_config_for_plugin($pluginname);
         }
 
         upgrade_mod_savepoint(true, 2026022502, 'glaaster');
