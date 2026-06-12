@@ -46,9 +46,9 @@ final class delete_course_tool_type_test extends mod_glaaster_testcase {
         $editingteacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $this->setUser($editingteacher);
 
-        $typeid = lti_glaaster_add_type(
+        $typeid = glaaster_add_type(
             (object) [
-                'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+                'state' => GLAASTER_TOOL_STATE_CONFIGURED,
                 'course' => $course->id,
             ],
             (object) [

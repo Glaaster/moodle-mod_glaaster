@@ -183,7 +183,7 @@ class memberships extends service_base {
         if (
             ($response->get_accept() === 'application/vnd.ims.lti-nrps.v2.membershipcontainer+json') ||
             (($response->get_accept() !== 'application/vnd.ims.lis.v2.membershipcontainer+json') &&
-                ($this->get_type()->ltiversion === LTI_GLAASTER_VERSION_1P3))
+                ($this->get_type()->ltiversion === GLAASTER_VERSION_1P3))
         ) {
             $json = $this->users_to_json(
                 $resource,
@@ -281,11 +281,11 @@ class memberships extends service_base {
 
             $member = new stdClass();
             $member->status = 'Active';
-            $member->roles = explode(',', lti_glaaster_get_ims_role($user->id, null, $course->id, true));
+            $member->roles = explode(',', glaaster_get_ims_role($user->id, null, $course->id, true));
 
             $instanceconfig = null;
             if (!is_null($lti)) {
-                $instanceconfig = lti_glaaster_get_type_config_from_instance($lti->id);
+                $instanceconfig = glaaster_get_type_config_from_instance($lti->id);
             }
             if (!$islti2) {
                 $isallowedlticonfig = self::is_allowed_field_set(
@@ -334,7 +334,7 @@ class memberships extends service_base {
 
                 if (!empty($lti->servicesalt) && $DB->record_exists('grade_items', $conditions)) {
                     $basicoutcome = new stdClass();
-                    $basicoutcome->lis_result_sourcedid = json_encode(lti_glaaster_build_sourcedid(
+                    $basicoutcome->lis_result_sourcedid = json_encode(glaaster_build_sourcedid(
                         $lti->id,
                         $user->id,
                         $lti->servicesalt,
@@ -348,7 +348,7 @@ class memberships extends service_base {
                         $forcessl = true;
                     }
                     if ((isset($toolconfig['forcessl']) && ($toolconfig['forcessl'] == '1')) || $forcessl) {
-                        $serviceurl = lti_glaaster_ensure_url_is_https($serviceurl);
+                        $serviceurl = glaaster_ensure_url_is_https($serviceurl);
                     }
                     $basicoutcome->lis_outcome_service_url = $serviceurl;
                     $message->{'https://purl.imsglobal.org/spec/lti-bo/claim/basicoutcome'} = $basicoutcome;
@@ -451,7 +451,7 @@ class memberships extends service_base {
             ],
         ];
 
-        $enabledcapabilities = lti_glaaster_get_enabled_capabilities($tool);
+        $enabledcapabilities = glaaster_get_enabled_capabilities($tool);
         $islti2 = $tool->toolproxyid > 0;
         $n = 0;
         $more = false;
@@ -477,11 +477,11 @@ class memberships extends service_base {
             $member->{"@type"} = 'LISPerson';
             $membership = new stdClass();
             $membership->status = 'Active';
-            $membership->role = explode(',', lti_glaaster_get_ims_role($user->id, null, $contextid, true));
+            $membership->role = explode(',', glaaster_get_ims_role($user->id, null, $contextid, true));
 
             $instanceconfig = null;
             if (!is_null($lti)) {
-                $instanceconfig = lti_glaaster_get_type_config_from_instance($lti->id);
+                $instanceconfig = glaaster_get_type_config_from_instance($lti->id);
             }
             $isallowedlticonfig = self::is_allowed_field_set(
                 $toolconfig,
@@ -520,7 +520,7 @@ class memberships extends service_base {
                     'itemmodule' => 'lti', 'iteminstance' => $lti->id];
 
                 if (!empty($lti->servicesalt) && $DB->record_exists('grade_items', $conditions)) {
-                    $message->lis_result_sourcedid = json_encode(lti_glaaster_build_sourcedid(
+                    $message->lis_result_sourcedid = json_encode(glaaster_build_sourcedid(
                         $lti->id,
                         $user->id,
                         $lti->servicesalt,
@@ -644,7 +644,7 @@ class memberships extends service_base {
         global $COURSE;
 
         $launchparameters = [];
-        $tool = lti_glaaster_get_type_type_config($typeid);
+        $tool = glaaster_get_type_type_config($typeid);
         if (isset($tool->{$this->get_component_id()})) {
             if (
                 $tool->{$this->get_component_id()} == parent::SERVICE_ENABLED &&

@@ -48,7 +48,7 @@ $path = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
 $accept = $response->get_accept();
 $contenttype = $response->get_content_type();
 
-$services = lti_glaaster_get_services();
+$services = glaaster_get_services();
 foreach ($services as $service) {
     $resources = $service->get_resources();
     foreach ($resources as $resource) {

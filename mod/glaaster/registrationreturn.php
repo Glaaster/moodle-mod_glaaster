@@ -94,16 +94,16 @@ EOD;
     if (!empty($id)) {
         $toolproxy = $DB->get_record('glaaster_tool_proxies', ['id' => $id]);
         switch ($toolproxy->state) {
-            case LTI_GLAASTER_TOOL_PROXY_STATE_ACCEPTED:
+            case GLAASTER_TOOL_PROXY_STATE_ACCEPTED:
                 $redirect->param('tab', 'tp_accepted');
                 break;
-            case LTI_GLAASTER_TOOL_PROXY_STATE_REJECTED:
+            case GLAASTER_TOOL_PROXY_STATE_REJECTED:
                 $redirect->param('tab', 'tp_rejected');
                 break;
-            case LTI_GLAASTER_TOOL_PROXY_STATE_PENDING:
+            case GLAASTER_TOOL_PROXY_STATE_PENDING:
                 // Change the status to configured.
-                $toolproxy->state = LTI_GLAASTER_TOOL_PROXY_STATE_CONFIGURED;
-                lti_glaaster_update_tool_proxy($toolproxy);
+                $toolproxy->state = GLAASTER_TOOL_PROXY_STATE_CONFIGURED;
+                glaaster_update_tool_proxy($toolproxy);
         }
     }
 

@@ -39,10 +39,10 @@ admin_externalpage_setup('glaastertoolconfigure');
 if ($cartridgeurl) {
     $type = new stdClass();
     $data = new stdClass();
-    $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+    $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
     $data->lti_coursevisible = 2;
-    lti_glaaster_load_type_from_cartridge($cartridgeurl, $data);
-    lti_glaaster_add_type($type, $data);
+    glaaster_load_type_from_cartridge($cartridgeurl, $data);
+    glaaster_add_type($type, $data);
 }
 
 $pageurl = new moodle_url('/mod/glaaster/toolconfigure.php');
@@ -173,7 +173,7 @@ if ($needssetup && $tooldomain && $apiuser && $apitoken) {
 $isconnected = $DB->record_exists_select(
     'lti_types',
     'baseurl LIKE :domain AND state = :state',
-    ['domain' => '%' . $tooldomain . '%', 'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED]
+    ['domain' => '%' . $tooldomain . '%', 'state' => GLAASTER_TOOL_STATE_CONFIGURED]
 );
 
 echo $output->header();

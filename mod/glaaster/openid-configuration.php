@@ -33,7 +33,7 @@ require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/glaaster/locallib.php');
 require_once($CFG->libdir . '/weblib.php');
 
-$scopes = registration_helper::get()->lti_glaaster_get_service_scopes();
+$scopes = registration_helper::get()->glaaster_get_service_scopes();
 $scopes[] = 'openid';
 $conf = [
     'issuer' => $CFG->wwwroot,
@@ -55,7 +55,7 @@ $conf = [
             ['type' => 'LtiResourceLinkRequest'],
             ['type' => 'LtiDeepLinkingRequest', 'placements' => ['ContentArea']],
         ],
-        'variables' => array_keys(lti_glaaster_get_capabilities()),
+        'variables' => array_keys(glaaster_get_capabilities()),
     ],
 ];
 

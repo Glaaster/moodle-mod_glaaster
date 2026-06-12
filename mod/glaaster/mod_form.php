@@ -124,10 +124,10 @@ class mod_glaaster_mod_form extends moodleform_mod {
         // Determine whether this tool instance is using a domain-matched site tool which is not visible at the course level.
         // In such a case, the instance has a typeid (the site tool) and toolurl (the url used to domain match the site tool) set,
         // and the type still exists (is not deleted).
-        $instancetypes = lti_glaaster_get_types_for_add_instance();
+        $instancetypes = glaaster_get_types_for_add_instance();
         $matchestoolnotavailabletocourse = false;
         if (!$manualinstance && !empty($this->current->toolurl)) {
-            if (lti_glaaster_get_type_config($this->current->typeid)) {
+            if (glaaster_get_type_config($this->current->typeid)) {
                 $matchestoolnotavailabletocourse = !in_array($this->current->typeid, array_keys($instancetypes));
             }
         }
@@ -143,7 +143,7 @@ class mod_glaaster_mod_form extends moodleform_mod {
         }
 
         $tooltypeid = $this->current->typeid ?? $this->typeid;
-        $tooltype = lti_glaaster_get_type($tooltypeid);
+        $tooltype = glaaster_get_type($tooltypeid);
 
         // Store the id of the tool type should it be linked to a tool proxy, to aid in disabling certain form elements.
         $toolproxytypeid = $tooltype->toolproxyid ? $tooltypeid : '';
@@ -160,7 +160,7 @@ class mod_glaaster_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // For tools supporting content selection, add the 'Select content button'.
-        $config = lti_glaaster_get_type_config($tooltypeid);
+        $config = glaaster_get_type_config($tooltypeid);
         $supportscontentitemselection = !empty($config['contentitem']);
 
         if ($supportscontentitemselection) {
@@ -210,7 +210,7 @@ class mod_glaaster_mod_form extends moodleform_mod {
         if (
             in_array(
                 $config['launchcontainer'],
-                [LTI_GLAASTER_LAUNCH_CONTAINER_EMBED, LTI_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS]
+                [GLAASTER_LAUNCH_CONTAINER_EMBED, GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS]
             )
         ) {
             $mform->addElement('checkbox', 'showtitlelaunch', get_string('display_name', 'glaaster'));
@@ -238,7 +238,7 @@ class mod_glaaster_mod_form extends moodleform_mod {
         if (
             in_array(
                 $config['launchcontainer'],
-                [LTI_GLAASTER_LAUNCH_CONTAINER_EMBED, LTI_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS]
+                [GLAASTER_LAUNCH_CONTAINER_EMBED, GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS]
             )
         ) {
             $mform->addElement('checkbox', 'showdescriptionlaunch', get_string('display_description', 'glaaster'));
@@ -278,9 +278,9 @@ class mod_glaaster_mod_form extends moodleform_mod {
         $mform->addElement('hidden', 'lineitemsubreviewparams', '', ['id' => 'id_lineitemsubreviewparams']);
         $mform->setType('lineitemsubreviewparams', PARAM_TEXT);
 
-        // Launch container is set to 'LTI_GLAASTER_LAUNCH_CONTAINER_DEFAULT', meaning it'll delegate to the tool's configuration.
+        // Launch container is set to 'GLAASTER_LAUNCH_CONTAINER_DEFAULT', meaning it'll delegate to the tool's configuration.
         // Existing instances using values other than this can continue to use their existing value but cannot change it.
-        $mform->addElement('hidden', 'launchcontainer', LTI_GLAASTER_LAUNCH_CONTAINER_DEFAULT);
+        $mform->addElement('hidden', 'launchcontainer', GLAASTER_LAUNCH_CONTAINER_DEFAULT);
         $mform->setType('launchcontainer', PARAM_INT);
 
         // Included to support deep linking return, but hidden to avoid instructor modification.
@@ -465,11 +465,11 @@ class mod_glaaster_mod_form extends moodleform_mod {
         $mform->setType('lineitemsubreviewparams', PARAM_TEXT);
 
         $launchoptions = [
-            LTI_GLAASTER_LAUNCH_CONTAINER_DEFAULT => get_string('default', 'glaaster'),
-            LTI_GLAASTER_LAUNCH_CONTAINER_EMBED => get_string('embed', 'glaaster'),
-            LTI_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS => get_string('embed_no_blocks', 'glaaster'),
-            LTI_GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW => get_string('existing_window', 'glaaster'),
-            LTI_GLAASTER_LAUNCH_CONTAINER_WINDOW => get_string('new_window', 'glaaster'),
+            GLAASTER_LAUNCH_CONTAINER_DEFAULT => get_string('default', 'glaaster'),
+            GLAASTER_LAUNCH_CONTAINER_EMBED => get_string('embed', 'glaaster'),
+            GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS => get_string('embed_no_blocks', 'glaaster'),
+            GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW => get_string('existing_window', 'glaaster'),
+            GLAASTER_LAUNCH_CONTAINER_WINDOW => get_string('new_window', 'glaaster'),
         ];
         $mform->addElement('select', 'launchcontainer', get_string('launchinpopup', 'glaaster'), $launchoptions);
         $mform->addHelpButton('launchcontainer', 'launchinpopup', 'glaaster');
@@ -558,7 +558,7 @@ class mod_glaaster_mod_form extends moodleform_mod {
      * @param object $defaultvalues default values to populate the form with.
      */
     public function set_data($defaultvalues) {
-        $services = lti_glaaster_get_services();
+        $services = glaaster_get_services();
         if (is_object($defaultvalues)) {
             foreach ($services as $service) {
                 $service->set_instance_form_values($defaultvalues);

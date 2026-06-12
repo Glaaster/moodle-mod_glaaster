@@ -126,7 +126,7 @@ class linkmemberships extends resource_base {
      * @return array with the permissions related to this resource by the $lti_type or null if none.
      */
     public function get_permissions($typeid) {
-        $tool = lti_glaaster_get_type_type_config($typeid);
+        $tool = glaaster_get_type_type_config($typeid);
         if ($tool->memberships == '1') {
             return ['ToolProxyBinding.memberships.url:get'];
         } else {

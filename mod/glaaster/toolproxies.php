@@ -52,17 +52,17 @@ $createdon = get_string('createdon', 'glaaster');
 
 $toolproxies = $DB->get_records('glaaster_tool_proxies');
 
-$configuredtoolproxies = lti_glaaster_filter_tool_proxy_types($toolproxies, LTI_GLAASTER_TOOL_PROXY_STATE_CONFIGURED);
-$configuredtoolproxieshtml = lti_glaaster_glaaster_get_tool_proxy_table($configuredtoolproxies, 'tp_configured');
+$configuredtoolproxies = glaaster_filter_tool_proxy_types($toolproxies, GLAASTER_TOOL_PROXY_STATE_CONFIGURED);
+$configuredtoolproxieshtml = glaaster_get_tool_proxy_table($configuredtoolproxies, 'tp_configured');
 
-$pendingtoolproxies = lti_glaaster_filter_tool_proxy_types($toolproxies, LTI_GLAASTER_TOOL_PROXY_STATE_PENDING);
-$pendingtoolproxieshtml = lti_glaaster_glaaster_get_tool_proxy_table($pendingtoolproxies, 'tp_pending');
+$pendingtoolproxies = glaaster_filter_tool_proxy_types($toolproxies, GLAASTER_TOOL_PROXY_STATE_PENDING);
+$pendingtoolproxieshtml = glaaster_get_tool_proxy_table($pendingtoolproxies, 'tp_pending');
 
-$acceptedtoolproxies = lti_glaaster_filter_tool_proxy_types($toolproxies, LTI_GLAASTER_TOOL_PROXY_STATE_ACCEPTED);
-$acceptedtoolproxieshtml = lti_glaaster_glaaster_get_tool_proxy_table($acceptedtoolproxies, 'tp_accepted');
+$acceptedtoolproxies = glaaster_filter_tool_proxy_types($toolproxies, GLAASTER_TOOL_PROXY_STATE_ACCEPTED);
+$acceptedtoolproxieshtml = glaaster_get_tool_proxy_table($acceptedtoolproxies, 'tp_accepted');
 
-$rejectedtoolproxies = lti_glaaster_filter_tool_proxy_types($toolproxies, LTI_GLAASTER_TOOL_PROXY_STATE_REJECTED);
-$rejectedtoolproxieshtml = lti_glaaster_glaaster_get_tool_proxy_table($rejectedtoolproxies, 'tp_rejected');
+$rejectedtoolproxies = glaaster_filter_tool_proxy_types($toolproxies, GLAASTER_TOOL_PROXY_STATE_REJECTED);
+$rejectedtoolproxieshtml = glaaster_get_tool_proxy_table($rejectedtoolproxies, 'tp_rejected');
 
 $tab = optional_param('tab', '', PARAM_ALPHAEXT);
 $configuredselected = '';

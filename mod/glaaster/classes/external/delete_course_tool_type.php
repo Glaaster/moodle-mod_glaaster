@@ -22,7 +22,7 @@ use core_external\external_function_parameters;
 use core_external\external_value;
 use invalid_parameter_exception;
 
-use function lti_glaaster_delete_type;
+use function glaaster_delete_type;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -57,7 +57,7 @@ class delete_course_tool_type extends external_api {
         self::validate_context($context);
         require_capability('mod/glaaster:addcoursetool', $context);
 
-        lti_glaaster_delete_type($tooltypeid);
+        glaaster_delete_type($tooltypeid);
         return true;
     }
 

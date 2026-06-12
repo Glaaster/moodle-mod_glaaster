@@ -117,7 +117,7 @@ class service_exception_handler {
 
         // Log the request if necessary.
         if ($this->log) {
-            lti_glaaster_log_response($xml, $exception);
+            glaaster_log_response($xml, $exception);
         }
 
         echo $xml;

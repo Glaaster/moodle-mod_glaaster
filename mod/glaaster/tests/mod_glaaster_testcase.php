@@ -42,16 +42,16 @@ abstract class mod_glaaster_testcase extends externallib_advanced_testcase {
     protected function generate_tool_type(string $uniqueid, ?int $toolproxyid = null): stdClass {
         // Create a tool type.
         $type = new stdClass();
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool $uniqueid";
         $type->description = "Example description $uniqueid";
         $type->toolproxyid = $toolproxyid;
         $type->baseurl = $this->getExternalTestFileUrl("/test$uniqueid.html");
-        $type->coursevisible = LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
+        $type->coursevisible = GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
         $config = new stdClass();
-        $config->lti_coursevisible = LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
+        $config->lti_coursevisible = GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
 
-        $type->id = lti_glaaster_add_type($type, $config);
+        $type->id = glaaster_add_type($type, $config);
         return $type;
     }
 

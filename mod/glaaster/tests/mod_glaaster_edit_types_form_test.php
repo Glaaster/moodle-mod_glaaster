@@ -36,9 +36,9 @@ final class mod_glaaster_edit_types_form_test extends advanced_testcase {
 
     /**
      * Tests the nested course categories JSON returned by public method
-     * mod_glaaster_edit_types_form::lti_glaaster_build_category_tree().
+     * mod_glaaster_edit_types_form::glaaster_build_category_tree().
      *
-     * @covers \mod_glaaster\mod_glaaster_edit_types_form::lti_glaaster_build_category_tree
+     * @covers \mod_glaaster\mod_glaaster_edit_types_form::glaaster_build_category_tree
      */
     public function test_set_nested_categories(): void {
         global $CFG, $DB;
@@ -96,7 +96,7 @@ final class mod_glaaster_edit_types_form_test extends advanced_testcase {
 
         $records = $DB->get_records('course_categories', [], 'sortorder, id', 'id, parent, name');
         $allcategories = json_decode(json_encode($records), true);
-        $ccategoriesarray = $ltiform->lti_glaaster_build_category_tree($allcategories);
+        $ccategoriesarray = $ltiform->glaaster_build_category_tree($allcategories);
 
         $this->assertEquals($categoryarray, $ccategoriesarray);
     }

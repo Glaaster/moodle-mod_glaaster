@@ -98,7 +98,7 @@ final class provider_test extends provider_testcase {
         $type = new stdClass();
         $type->baseurl = 'http://moodle.org';
         $type->course = $course->id;
-        lti_glaaster_add_type($type, new stdClass());
+        glaaster_add_type($type, new stdClass());
 
         // Check the contexts supplied are correct.
         $contextlist = provider::get_contexts_for_userid($user->id);
@@ -122,13 +122,13 @@ final class provider_test extends provider_testcase {
         $type = new stdClass();
         $type->baseurl = 'http://moodle.org';
         $type->course = $course->id;
-        lti_glaaster_add_type($type, new stdClass());
+        glaaster_add_type($type, new stdClass());
 
         $this->setUser($user2);
         $type = new stdClass();
         $type->baseurl = 'http://moodle.org';
         $type->course = $course->id;
-        lti_glaaster_add_type($type, new stdClass());
+        glaaster_add_type($type, new stdClass());
 
         $coursecontext = context_course::instance($course->id);
         $userlist = new userlist($coursecontext, $component);
@@ -157,17 +157,17 @@ final class provider_test extends provider_testcase {
         $type = new stdClass();
         $type->baseurl = 'http://moodle.org';
         $type->course = $course1->id;
-        lti_glaaster_add_type($type, new stdClass());
+        glaaster_add_type($type, new stdClass());
 
         $type = new stdClass();
         $type->baseurl = 'http://moodle.org';
         $type->course = $course1->id;
-        lti_glaaster_add_type($type, new stdClass());
+        glaaster_add_type($type, new stdClass());
 
         $type = new stdClass();
         $type->baseurl = 'http://moodle.org';
         $type->course = $course2->id;
-        lti_glaaster_add_type($type, new stdClass());
+        glaaster_add_type($type, new stdClass());
 
         // Export all of the data for the context.
         $coursecontext = context_course::instance($course1->id);
@@ -201,7 +201,7 @@ final class provider_test extends provider_testcase {
 
         $toolproxy = new stdClass();
         $toolproxy->createdby = $user;
-        lti_glaaster_add_tool_proxy($toolproxy);
+        glaaster_add_tool_proxy($toolproxy);
 
         // Export all of the data for the context.
         $systemcontext = context_system::instance();

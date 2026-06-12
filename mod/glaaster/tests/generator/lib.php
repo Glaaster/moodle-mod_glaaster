@@ -96,7 +96,7 @@ class mod_glaaster_generator extends testing_module_generator {
         if (!isset($config['serviceoffered'])) {
             $config['serviceoffered'] = '';
         }
-        lti_glaaster_add_tool_proxy((object) $config);
+        glaaster_add_tool_proxy((object) $config);
     }
 
     /**
@@ -112,21 +112,21 @@ class mod_glaaster_generator extends testing_module_generator {
         $data['baseurl'] = (new moodle_url($data['baseurl']))->out(false); // Permits relative URLs in behat features.
 
         // Sensible defaults permitting the tool type to be used in a launch.
-        $data['lti_acceptgrades'] = $data['lti_acceptgrades'] ?? LTI_GLAASTER_SETTING_ALWAYS;
-        $data['lti_sendname'] = $data['lti_sendname'] ?? LTI_GLAASTER_SETTING_ALWAYS;
-        $data['lti_sendemailaddr'] = $data['lti_sendname'] ?? LTI_GLAASTER_SETTING_ALWAYS;
-        $data['lti_launchcontainer'] = $data['lti_launchcontainer'] ?? LTI_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+        $data['lti_acceptgrades'] = $data['lti_acceptgrades'] ?? GLAASTER_SETTING_ALWAYS;
+        $data['lti_sendname'] = $data['lti_sendname'] ?? GLAASTER_SETTING_ALWAYS;
+        $data['lti_sendemailaddr'] = $data['lti_sendname'] ?? GLAASTER_SETTING_ALWAYS;
+        $data['lti_launchcontainer'] = $data['lti_launchcontainer'] ?? GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
 
         ['type' => $type, 'config' => $config] = $this->get_type_and_config_from_data($data);
 
-        return lti_glaaster_add_type(type: $type, config: $config);
+        return glaaster_add_type(type: $type, config: $config);
     }
 
     /**
      * Split type creation data into 'type' and 'config' components, based on input array key prefixes.
      *
-     * The $data array contains both the type data and config data that will be passed to lti_glaaster_add_type(). This
-     * must be split into two params (type, config) based on the array key prefixes ({@see lti_glaaster_add_type()} for
+     * The $data array contains both the type data and config data that will be passed to glaaster_add_type(). This
+     * must be split into two params (type, config) based on the array key prefixes ({@see glaaster_add_type()} for
      * how the two params are handled):
      * - NO prefix: denotes 'type' data.
      * - 'glaaster_tool_proxies' prefix: denotes 'config' data.
@@ -166,15 +166,15 @@ class mod_glaaster_generator extends testing_module_generator {
         }
 
         $type['baseurl'] = (new moodle_url($type['baseurl']))->out(false); // Permits relative URLs in behat features.
-        $type['coursevisible'] = $type['coursevisible'] ?? LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
-        $type['state'] = LTI_GLAASTER_TOOL_STATE_CONFIGURED; // The default for course tools.
+        $type['coursevisible'] = $type['coursevisible'] ?? GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
+        $type['state'] = GLAASTER_TOOL_STATE_CONFIGURED; // The default for course tools.
 
         // Sensible defaults permitting the tool type to be used in a launch.
-        $type['lti_acceptgrades'] = $type['lti_acceptgrades'] ?? LTI_GLAASTER_SETTING_ALWAYS;
-        $type['lti_sendname'] = $type['lti_sendname'] ?? LTI_GLAASTER_SETTING_ALWAYS;
-        $type['lti_sendemailaddr'] = $type['lti_sendemailaddr'] ?? LTI_GLAASTER_SETTING_ALWAYS;
-        $type['lti_coursevisible'] = $type['coursevisible'] ?? LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
-        $type['lti_launchcontainer'] = $type['lti_launchcontainer'] ?? LTI_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+        $type['lti_acceptgrades'] = $type['lti_acceptgrades'] ?? GLAASTER_SETTING_ALWAYS;
+        $type['lti_sendname'] = $type['lti_sendname'] ?? GLAASTER_SETTING_ALWAYS;
+        $type['lti_sendemailaddr'] = $type['lti_sendemailaddr'] ?? GLAASTER_SETTING_ALWAYS;
+        $type['lti_coursevisible'] = $type['coursevisible'] ?? GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
+        $type['lti_launchcontainer'] = $type['lti_launchcontainer'] ?? GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
 
         // Required for cartridge processing support.
         $type['lti_toolurl'] = $type['baseurl'];
@@ -187,7 +187,7 @@ class mod_glaaster_generator extends testing_module_generator {
 
         ['type' => $type, 'config' => $config] = $this->get_type_and_config_from_data($type);
 
-        lti_glaaster_load_type_if_cartridge($config);
-        return lti_glaaster_add_type(type: $type, config: $config);
+        glaaster_load_type_if_cartridge($config);
+        return glaaster_add_type(type: $type, config: $config);
     }
 }

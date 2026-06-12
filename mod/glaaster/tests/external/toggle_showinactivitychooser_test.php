@@ -46,17 +46,17 @@ final class toggle_showinactivitychooser_test extends mod_glaaster_testcase {
         $editingteacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $this->setUser($editingteacher);
 
-        $typeid = lti_glaaster_add_type(
+        $typeid = glaaster_add_type(
             (object) [
-                'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+                'state' => GLAASTER_TOOL_STATE_CONFIGURED,
                 'course' => $course->id,
-                'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+                'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
             ],
             (object) [
                 'lti_typename' => "My course tool",
                 'lti_toolurl' => 'http://example.com',
                 'lti_ltiversion' => 'LTI-1p0',
-                'lti_coursevisible' => LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+                'lti_coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
             ]
         );
         $result = toggle_showinactivitychooser::execute($typeid, $course->id, false);
@@ -67,13 +67,13 @@ final class toggle_showinactivitychooser_test extends mod_glaaster_testcase {
                   FROM {glaaster_types} lt
                  WHERE lt.id = ?";
         $actual = $DB->get_record_sql($sql, [$typeid]);
-        $this->assertEquals(LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED, $actual->coursevisible);
+        $this->assertEquals(GLAASTER_COURSEVISIBLE_PRECONFIGURED, $actual->coursevisible);
 
         $result = toggle_showinactivitychooser::execute($typeid, $course->id, true);
         $result = external_api::clean_returnvalue(toggle_showinactivitychooser::execute_returns(), $result);
         $this->assertTrue($result);
         $actual = $DB->get_record_sql($sql, [$typeid]);
-        $this->assertEquals(LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible);
+        $this->assertEquals(GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible);
     }
 
     /**
@@ -104,23 +104,23 @@ final class toggle_showinactivitychooser_test extends mod_glaaster_testcase {
                  WHERE lt.id = ?
                    AND lc.courseid = ?";
         $actual = $DB->get_record_sql($sql, [$type->id, $course->id]);
-        $this->assertEquals(LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible1);
-        $this->assertEquals(LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED, $actual->coursevisible2);
+        $this->assertEquals(GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible1);
+        $this->assertEquals(GLAASTER_COURSEVISIBLE_PRECONFIGURED, $actual->coursevisible2);
 
         $result = toggle_showinactivitychooser::execute($type->id, $course->id, true);
         $result = external_api::clean_returnvalue(toggle_showinactivitychooser::execute_returns(), $result);
         $this->assertTrue($result);
 
         $actual = $DB->get_record_sql($sql, [$type->id, $course->id]);
-        $this->assertEquals(LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible1);
-        $this->assertEquals(LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible2);
+        $this->assertEquals(GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible1);
+        $this->assertEquals(GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible2);
 
         $ltigenerator = $this->getDataGenerator()->get_plugin_generator('mod_glaaster');
         $ltigenerator->create_tool_types([
             'name' => 'site tool preconfigured and activity chooser, restricted to category 1',
             'baseurl' => 'http://example.com/tool/1',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
             'lti_coursecategories' => $coursecat1->id,
         ]);
         $tool =
@@ -130,15 +130,15 @@ final class toggle_showinactivitychooser_test extends mod_glaaster_testcase {
         $this->assertTrue($result);
 
         $actual = $DB->get_record_sql($sql, [$tool->id, $course->id]);
-        $this->assertEquals(LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible1);
-        $this->assertEquals(LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED, $actual->coursevisible2);
+        $this->assertEquals(GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible1);
+        $this->assertEquals(GLAASTER_COURSEVISIBLE_PRECONFIGURED, $actual->coursevisible2);
 
         $ltigenerator = $this->getDataGenerator()->get_plugin_generator('mod_glaaster');
         $ltigenerator->create_tool_types([
             'name' => 'site tool preconfigured and activity chooser, restricted to category 2',
             'baseurl' => 'http://example.com/tool/1',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
             'lti_coursecategories' => $coursecat2->id,
         ]);
         $tool =
@@ -151,8 +151,8 @@ final class toggle_showinactivitychooser_test extends mod_glaaster_testcase {
         $ltigenerator->create_tool_types([
             'name' => 'site tool dont show',
             'baseurl' => 'http://example.com/tool/1',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_NO,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_NO,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
         ]);
         $tool = $DB->get_record('glaaster_types', ['name' => 'site tool dont show']);
         $result = toggle_showinactivitychooser::execute($tool->id, $course->id, false);

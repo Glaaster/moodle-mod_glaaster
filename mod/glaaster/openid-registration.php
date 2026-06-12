@@ -38,7 +38,7 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' || ($_SERVER['REQUEST_METHOD'] === 'GET')) {
     $doregister = $_SERVER['REQUEST_METHOD'] === 'POST';
     // Retrieve registration token from Bearer Authorization header.
-    $authheader = moodle\mod\glaaster\GlaasterOAuthUtil::get_headers()['Authorization'] ?? '';
+    $authheader = moodle\mod\lti\OAuthUtil::get_headers()['Authorization'] ?? '';
     if (!($authheader && substr($authheader, 0, 7) == 'Bearer ')) {
         $message = 'missing_registration_token';
         $code = 401;
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || ($_SERVER['REQUEST_METHOD'] === 'GE
         try {
             $tokenres = registration_helper::get()->validate_registration_token(trim(substr($authheader, 7)));
             $type = new stdClass();
-            $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+            $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
             if (array_key_exists('type', $tokenres)) {
                 $type = $tokenres['type'];
             }
@@ -56,15 +56,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || ($_SERVER['REQUEST_METHOD'] === 'GE
                 $config =
                     registration_helper::get()->registration_to_config($registrationpayload, $tokenres['clientid']);
                 if ($type->id) {
-                    lti_glaaster_update_type($type, clone $config);
+                    glaaster_update_type($type, clone $config);
                     $typeid = $type->id;
                 } else {
-                    $typeid = lti_glaaster_add_type($type, clone $config);
+                    $typeid = glaaster_add_type($type, clone $config);
                 }
                 header('Content-Type: application/json; charset=utf-8');
                 $message = json_encode(registration_helper::get()->config_to_registration((object) $config, $typeid));
             } else if ($type) {
-                $config = lti_glaaster_get_type_config($type->id);
+                $config = glaaster_get_type_config($type->id);
                 header('Content-Type: application/json; charset=utf-8');
                 $message =
                     json_encode(registration_helper::get()->config_to_registration((object) $config, $type->id, $type));

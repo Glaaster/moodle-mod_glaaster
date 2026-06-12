@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/mod/glaaster/OAuthBody.php');
 require_once($CFG->dirroot . '/mod/glaaster/locallib.php');
 
-// TODO: Switch to core oauthlib once implemented - MDL-30149.
+// OAuthBody.php functions live in moodle\mod\glaaster namespace.
 use moodle\mod\glaaster as lti;
 
 define('LTI_ITEM_TYPE', 'mod');
@@ -200,14 +200,14 @@ if (!function_exists('glaaster_accepts_grades')) {
         $ltitype = $DB->get_record('lti_types', ['id' => $ltiinstance->typeid]);
 
         if (empty($ltitype->toolproxyid)) {
-            $typeconfig = lti_glaaster_get_config($ltiinstance);
+            $typeconfig = glaaster_get_config($ltiinstance);
 
-            $typeacceptgrades = isset($typeconfig['acceptgrades']) ? $typeconfig['acceptgrades'] : LTI_GLAASTER_SETTING_DELEGATE;
+            $typeacceptgrades = isset($typeconfig['acceptgrades']) ? $typeconfig['acceptgrades'] : GLAASTER_SETTING_DELEGATE;
 
             if (
-                !($typeacceptgrades == LTI_GLAASTER_SETTING_ALWAYS ||
-                ($typeacceptgrades == LTI_GLAASTER_SETTING_DELEGATE &&
-                $ltiinstance->instructorchoiceacceptgrades == LTI_GLAASTER_SETTING_ALWAYS))
+                !($typeacceptgrades == GLAASTER_SETTING_ALWAYS ||
+                ($typeacceptgrades == GLAASTER_SETTING_DELEGATE &&
+                $ltiinstance->instructorchoiceacceptgrades == GLAASTER_SETTING_ALWAYS))
             ) {
                 $acceptsgrades = false;
             }
@@ -386,7 +386,7 @@ if (!function_exists('glaaster_verify_sourcedid')) {
      * @throws Exception
      */
     function glaaster_verify_sourcedid($ltiinstance, $parsed) {
-        $sourceid = lti_glaaster_build_sourcedid(
+        $sourceid = glaaster_build_sourcedid(
             $parsed->instanceid,
             $parsed->userid,
             $ltiinstance->servicesalt,

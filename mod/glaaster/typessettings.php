@@ -69,7 +69,7 @@ require_sesskey();
 
 // Check this is not for a tool created from a tool proxy.
 if (!empty($id)) {
-    $type = lti_glaaster_get_type_type_config($id);
+    $type = glaaster_get_type_type_config($id);
     if (!empty($type->toolproxyid)) {
         $sesskey = required_param('sesskey', PARAM_RAW);
         $params = ['action' => $action, 'id' => $id, 'sesskey' => $sesskey, 'tab' => $tab];
@@ -117,17 +117,17 @@ if (!empty($returnurl)) {
 }
 
 if ($action == 'accept') {
-    lti_glaaster_set_state_for_type($id, LTI_GLAASTER_TOOL_STATE_CONFIGURED);
+    glaaster_set_state_for_type($id, GLAASTER_TOOL_STATE_CONFIGURED);
     redirect($redirect);
 } else if ($action == 'reject') {
-    lti_glaaster_set_state_for_type($id, LTI_GLAASTER_TOOL_STATE_REJECTED);
+    glaaster_set_state_for_type($id, GLAASTER_TOOL_STATE_REJECTED);
     redirect($redirect);
 } else if ($action == 'delete') {
-    lti_glaaster_delete_type($id);
+    glaaster_delete_type($id);
     redirect($redirect);
 }
 
-if (lti_glaaster_request_is_using_ssl() && !empty($type->lti_secureicon)) {
+if (glaaster_request_is_using_ssl() && !empty($type->lti_secureicon)) {
     $type->oldicon = $type->lti_secureicon;
 } else {
     $type->oldicon = $type->lti_icon;
@@ -149,14 +149,14 @@ if ($data = $form->get_data()) {
     $type = new stdClass();
     if (!empty($id)) {
         $type->id = $id;
-        lti_glaaster_load_type_if_cartridge($data);
-        lti_glaaster_update_type($type, $data);
+        glaaster_load_type_if_cartridge($data);
+        glaaster_update_type($type, $data);
 
         redirect($redirect);
     } else {
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
-        lti_glaaster_load_type_if_cartridge($data);
-        lti_glaaster_add_type($type, $data);
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
+        glaaster_load_type_if_cartridge($data);
+        glaaster_add_type($type, $data);
 
         redirect($redirect);
     }

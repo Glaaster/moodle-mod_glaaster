@@ -37,4 +37,4 @@ require_sesskey();
 $systemcontext = context_system::instance();
 require_capability('moodle/site:config', $systemcontext);
 
-lti_glaaster_register($toolproxy);
+glaaster_register($toolproxy);

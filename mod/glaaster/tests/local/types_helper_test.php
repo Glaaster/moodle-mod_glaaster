@@ -78,20 +78,20 @@ final class types_helper_test extends mod_glaaster_testcase {
         $ltigenerator->create_tool_types([
             'name' => 'site tool do not show',
             'baseurl' => 'http://example.com/tool/1',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_NO,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_NO,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
         ]);
         $ltigenerator->create_tool_types([
             'name' => 'site tool preconfigured only',
             'baseurl' => 'http://example.com/tool/2',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_PRECONFIGURED,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
         ]);
         $ltigenerator->create_tool_types([
             'name' => 'site tool preconfigured and activity chooser',
             'baseurl' => 'http://example.com/tool/3',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
         ]);
         $ltigenerator->create_course_tool_types([
             'name' => 'course tool preconfigured and activity chooser',
@@ -101,8 +101,8 @@ final class types_helper_test extends mod_glaaster_testcase {
         $ltigenerator->create_tool_types([
             'name' => 'site tool preconfigured and activity chooser, restricted to category 2',
             'baseurl' => 'http://example.com/tool/5',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
             'lti_coursecategories' => $coursecat2->id,
         ]);
 
@@ -124,7 +124,7 @@ final class types_helper_test extends mod_glaaster_testcase {
         $coursetooltypes = types_helper::get_lti_types_by_course(
             $course->id,
             $teacher->id,
-            [LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER]
+            [GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER]
         );
         $this->assertCount(2, $coursetooltypes);
         $expected = [
@@ -140,7 +140,7 @@ final class types_helper_test extends mod_glaaster_testcase {
         $coursetooltypes = types_helper::get_lti_types_by_course(
             $course->id,
             $teacher->id,
-            [LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED]
+            [GLAASTER_COURSEVISIBLE_PRECONFIGURED]
         );
         $this->assertCount(1, $coursetooltypes);
         $expected = [
@@ -197,11 +197,11 @@ final class types_helper_test extends mod_glaaster_testcase {
         /*
             Create the following tool types for testing:
             | tooltype | coursevisible                     | restrictedtocategory |
-            | site     | LTI_GLAASTER_COURSEVISIBLE_NO              |                      |
-            | site     | LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED   |                      |
-            | site     | LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER | yes                  |
-            | site     | LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER | yes                  |
-            | course   | LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER |                      |
+            | site     | GLAASTER_COURSEVISIBLE_NO              |                      |
+            | site     | GLAASTER_COURSEVISIBLE_PRECONFIGURED   |                      |
+            | site     | GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER | yes                  |
+            | site     | GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER | yes                  |
+            | course   | GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER |                      |
         */
 
         /** @var mod_glaaster_generator $ltigenerator */
@@ -209,14 +209,14 @@ final class types_helper_test extends mod_glaaster_testcase {
         $tool1id = $ltigenerator->create_tool_types([
             'name' => 'site tool do not show',
             'baseurl' => 'http://example.com/tool/1',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_NO,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_NO,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
         ]);
         $tool2id = $ltigenerator->create_tool_types([
             'name' => 'site tool preconfigured only',
             'baseurl' => 'http://example.com/tool/2',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_PRECONFIGURED,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
         ]);
         $tool3id = $ltigenerator->create_course_tool_types([
             'name' => 'course tool preconfigured and activity chooser',
@@ -226,19 +226,19 @@ final class types_helper_test extends mod_glaaster_testcase {
         $tool4id = $ltigenerator->create_tool_types([
             'name' => 'site tool preconfigured and activity chooser, restricted to category 2',
             'baseurl' => 'http://example.com/tool/4',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
             'lti_coursecategories' => $coursecat2->id,
         ]);
         $tool5id = $ltigenerator->create_tool_types([
             'name' => 'site tool preconfigured and activity chooser, restricted to category 1',
             'baseurl' => 'http://example.com/tool/5',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
             'lti_coursecategories' => $coursecat1->id,
         ]);
 
-        // LTI_GLAASTER_COURSEVISIBLE_NO can't be updated.
+        // GLAASTER_COURSEVISIBLE_NO can't be updated.
         $result = types_helper::override_type_showinactivitychooser($tool1id, $course->id, $context, true);
         $this->assertFalse($result);
 
@@ -253,12 +253,12 @@ final class types_helper_test extends mod_glaaster_testcase {
             'coursevisible',
             ['typeid' => $tool2id, 'courseid' => $course->id]
         );
-        $this->assertEquals(LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER, $cvisibleoverriden);
+        $this->assertEquals(GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER, $cvisibleoverriden);
 
         $result = types_helper::override_type_showinactivitychooser($tool3id, $course->id, $context, false);
         $this->assertTrue($result);
         $coursevisible = $DB->get_field('glaaster_types', 'coursevisible', ['id' => $tool3id]);
-        $this->assertEquals(LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED, $coursevisible);
+        $this->assertEquals(GLAASTER_COURSEVISIBLE_PRECONFIGURED, $coursevisible);
 
         // Restricted category no allowed.
         $this->expectException('moodle_exception');
@@ -273,7 +273,7 @@ final class types_helper_test extends mod_glaaster_testcase {
             'coursevisible',
             ['typeid' => $tool5id, 'courseid' => $course->id]
         );
-        $this->assertEquals(LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED, $cvisibleoverriden);
+        $this->assertEquals(GLAASTER_COURSEVISIBLE_PRECONFIGURED, $cvisibleoverriden);
 
         $this->setUser($teacher2);
         $this->expectException(required_capability_exception::class);

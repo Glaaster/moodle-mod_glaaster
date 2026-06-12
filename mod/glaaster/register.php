@@ -42,8 +42,8 @@ $toolproxies = $DB->get_records('glaaster_tool_proxies');
 $duplicate = false;
 foreach ($toolproxies as $key => $toolproxy) {
     if (
-        ($toolproxy->state == LTI_GLAASTER_TOOL_PROXY_STATE_PENDING) ||
-        ($toolproxy->state == LTI_GLAASTER_TOOL_PROXY_STATE_ACCEPTED)
+        ($toolproxy->state == GLAASTER_TOOL_PROXY_STATE_PENDING) ||
+        ($toolproxy->state == GLAASTER_TOOL_PROXY_STATE_ACCEPTED)
     ) {
         if ($toolproxy->regurl == $toolproxies[$id]->regurl) {
             $duplicate = true;
@@ -57,7 +57,7 @@ if ($duplicate) {
     redirect($redirect, get_string('duplicateregurl', 'glaaster'));
 }
 
-$profileservice = lti_glaaster_get_service_by_name('profile');
+$profileservice = glaaster_get_service_by_name('profile');
 if (empty($profileservice)) {
     redirect($redirect, get_string('noprofileservice', 'glaaster'));
 }

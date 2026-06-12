@@ -75,52 +75,52 @@ require_once($CFG->dirroot . '/mod/glaaster/tests/mod_glaaster_testcase.php');
  */
 final class locallib_test extends mod_glaaster_testcase {
     /**
-     * Provider for test_lti_glaaster_get_best_tool_by_url.
+     * Provider for test_glaaster_get_best_tool_by_url.
      *
      * @return array of [urlToTest, expectedTool, allTools]
      */
-    public static function lti_glaaster_get_best_tool_by_url_provider(): array {
+    public static function glaaster_get_best_tool_by_url_provider(): array {
         $tools = [
             (object) [
                 'name' => 'Here',
                 'baseurl' => 'https://example.com/i/am/?where=here',
                 'tooldomain' => 'example.com',
-                'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+                'state' => GLAASTER_TOOL_STATE_CONFIGURED,
                 'course' => SITEID,
             ],
             (object) [
                 'name' => 'There',
                 'baseurl' => 'https://example.com/i/am/?where=there',
                 'tooldomain' => 'example.com',
-                'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+                'state' => GLAASTER_TOOL_STATE_CONFIGURED,
                 'course' => SITEID,
             ],
             (object) [
                 'name' => 'Not here',
                 'baseurl' => 'https://example.com/i/am/?where=not/here',
                 'tooldomain' => 'example.com',
-                'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+                'state' => GLAASTER_TOOL_STATE_CONFIGURED,
                 'course' => SITEID,
             ],
             (object) [
                 'name' => 'Here',
                 'baseurl' => 'https://example.com/i/am/',
                 'tooldomain' => 'example.com',
-                'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+                'state' => GLAASTER_TOOL_STATE_CONFIGURED,
                 'course' => SITEID,
             ],
             (object) [
                 'name' => 'Here',
                 'baseurl' => 'https://example.com/i/was',
                 'tooldomain' => 'example.com',
-                'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+                'state' => GLAASTER_TOOL_STATE_CONFIGURED,
                 'course' => SITEID,
             ],
             (object) [
                 'name' => 'Here',
                 'baseurl' => 'https://badexample.com/i/am/?where=here',
                 'tooldomain' => 'badexample.com',
-                'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+                'state' => GLAASTER_TOOL_STATE_CONFIGURED,
                 'course' => SITEID,
             ],
         ];
@@ -173,11 +173,11 @@ final class locallib_test extends mod_glaaster_testcase {
     }
 
     /**
-     * Data provider for testing lti_glaaster_get_ims_role.
+     * Data provider for testing glaaster_get_ims_role.
      *
      * @return array[] the test case data.
      */
-    public static function lti_glaaster_get_ims_role_provider(): array {
+    public static function glaaster_get_ims_role_provider(): array {
         return [
             'Student, LTI 1.1, no role switch' => [
                 'islti2' => false,
@@ -244,15 +244,15 @@ final class locallib_test extends mod_glaaster_testcase {
 
     /**
      * Test the split parameters function
-     * @covers ::lti_glaaster_split_parameters()
+     * @covers ::glaaster_split_parameters()
      *
      */
     public function test_split_parameters(): void {
-        $this->assertEquals(lti_glaaster_split_parameters(''), []);
-        $this->assertEquals(lti_glaaster_split_parameters('a=1'), ['a' => '1']);
-        $this->assertEquals(lti_glaaster_split_parameters("a=1\nb=2"), ['a' => '1', 'b' => '2']);
-        $this->assertEquals(lti_glaaster_split_parameters("a=1\n\rb=2"), ['a' => '1', 'b' => '2']);
-        $this->assertEquals(lti_glaaster_split_parameters("a=1\r\nb=2"), ['a' => '1', 'b' => '2']);
+        $this->assertEquals(glaaster_split_parameters(''), []);
+        $this->assertEquals(glaaster_split_parameters('a=1'), ['a' => '1']);
+        $this->assertEquals(glaaster_split_parameters("a=1\nb=2"), ['a' => '1', 'b' => '2']);
+        $this->assertEquals(glaaster_split_parameters("a=1\n\rb=2"), ['a' => '1', 'b' => '2']);
+        $this->assertEquals(glaaster_split_parameters("a=1\r\nb=2"), ['a' => '1', 'b' => '2']);
     }
 
     public function test_split_custom_parameters(): void {
@@ -263,27 +263,27 @@ final class locallib_test extends mod_glaaster_testcase {
         $tool->parameter = '';
         $tool->ltiversion = 'LTI-1p0';
         $this->assertEquals(
-            lti_glaaster_split_custom_parameters(null, $tool, [], "x=1\ny=2", false),
+            glaaster_split_custom_parameters(null, $tool, [], "x=1\ny=2", false),
             ['custom_x' => '1', 'custom_y' => '2']
         );
 
         // Check params with caps.
         $this->assertEquals(
-            lti_glaaster_split_custom_parameters(null, $tool, [], "X=1", true),
+            glaaster_split_custom_parameters(null, $tool, [], "X=1", true),
             ['custom_x' => '1', 'custom_X' => '1']
         );
 
         // Removed repeat of previous test with a semicolon separator.
 
         $this->assertEquals(
-            lti_glaaster_split_custom_parameters(null, $tool, [], 'Review:Chapter=1.2.56', true),
+            glaaster_split_custom_parameters(null, $tool, [], 'Review:Chapter=1.2.56', true),
             [
                 'custom_review_chapter' => '1.2.56',
             'custom_Review:Chapter' => '1.2.56']
         );
 
         $this->assertEquals(
-            lti_glaaster_split_custom_parameters(
+            glaaster_split_custom_parameters(
                 null,
                 $tool,
                 [],
@@ -300,7 +300,7 @@ final class locallib_test extends mod_glaaster_testcase {
         $this->setUser($user);
         $this->assertEquals(
             ['custom_x' => '1', 'custom_y' => 'SOMETHING'],
-            lti_glaaster_split_custom_parameters(null, $tool, [], "x=1\ny=\$Person.name.middle", false)
+            glaaster_split_custom_parameters(null, $tool, [], "x=1\ny=\$Person.name.middle", false)
         );
     }
 
@@ -324,7 +324,7 @@ final class locallib_test extends mod_glaaster_testcase {
             'roles' => 'Learner', 'context_id' => '12345', 'context_label' => 'SI124',
             'context_title' => 'Social Computing'];
 
-        $parms = lti_glaaster_sign_parameters(
+        $parms = glaaster_sign_parameters(
             $requestparams,
             'http://www.imsglobal.org/developer/LTI/tool.php',
             'POST',
@@ -394,40 +394,40 @@ final class locallib_test extends mod_glaaster_testcase {
     }
 
     /*
-     * Verify that lti_glaaster_build_request does handle resource_link_id as expected
+     * Verify that glaaster_build_request does handle resource_link_id as expected
      */
 
-    public function test_lti_glaaster_ensure_url_is_https(): void {
-        $this->assertEquals('https://moodle.org', lti_glaaster_ensure_url_is_https('http://moodle.org'));
-        $this->assertEquals('https://moodle.org', lti_glaaster_ensure_url_is_https('moodle.org'));
-        $this->assertEquals('https://moodle.org', lti_glaaster_ensure_url_is_https('https://moodle.org'));
+    public function test_glaaster_ensure_url_is_https(): void {
+        $this->assertEquals('https://moodle.org', glaaster_ensure_url_is_https('http://moodle.org'));
+        $this->assertEquals('https://moodle.org', glaaster_ensure_url_is_https('moodle.org'));
+        $this->assertEquals('https://moodle.org', glaaster_ensure_url_is_https('https://moodle.org'));
     }
 
     /**
-     * Test lti_glaaster_get_url_thumbprint against various URLs
+     * Test glaaster_get_url_thumbprint against various URLs
      */
-    public function test_lti_glaaster_get_url_thumbprint(): void {
+    public function test_glaaster_get_url_thumbprint(): void {
         // Note: trailing and double slash are expected right now.  Must evaluate if it must be removed at some point.
-        $this->assertEquals('moodle.org/', lti_glaaster_get_url_thumbprint('http://MOODLE.ORG'));
-        $this->assertEquals('moodle.org/', lti_glaaster_get_url_thumbprint('http://www.moodle.org'));
-        $this->assertEquals('moodle.org/', lti_glaaster_get_url_thumbprint('https://www.moodle.org'));
-        $this->assertEquals('moodle.org/', lti_glaaster_get_url_thumbprint('moodle.org'));
+        $this->assertEquals('moodle.org/', glaaster_get_url_thumbprint('http://MOODLE.ORG'));
+        $this->assertEquals('moodle.org/', glaaster_get_url_thumbprint('http://www.moodle.org'));
+        $this->assertEquals('moodle.org/', glaaster_get_url_thumbprint('https://www.moodle.org'));
+        $this->assertEquals('moodle.org/', glaaster_get_url_thumbprint('moodle.org'));
         $this->assertEquals(
             'moodle.org//this/is/moodle',
-            lti_glaaster_get_url_thumbprint('http://moodle.org/this/is/moodle')
+            glaaster_get_url_thumbprint('http://moodle.org/this/is/moodle')
         );
         $this->assertEquals(
             'moodle.org//this/is/moodle',
-            lti_glaaster_get_url_thumbprint('https://moodle.org/this/is/moodle')
+            glaaster_get_url_thumbprint('https://moodle.org/this/is/moodle')
         );
-        $this->assertEquals('moodle.org//this/is/moodle', lti_glaaster_get_url_thumbprint('moodle.org/this/is/moodle'));
+        $this->assertEquals('moodle.org//this/is/moodle', glaaster_get_url_thumbprint('moodle.org/this/is/moodle'));
         $this->assertEquals(
             'moodle.org//this/is/moodle',
-            lti_glaaster_get_url_thumbprint('moodle.org/this/is/moodle?')
+            glaaster_get_url_thumbprint('moodle.org/this/is/moodle?')
         );
         $this->assertEquals(
             'moodle.org//this/is/moodle?foo=bar',
-            lti_glaaster_get_url_thumbprint('moodle.org/this/is/moodle?foo=bar')
+            glaaster_get_url_thumbprint('moodle.org/this/is/moodle?foo=bar')
         );
     }
 
@@ -451,26 +451,26 @@ final class locallib_test extends mod_glaaster_testcase {
         ];
 
         // Normal call, we expect $instance->id to be used as resource_link_id.
-        $params = lti_glaaster_build_request($instance, $typeconfig, $course, null);
+        $params = glaaster_build_request($instance, $typeconfig, $course, null);
         $this->assertSame($instance->id, $params['resource_link_id']);
 
         // If there is a resource_link_id set, it gets precedence.
         $instance->resource_link_id = $instance->id + 99;
-        $params = lti_glaaster_build_request($instance, $typeconfig, $course, null);
+        $params = glaaster_build_request($instance, $typeconfig, $course, null);
         $this->assertSame($instance->resource_link_id, $params['resource_link_id']);
 
         // With none set, resource_link_id is not set either.
         unset($instance->id);
         unset($instance->resource_link_id);
-        $params = lti_glaaster_build_request($instance, $typeconfig, $course, null);
+        $params = glaaster_build_request($instance, $typeconfig, $course, null);
         $this->assertArrayNotHasKey('resource_link_id', $params);
     }
 
     /**
-     * Test lti_glaaster_build_request's resource_link_description and ensure
+     * Test glaaster_build_request's resource_link_description and ensure
      * that the newlines in the description are correct.
      */
-    public function test_lti_glaaster_build_request_description(): void {
+    public function test_glaaster_build_request_description(): void {
         $this->resetAfterTest();
 
         self::setUser($this->getDataGenerator()->create_user());
@@ -489,7 +489,7 @@ final class locallib_test extends mod_glaaster_testcase {
             'customparameters' => '',
         ];
 
-        $params = lti_glaaster_build_request($instance, $typeconfig, $course, null);
+        $params = glaaster_build_request($instance, $typeconfig, $course, null);
 
         $ncount = substr_count($params['resource_link_description'], "\n");
         $this->assertGreaterThan(0, $ncount);
@@ -510,41 +510,41 @@ final class locallib_test extends mod_glaaster_testcase {
     }
 
     /**
-     * Tests lti_glaaster_prepare_type_for_save's handling of the "Force SSL" configuration.
+     * Tests glaaster_prepare_type_for_save's handling of the "Force SSL" configuration.
      */
-    public function test_lti_glaaster_prepare_type_for_save_forcessl(): void {
+    public function test_glaaster_prepare_type_for_save_forcessl(): void {
         $type = new stdClass();
         $config = new stdClass();
 
         // Try when the forcessl config property is not set.
-        lti_glaaster_prepare_type_for_save($type, $config);
+        glaaster_prepare_type_for_save($type, $config);
         $this->assertObjectHasProperty('lti_forcessl', $config);
         $this->assertEquals(0, $config->lti_forcessl);
         $this->assertEquals(0, $type->forcessl);
 
         // Try when forcessl config property is set.
         $config->lti_forcessl = 1;
-        lti_glaaster_prepare_type_for_save($type, $config);
+        glaaster_prepare_type_for_save($type, $config);
         $this->assertObjectHasProperty('lti_forcessl', $config);
         $this->assertEquals(1, $config->lti_forcessl);
         $this->assertEquals(1, $type->forcessl);
 
         // Try when forcessl config property is set to 0.
         $config->lti_forcessl = 0;
-        lti_glaaster_prepare_type_for_save($type, $config);
+        glaaster_prepare_type_for_save($type, $config);
         $this->assertObjectHasProperty('lti_forcessl', $config);
         $this->assertEquals(0, $config->lti_forcessl);
         $this->assertEquals(0, $type->forcessl);
     }
 
     /**
-     * Tests lti_glaaster_load_type_from_cartridge and lti_glaaster_load_type_if_cartridge
+     * Tests glaaster_load_type_from_cartridge and glaaster_load_type_if_cartridge
      */
-    public function test_lti_glaaster_load_type_from_cartridge(): void {
+    public function test_glaaster_load_type_from_cartridge(): void {
         $type = new stdClass();
         $type->lti_toolurl = $this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml');
 
-        lti_glaaster_load_type_if_cartridge($type);
+        glaaster_load_type_if_cartridge($type);
 
         $this->assertEquals('Example tool', $type->lti_typename);
         $this->assertEquals('Example tool description', $type->lti_description);
@@ -554,13 +554,13 @@ final class locallib_test extends mod_glaaster_testcase {
     }
 
     /**
-     * Tests lti_glaaster_load_tool_from_cartridge and lti_glaaster_load_tool_if_cartridge
+     * Tests glaaster_load_tool_from_cartridge and glaaster_load_tool_if_cartridge
      */
-    public function test_lti_glaaster_load_tool_from_cartridge(): void {
+    public function test_glaaster_load_tool_from_cartridge(): void {
         $lti = new stdClass();
         $lti->toolurl = $this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml');
 
-        lti_glaaster_load_tool_if_cartridge($lti);
+        glaaster_load_tool_if_cartridge($lti);
 
         $this->assertEquals('Example tool', $lti->name);
         $this->assertEquals('Example tool description', $lti->intro);
@@ -571,9 +571,9 @@ final class locallib_test extends mod_glaaster_testcase {
     }
 
     /**
-     * Tests for lti_glaaster_build_content_item_selection_request().
+     * Tests for glaaster_build_content_item_selection_request().
      */
-    public function test_lti_glaaster_build_content_item_selection_request(): void {
+    public function test_glaaster_build_content_item_selection_request(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -585,21 +585,21 @@ final class locallib_test extends mod_glaaster_testcase {
         $type = new stdClass();
         $data = new stdClass();
         $data->lti_contentitem = true;
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->toolproxyid = $proxy->id;
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $typeid = lti_glaaster_add_type($type, $data);
+        $typeid = glaaster_add_type($type, $data);
 
-        $typeconfig = lti_glaaster_get_type_config($typeid);
+        $typeconfig = glaaster_get_type_config($typeid);
 
         $course = $this->getDataGenerator()->create_course();
         $returnurl = new moodle_url('/');
 
         // Default parameters.
-        $result = lti_glaaster_build_content_item_selection_request($typeid, $course, $returnurl);
+        $result = glaaster_build_content_item_selection_request($typeid, $course, $returnurl);
         $this->assertNotEmpty($result);
         $this->assertNotEmpty($result->params);
         $this->assertNotEmpty($result->url);
@@ -607,7 +607,7 @@ final class locallib_test extends mod_glaaster_testcase {
         $url = $result->url;
         $this->assertEquals($typeconfig['toolurl'], $url);
         $this->assertEquals('ContentItemSelectionRequest', $params['lti_message_type']);
-        $this->assertEquals(LTI_GLAASTER_VERSION_1, $params['lti_version']);
+        $this->assertEquals(GLAASTER_VERSION_1, $params['lti_version']);
         $this->assertEquals('application/vnd.ims.lti.v1.ltilink', $params['accept_media_types']);
         $this->assertEquals('frame,iframe,window', $params['accept_presentation_document_targets']);
         $this->assertEquals($returnurl->out(false), $params['content_item_return_url']);
@@ -629,7 +629,7 @@ final class locallib_test extends mod_glaaster_testcase {
         $mediatypes = ['image/*', 'video/*'];
         $targets = ['embed', 'iframe'];
         $result =
-            lti_glaaster_build_content_item_selection_request(
+            glaaster_build_content_item_selection_request(
                 $typeid,
                 $course,
                 $returnurl,
@@ -658,7 +658,7 @@ final class locallib_test extends mod_glaaster_testcase {
 
         // Invalid flag values.
         $result =
-            lti_glaaster_build_content_item_selection_request(
+            glaaster_build_content_item_selection_request(
                 $typeid,
                 $course,
                 $returnurl,
@@ -687,9 +687,9 @@ final class locallib_test extends mod_glaaster_testcase {
     }
 
     /**
-     * Test for lti_glaaster_build_content_item_selection_request() with nonexistent tool type ID parameter.
+     * Test for glaaster_build_content_item_selection_request() with nonexistent tool type ID parameter.
      */
-    public function test_lti_glaaster_build_content_item_selection_request_invalid_tooltype(): void {
+    public function test_glaaster_build_content_item_selection_request_invalid_tooltype(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -698,13 +698,13 @@ final class locallib_test extends mod_glaaster_testcase {
 
         // Should throw Exception on non-existent tool type.
         $this->expectException('moodle_exception');
-        lti_glaaster_build_content_item_selection_request(1, $course, $returnurl);
+        glaaster_build_content_item_selection_request(1, $course, $returnurl);
     }
 
     /**
-     * Test for lti_glaaster_build_content_item_selection_request() with invalid media types parameter.
+     * Test for glaaster_build_content_item_selection_request() with invalid media types parameter.
      */
-    public function test_lti_glaaster_build_content_item_selection_request_invalid_mediatypes(): void {
+    public function test_glaaster_build_content_item_selection_request_invalid_mediatypes(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -713,25 +713,25 @@ final class locallib_test extends mod_glaaster_testcase {
         $type = new stdClass();
         $data = new stdClass();
         $data->lti_contentitem = true;
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $typeid = lti_glaaster_add_type($type, $data);
+        $typeid = glaaster_add_type($type, $data);
         $course = $this->getDataGenerator()->create_course();
         $returnurl = new moodle_url('/');
 
         // Should throw coding_exception on non-array media types.
         $mediatypes = 'image/*,video/*';
         $this->expectException('coding_exception');
-        lti_glaaster_build_content_item_selection_request($typeid, $course, $returnurl, '', '', $mediatypes);
+        glaaster_build_content_item_selection_request($typeid, $course, $returnurl, '', '', $mediatypes);
     }
 
     /**
-     * Test for lti_glaaster_build_content_item_selection_request() with invalid presentation targets parameter.
+     * Test for glaaster_build_content_item_selection_request() with invalid presentation targets parameter.
      */
-    public function test_lti_glaaster_build_content_item_selection_request_invalid_presentationtargets(): void {
+    public function test_glaaster_build_content_item_selection_request_invalid_presentationtargets(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -740,40 +740,40 @@ final class locallib_test extends mod_glaaster_testcase {
         $type = new stdClass();
         $data = new stdClass();
         $data->lti_contentitem = true;
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $typeid = lti_glaaster_add_type($type, $data);
+        $typeid = glaaster_add_type($type, $data);
         $course = $this->getDataGenerator()->create_course();
         $returnurl = new moodle_url('/');
 
         // Should throw coding_exception on non-array presentation targets.
         $targets = 'frame,iframe';
         $this->expectException('coding_exception');
-        lti_glaaster_build_content_item_selection_request($typeid, $course, $returnurl, '', '', [], $targets);
+        glaaster_build_content_item_selection_request($typeid, $course, $returnurl, '', '', [], $targets);
     }
 
     /**
-     * Test lti_glaaster_get_best_tool_by_url.
+     * Test glaaster_get_best_tool_by_url.
      *
-     * @dataProvider lti_glaaster_get_best_tool_by_url_provider
+     * @dataProvider glaaster_get_best_tool_by_url_provider
      * @param string $url The URL to test.
      * @param object $expected The expected tool matching the URL.
      * @param array $tools The pool of tools to match the URL with.
      */
-    public function test_lti_glaaster_get_best_tool_by_url($url, $expected, $tools): void {
-        $actual = lti_glaaster_get_best_tool_by_url($url, $tools, null);
+    public function test_glaaster_get_best_tool_by_url($url, $expected, $tools): void {
+        $actual = glaaster_get_best_tool_by_url($url, $tools, null);
         $this->assertSame($expected, $actual);
     }
 
     /**
-     * Test lti_glaaster_get_tools_by_domain.
-     * @covers ::lti_glaaster_get_tools_by_domain()
+     * Test glaaster_get_tools_by_domain.
+     * @covers ::glaaster_get_tools_by_domain()
      *
      */
-    public function test_lti_glaaster_get_tools_by_domain(): void {
+    public function test_glaaster_get_tools_by_domain(): void {
         $this->resetAfterTest();
 
         /** @var mod_glaaster_generator $ltigenerator */
@@ -785,7 +785,7 @@ final class locallib_test extends mod_glaaster_testcase {
             'description' => 'Good example description',
             'tooldomain' => 'example.com',
             'baseurl' => 'https://example.com/i/am/?where=here',
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
         ]);
 
         // Create a tool type with bad domain.
@@ -794,10 +794,10 @@ final class locallib_test extends mod_glaaster_testcase {
             'description' => 'Bad example description',
             'tooldomain' => 'badexample.com',
             'baseurl' => 'https://badexample.com/i/am/?where=here',
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
         ]);
 
-        $records = lti_glaaster_get_tools_by_domain('example.com', LTI_GLAASTER_TOOL_STATE_CONFIGURED);
+        $records = glaaster_get_tools_by_domain('example.com', GLAASTER_TOOL_STATE_CONFIGURED);
         $this->assertCount(1, $records);
         $this->assertEmpty(array_diff(
             ['https://example.com/i/am/?where=here'],
@@ -806,11 +806,11 @@ final class locallib_test extends mod_glaaster_testcase {
     }
 
     /**
-     * Test test_lti_glaaster_get_tools_by_domain_restrict_types_category.
-     * @covers ::lti_glaaster_get_tools_by_domain()
+     * Test test_glaaster_get_tools_by_domain_restrict_types_category.
+     * @covers ::glaaster_get_tools_by_domain()
      *
      */
-    public function test_lti_glaaster_get_tools_by_domain_restrict_types_category(): void {
+    public function test_glaaster_get_tools_by_domain_restrict_types_category(): void {
         $this->resetAfterTest();
 
         $coursecat1 = $this->getDataGenerator()->create_category();
@@ -828,7 +828,7 @@ final class locallib_test extends mod_glaaster_testcase {
             'description' => 'Good example description',
             'tooldomain' => 'exampleone.com',
             'baseurl' => 'https://exampleone.com/tool/1',
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
             'lti_coursecategories' => $coursecat1->id,
         ]);
 
@@ -838,7 +838,7 @@ final class locallib_test extends mod_glaaster_testcase {
             'description' => 'Good example description',
             'tooldomain' => 'exampleone.com',
             'baseurl' => 'https://exampleone.com/tool/2',
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
             'lti_coursecategories' => $coursecat2->id,
         ]);
 
@@ -848,12 +848,12 @@ final class locallib_test extends mod_glaaster_testcase {
             'description' => 'Good example description',
             'tooldomain' => 'exampletwo.com',
             'baseurl' => 'https://exampletwo.com/tool/3',
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
             'lti_coursecategories' => $coursecat2->id,
         ]);
 
         // Get tool types for domain 'exampleone' in course 1 and verify only the one result under course category 1 is included.
-        $records = lti_glaaster_get_tools_by_domain('exampleone.com', LTI_GLAASTER_TOOL_STATE_CONFIGURED, $course1->id);
+        $records = glaaster_get_tools_by_domain('exampleone.com', GLAASTER_TOOL_STATE_CONFIGURED, $course1->id);
         $this->assertCount(1, $records);
         $this->assertEmpty(array_diff(
             ['https://exampleone.com/tool/1'],
@@ -861,7 +861,7 @@ final class locallib_test extends mod_glaaster_testcase {
         ));
 
         // Get tool types for domain 'exampleone' in course 2 and verify only the one result under course category 2 is included.
-        $records = lti_glaaster_get_tools_by_domain('exampleone.com', LTI_GLAASTER_TOOL_STATE_CONFIGURED, $course2->id);
+        $records = glaaster_get_tools_by_domain('exampleone.com', GLAASTER_TOOL_STATE_CONFIGURED, $course2->id);
         $this->assertCount(1, $records);
         $this->assertEmpty(array_diff(
             ['https://exampleone.com/tool/2'],
@@ -869,14 +869,14 @@ final class locallib_test extends mod_glaaster_testcase {
         ));
 
         // Get tool types for domain 'exampletwo' in course 1 and verify that no results are found.
-        $records = lti_glaaster_get_tools_by_domain('exampletwo.com', LTI_GLAASTER_TOOL_STATE_CONFIGURED, $course1->id);
+        $records = glaaster_get_tools_by_domain('exampletwo.com', GLAASTER_TOOL_STATE_CONFIGURED, $course1->id);
         $this->assertCount(0, $records);
     }
 
     /**
-     * Test lti_glaaster_get_jwt_message_type_mapping().
+     * Test glaaster_get_jwt_message_type_mapping().
      */
-    public function test_lti_glaaster_get_jwt_message_type_mapping(): void {
+    public function test_glaaster_get_jwt_message_type_mapping(): void {
         $mapping = [
             'basic-lti-launch-request' => 'LtiResourceLinkRequest',
             'ContentItemSelectionRequest' => 'LtiDeepLinkingRequest',
@@ -884,13 +884,13 @@ final class locallib_test extends mod_glaaster_testcase {
             'LtiSubmissionReviewRequest' => 'LtiSubmissionReviewRequest',
         ];
 
-        $this->assertEquals($mapping, lti_glaaster_get_jwt_message_type_mapping());
+        $this->assertEquals($mapping, glaaster_get_jwt_message_type_mapping());
     }
 
     /**
-     * Test lti_glaaster_get_jwt_claim_mapping()
+     * Test glaaster_get_jwt_claim_mapping()
      */
-    public function test_lti_glaaster_get_jwt_claim_mapping(): void {
+    public function test_glaaster_get_jwt_claim_mapping(): void {
         $mapping = [
             'accept_copy_advice' => [
                 'suffix' => 'dl',
@@ -1222,14 +1222,14 @@ final class locallib_test extends mod_glaaster_testcase {
                 'isarray' => false,
             ],
         ];
-        $actual = lti_glaaster_get_jwt_claim_mapping();
+        $actual = glaaster_get_jwt_claim_mapping();
         $this->assertEquals($mapping, $actual);
     }
 
     /**
-     * Test lti_glaaster_build_standard_message().
+     * Test glaaster_build_standard_message().
      */
-    public function test_lti_glaaster_build_standard_message_institution_name_set(): void {
+    public function test_glaaster_build_standard_message_institution_name_set(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -1244,11 +1244,11 @@ final class locallib_test extends mod_glaaster_testcase {
             ]
         );
 
-        $message = lti_glaaster_build_standard_message($instance, '2', LTI_GLAASTER_VERSION_1);
+        $message = glaaster_build_standard_message($instance, '2', GLAASTER_VERSION_1);
 
         $this->assertEquals('moodle-2', $message['ext_lms']);
         $this->assertEquals('moodle', $message['tool_consumer_info_product_family_code']);
-        $this->assertEquals(LTI_GLAASTER_VERSION_1, $message['lti_version']);
+        $this->assertEquals(GLAASTER_VERSION_1, $message['lti_version']);
         $this->assertEquals('basic-lti-launch-request', $message['lti_message_type']);
         $this->assertEquals('2', $message['tool_consumer_instance_guid']);
         $this->assertEquals('some institution name lols', $message['tool_consumer_instance_name']);
@@ -1256,9 +1256,9 @@ final class locallib_test extends mod_glaaster_testcase {
     }
 
     /**
-     * Test lti_glaaster_build_standard_message().
+     * Test glaaster_build_standard_message().
      */
-    public function test_lti_glaaster_build_standard_message_institution_name_not_set(): void {
+    public function test_glaaster_build_standard_message_institution_name_not_set(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -1269,11 +1269,11 @@ final class locallib_test extends mod_glaaster_testcase {
             ]
         );
 
-        $message = lti_glaaster_build_standard_message($instance, '2', LTI_GLAASTER_VERSION_2);
+        $message = glaaster_build_standard_message($instance, '2', GLAASTER_VERSION_2);
 
         $this->assertEquals('moodle-2', $message['ext_lms']);
         $this->assertEquals('moodle', $message['tool_consumer_info_product_family_code']);
-        $this->assertEquals(LTI_GLAASTER_VERSION_2, $message['lti_version']);
+        $this->assertEquals(GLAASTER_VERSION_2, $message['lti_version']);
         $this->assertEquals('basic-lti-launch-request', $message['lti_message_type']);
         $this->assertEquals('2', $message['tool_consumer_instance_guid']);
         $this->assertEquals('phpunit', $message['tool_consumer_instance_name']);
@@ -1281,16 +1281,16 @@ final class locallib_test extends mod_glaaster_testcase {
     }
 
     /**
-     * Test lti_glaaster_verify_jwt_signature().
+     * Test glaaster_verify_jwt_signature().
      */
-    public function test_lti_glaaster_verify_jwt_signature(): void {
+    public function test_glaaster_verify_jwt_signature(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
         $type = new stdClass();
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
@@ -1306,11 +1306,11 @@ V6L11BWkpzGXSW4Hv43qa+GSYOD2QU68Mb59oSk2OB+BtOLpJofmbGEGgvmwyCI9
 MwIDAQAB
 -----END PUBLIC KEY-----';
 
-        $config->lti_keytype = LTI_GLAASTER_RSA_KEY;
+        $config->lti_keytype = GLAASTER_RSA_KEY;
 
-        $typeid = lti_glaaster_add_type($type, $config);
+        $typeid = glaaster_add_type($type, $config);
 
-        lti_glaaster_verify_jwt_signature(
+        glaaster_verify_jwt_signature(
             $typeid,
             '',
             'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4g' .
@@ -1322,16 +1322,16 @@ MwIDAQAB
     }
 
     /**
-     * Test lti_glaaster_verify_jwt_signature_jwk().
+     * Test glaaster_verify_jwt_signature_jwk().
      */
-    public function test_lti_glaaster_verify_jwt_signature_jwk(): void {
+    public function test_glaaster_verify_jwt_signature_jwk(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
         $type = new stdClass();
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
@@ -1339,9 +1339,9 @@ MwIDAQAB
         $config = new stdClass();
         $config->lti_publickeyset = $this->getExternalTestFileUrl('/lti_keyset.json');
 
-        $config->lti_keytype = LTI_GLAASTER_JWK_KEYSET;
+        $config->lti_keytype = GLAASTER_JWK_KEYSET;
 
-        $typeid = lti_glaaster_add_type($type, $config);
+        $typeid = glaaster_add_type($type, $config);
 
         $jwt = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjU3YzExNzdkMmQ1M2EwMjFjNzM';
         $jwt .= '3NTY0OTFjMTM3YjE3In0.eyJpc3MiOiJnclJvbkd3RTd1WjRwZ28iLCJzdWIiOiJnclJvb';
@@ -1358,13 +1358,13 @@ MwIDAQAB
         $jwt .= 'EscmqzizI3j80USBCLUUb1UTsfJb2g7oyApJAp-13Q3InR3QyvWO8unG5VraFE7IL5I28h';
         $jwt .= 'MkQAHuCI90DFmXB4leflAu7wNlIK_U8xkGl8X8Mnv6MWgg94Ki8jgIq_kA85JAqI';
 
-        lti_glaaster_verify_jwt_signature($typeid, '', $jwt);
+        glaaster_verify_jwt_signature($typeid, '', $jwt);
     }
 
     /**
-     * Test lti_glaaster_verify_jwt_signature().
+     * Test glaaster_verify_jwt_signature().
      */
-    public function test_lti_glaaster_verify_jwt_signature_with_lti2(): void {
+    public function test_glaaster_verify_jwt_signature_with_lti2(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -1375,7 +1375,7 @@ MwIDAQAB
 
         // Create a tool type, associated with that proxy.
         $type = new stdClass();
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->toolproxyid = $proxy->id;
@@ -1384,62 +1384,62 @@ MwIDAQAB
         $data = new stdClass();
         $data->lti_contentitem = true;
 
-        $typeid = lti_glaaster_add_type($type, $data);
+        $typeid = glaaster_add_type($type, $data);
 
         $this->expectExceptionMessage('JWT security not supported with LTI 2');
-        lti_glaaster_verify_jwt_signature($typeid, '', '');
+        glaaster_verify_jwt_signature($typeid, '', '');
     }
 
     /**
-     * Test lti_glaaster_verify_jwt_signature().
+     * Test glaaster_verify_jwt_signature().
      */
-    public function test_lti_glaaster_verify_jwt_signature_no_consumer_key(): void {
+    public function test_glaaster_verify_jwt_signature_no_consumer_key(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
         $type = new stdClass();
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = 'consumerkey';
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
         $config = new stdClass();
-        $typeid = lti_glaaster_add_type($type, $config);
+        $typeid = glaaster_add_type($type, $config);
 
         $this->expectExceptionMessage(get_string('errorincorrectconsumerkey', 'mod_glaaster'));
-        lti_glaaster_verify_jwt_signature($typeid, '', '');
+        glaaster_verify_jwt_signature($typeid, '', '');
     }
 
     /**
-     * Test lti_glaaster_verify_jwt_signature().
+     * Test glaaster_verify_jwt_signature().
      */
-    public function test_lti_glaaster_verify_jwt_signature_no_public_key(): void {
+    public function test_glaaster_verify_jwt_signature_no_public_key(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
         $type = new stdClass();
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = 'consumerkey';
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
         $config = new stdClass();
-        $config->lti_keytype = LTI_GLAASTER_RSA_KEY;
-        $typeid = lti_glaaster_add_type($type, $config);
+        $config->lti_keytype = GLAASTER_RSA_KEY;
+        $typeid = glaaster_add_type($type, $config);
 
         $this->expectExceptionMessage('No public key configured');
-        lti_glaaster_verify_jwt_signature($typeid, 'consumerkey', '');
+        glaaster_verify_jwt_signature($typeid, 'consumerkey', '');
     }
 
     /**
-     * Test lti_glaaster_convert_content_items().
+     * Test glaaster_convert_content_items().
      */
-    public function test_lti_glaaster_convert_content_items(): void {
+    public function test_glaaster_convert_content_items(): void {
         $contentitems = [];
         $contentitems[] = [
             'type' => 'ltiResourceLink',
@@ -1472,7 +1472,7 @@ MwIDAQAB
 
         $contentitems = json_encode($contentitems);
 
-        $json = lti_glaaster_convert_content_items($contentitems);
+        $json = glaaster_convert_content_items($contentitems);
 
         $jsondecode = json_decode($json);
 
@@ -1523,10 +1523,10 @@ MwIDAQAB
 
     /**
      * Test adding a single gradable item through content item with an empty subreview url.
-     * @covers ::lti_glaaster_tool_configuration_from_content_item()
+     * @covers ::glaaster_tool_configuration_from_content_item()
      *
      */
-    public function test_lti_glaaster_tool_configuration_from_content_item_single_gradable_subreview_default_emptyurl(): void {
+    public function test_glaaster_tool_configuration_from_content_item_single_gradable_subreview_default_emptyurl(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -1534,8 +1534,8 @@ MwIDAQAB
         $type->name = "Test tool";
         $type->baseurl = "http://example.com";
         $config = new stdClass();
-        $config->lti_acceptgrades = LTI_GLAASTER_SETTING_DELEGATE;
-        $typeid = lti_glaaster_add_type($type, $config);
+        $config->lti_acceptgrades = GLAASTER_SETTING_DELEGATE;
+        $typeid = glaaster_add_type($type, $config);
 
         $contentitems = [];
         $contentitems[] = [
@@ -1553,9 +1553,9 @@ MwIDAQAB
             'frame' => [],
         ];
         $contentitemsjson13 = json_encode($contentitems);
-        $json11 = lti_glaaster_convert_content_items($contentitemsjson13);
+        $json11 = glaaster_convert_content_items($contentitemsjson13);
 
-        $config = lti_glaaster_tool_configuration_from_content_item(
+        $config = glaaster_tool_configuration_from_content_item(
             $typeid,
             'ContentItemSelection',
             $type->ltiversion,
@@ -1570,7 +1570,7 @@ MwIDAQAB
     /**
      * Test adding a single non gradable item through content item.
      */
-    public function test_lti_glaaster_tool_configuration_from_content_item_single(): void {
+    public function test_glaaster_tool_configuration_from_content_item_single(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -1578,7 +1578,7 @@ MwIDAQAB
         $type->name = "Test tool";
         $type->baseurl = "http://example.com";
         $config = new stdClass();
-        $typeid = lti_glaaster_add_type($type, $config);
+        $typeid = glaaster_add_type($type, $config);
 
         $this->getDataGenerator()->get_plugin_generator('mod_glaaster');
         $contentitems = [];
@@ -1594,9 +1594,9 @@ MwIDAQAB
             'frame' => [],
         ];
         $contentitemsjson13 = json_encode($contentitems);
-        $json11 = lti_glaaster_convert_content_items($contentitemsjson13);
+        $json11 = glaaster_convert_content_items($contentitemsjson13);
 
-        $config = lti_glaaster_tool_configuration_from_content_item(
+        $config = glaaster_tool_configuration_from_content_item(
             $typeid,
             'ContentItemSelection',
             $type->ltiversion,
@@ -1607,27 +1607,27 @@ MwIDAQAB
         $this->assertEquals($contentitems[0]['text'], $config->introeditor['text']);
         $this->assertEquals($contentitems[0]['url'], $config->toolurl);
         $this->assertEquals($contentitems[0]['icon']['url'], $config->icon);
-        $this->assertEquals(LTI_GLAASTER_SETTING_NEVER, $config->instructorchoiceacceptgrades);
+        $this->assertEquals(GLAASTER_SETTING_NEVER, $config->instructorchoiceacceptgrades);
     }
 
     /**
-     * Test lti_glaaster_sign_jwt().
+     * Test glaaster_sign_jwt().
      */
-    public function test_lti_glaaster_sign_jwt(): void {
+    public function test_glaaster_sign_jwt(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
         $type = new stdClass();
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = 'consumerkey';
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
         $config = new stdClass();
-        $typeid = lti_glaaster_add_type($type, $config);
+        $typeid = glaaster_add_type($type, $config);
 
         $params = [];
         $params['roles'] = 'urn:lti:role:ims/lis/testrole,' .
@@ -1650,23 +1650,23 @@ MwIDAQAB
         $oauthconsumerkey = 'consumerkey';
         $nonce = '';
 
-        $jwt = lti_glaaster_sign_jwt($params, $endpoint, $oauthconsumerkey, $typeid, $nonce);
+        $jwt = glaaster_sign_jwt($params, $endpoint, $oauthconsumerkey, $typeid, $nonce);
 
         $this->assertArrayHasKey('id_token', $jwt);
         $this->assertNotEmpty($jwt['id_token']);
     }
 
     /**
-     * Test lti_glaaster_convert_from_jwt()
+     * Test glaaster_convert_from_jwt()
      */
-    public function test_lti_glaaster_convert_from_jwt(): void {
+    public function test_glaaster_convert_from_jwt(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
         $type = new stdClass();
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = 'sso.example.com';
@@ -1682,11 +1682,11 @@ e+lf4s4OxQawWD79J9/5d3Ry0vbV3Am1FtGJiJvOwRsIfVChDpYStTcHTCMqtvWb
 V6L11BWkpzGXSW4Hv43qa+GSYOD2QU68Mb59oSk2OB+BtOLpJofmbGEGgvmwyCI9
 MwIDAQAB
 -----END PUBLIC KEY-----';
-        $config->lti_keytype = LTI_GLAASTER_RSA_KEY;
+        $config->lti_keytype = GLAASTER_RSA_KEY;
 
-        $typeid = lti_glaaster_add_type($type, $config);
+        $typeid = glaaster_add_type($type, $config);
 
-        $params = lti_glaaster_convert_from_jwt(
+        $params = glaaster_convert_from_jwt(
             $typeid,
             'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwib' .
             'mFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwiaXNzIjoic3NvLmV4YW1wbGUuY29tIn0.XURVvEb5ueAvFsn-S9EB' .
@@ -1700,16 +1700,16 @@ MwIDAQAB
     }
 
     /**
-     * Test glaaster_glaaster_get_tool_type_config().
+     * Test glaaster_get_tool_type_config().
      */
-    public function test_glaaster_glaaster_get_tool_type_config(): void {
+    public function test_glaaster_get_tool_type_config(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
         $type = new stdClass();
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = "Test client ID";
@@ -1717,11 +1717,11 @@ MwIDAQAB
 
         $config = new stdClass();
 
-        $typeid = lti_glaaster_add_type($type, $config);
+        $typeid = glaaster_add_type($type, $config);
 
-        $type = lti_glaaster_get_type($typeid);
+        $type = glaaster_get_type($typeid);
 
-        $typeconfig = glaaster_glaaster_get_tool_type_config($type);
+        $typeconfig = glaaster_get_tool_type_config($type);
 
         $this->assertEquals('https://www.example.com/moodle', $typeconfig['platformid']);
         $this->assertEquals($type->clientid, $typeconfig['clientid']);
@@ -1732,9 +1732,9 @@ MwIDAQAB
     }
 
     /**
-     * Test lti_glaaster_new_access_token().
+     * Test glaaster_new_access_token().
      */
-    public function test_lti_glaaster_new_access_token(): void {
+    public function test_glaaster_new_access_token(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1743,7 +1743,7 @@ MwIDAQAB
 
         // Create a tool type, associated with that proxy.
         $type = new stdClass();
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = "Test client ID";
@@ -1751,11 +1751,11 @@ MwIDAQAB
 
         $config = new stdClass();
 
-        $typeid = lti_glaaster_add_type($type, $config);
+        $typeid = glaaster_add_type($type, $config);
 
         $scopes = ['lti_some_scope', 'lti_another_scope'];
 
-        lti_glaaster_new_access_token($typeid, $scopes);
+        glaaster_new_access_token($typeid, $scopes);
 
         $token = $DB->get_records('glaaster_access_tokens');
         $this->assertEquals(1, count($token));
@@ -1764,14 +1764,14 @@ MwIDAQAB
 
         $this->assertEquals($typeid, $token->typeid);
         $this->assertEquals(json_encode(array_values($scopes)), $token->scope);
-        $this->assertEquals($token->timecreated + LTI_GLAASTER_ACCESS_TOKEN_LIFE, $token->validuntil);
+        $this->assertEquals($token->timecreated + GLAASTER_ACCESS_TOKEN_LIFE, $token->validuntil);
         $this->assertNull($token->lastaccess);
     }
 
     /**
-     * Test lti_glaaster_build_login_request().
+     * Test glaaster_build_login_request().
      */
-    public function test_lti_glaaster_build_login_request(): void {
+    public function test_glaaster_build_login_request(): void {
         global $USER, $CFG;
 
         $this->resetAfterTest();
@@ -1791,7 +1791,7 @@ MwIDAQAB
         $config->typeid = 'some-type-id';
         $config->lti_toolurl = 'some-lti-tool-url';
 
-        $request = lti_glaaster_build_login_request(
+        $request = glaaster_build_login_request(
             $course->id,
             $instance->cmid,
             $instance,
@@ -1809,10 +1809,10 @@ MwIDAQAB
 
     /**
      * Test for_user is passed as parameter when specified.
-     * @covers ::lti_glaaster_get_launch_data()
+     * @covers ::glaaster_get_launch_data()
      *
      */
-    public function test_lti_glaaster_get_launch_data_with_for_user(): void {
+    public function test_glaaster_get_launch_data_with_for_user(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $config = new stdClass();
@@ -1820,7 +1820,7 @@ MwIDAQAB
         $course = $this->getDataGenerator()->create_course();
         $type = $this->create_type($config);
         $link = $this->create_instance($type, $course);
-        $launchdata = lti_glaaster_get_launch_data($link, '', '', 345);
+        $launchdata = glaaster_get_launch_data($link, '', '', 345);
         $this->assertEquals($launchdata[1]['lti_message_type'], 'basic-lti-launch-request');
         $this->assertEquals($launchdata[1]['for_user_id'], 345);
     }
@@ -1834,19 +1834,19 @@ MwIDAQAB
      */
     private function create_type(object $config) {
         $type = new stdClass();
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = "Test client ID";
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
         $configbase = new stdClass();
-        $configbase->lti_acceptgrades = LTI_GLAASTER_SETTING_NEVER;
-        $configbase->lti_sendname = LTI_GLAASTER_SETTING_NEVER;
-        $configbase->lti_sendemailaddr = LTI_GLAASTER_SETTING_NEVER;
+        $configbase->lti_acceptgrades = GLAASTER_SETTING_NEVER;
+        $configbase->lti_sendname = GLAASTER_SETTING_NEVER;
+        $configbase->lti_sendemailaddr = GLAASTER_SETTING_NEVER;
         $mergedconfig = (object) array_merge((array) $configbase, (array) $config);
-        $typeid = lti_glaaster_add_type($type, $mergedconfig);
-        return lti_glaaster_get_type($typeid);
+        $typeid = glaaster_add_type($type, $mergedconfig);
+        return glaaster_get_type($typeid);
     }
 
     /**
@@ -1868,7 +1868,7 @@ MwIDAQAB
     /**
      * Test default orgid is host if not specified in config (tool installed in earlier version of Moodle).
      */
-    public function test_lti_glaaster_get_launch_data_default_organizationid_unset_usehost(): void {
+    public function test_glaaster_get_launch_data_default_organizationid_unset_usehost(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $config = new stdClass();
@@ -1876,55 +1876,55 @@ MwIDAQAB
         $course = $this->getDataGenerator()->create_course();
         $type = $this->create_type($config);
         $link = $this->create_instance($type, $course);
-        $launchdata = lti_glaaster_get_launch_data($link);
+        $launchdata = glaaster_get_launch_data($link);
         $this->assertEquals($launchdata[1]['tool_consumer_instance_guid'], 'www.example.com');
     }
 
     /**
      * Test default org id is set to host when config is usehost.
      */
-    public function test_lti_glaaster_get_launch_data_default_organizationid_set_usehost(): void {
+    public function test_glaaster_get_launch_data_default_organizationid_set_usehost(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $config = new stdClass();
         $config->lti_organizationid = '';
-        $config->lti_organizationid_default = LTI_GLAASTER_DEFAULT_ORGID_SITEHOST;
+        $config->lti_organizationid_default = GLAASTER_DEFAULT_ORGID_SITEHOST;
         $course = $this->getDataGenerator()->create_course();
         $type = $this->create_type($config);
         $link = $this->create_instance($type, $course);
-        $launchdata = lti_glaaster_get_launch_data($link);
+        $launchdata = glaaster_get_launch_data($link);
         $this->assertEquals($launchdata[1]['tool_consumer_instance_guid'], 'www.example.com');
     }
 
     /**
      * Test default org id is set to site id when config is usesiteid.
      */
-    public function test_lti_glaaster_get_launch_data_default_organizationid_set_usesiteid(): void {
+    public function test_glaaster_get_launch_data_default_organizationid_set_usesiteid(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $config = new stdClass();
         $config->lti_organizationid = '';
-        $config->lti_organizationid_default = LTI_GLAASTER_DEFAULT_ORGID_SITEID;
+        $config->lti_organizationid_default = GLAASTER_DEFAULT_ORGID_SITEID;
         $course = $this->getDataGenerator()->create_course();
         $type = $this->create_type($config);
         $link = $this->create_instance($type, $course);
-        $launchdata = lti_glaaster_get_launch_data($link);
+        $launchdata = glaaster_get_launch_data($link);
         $this->assertEquals($launchdata[1]['tool_consumer_instance_guid'], md5(get_site_identifier()));
     }
 
     /**
      * Test orgid can be overridden in which case default is ignored.
      */
-    public function test_lti_glaaster_get_launch_data_default_organizationid_orgid_override(): void {
+    public function test_glaaster_get_launch_data_default_organizationid_orgid_override(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $config = new stdClass();
         $config->lti_organizationid = 'overridden!';
-        $config->lti_organizationid_default = LTI_GLAASTER_DEFAULT_ORGID_SITEID;
+        $config->lti_organizationid_default = GLAASTER_DEFAULT_ORGID_SITEID;
         $course = $this->getDataGenerator()->create_course();
         $type = $this->create_type($config);
         $link = $this->create_instance($type, $course);
-        $launchdata = lti_glaaster_get_launch_data($link);
+        $launchdata = glaaster_get_launch_data($link);
         $this->assertEquals($launchdata[1]['tool_consumer_instance_guid'], 'overridden!');
     }
 
@@ -1948,17 +1948,17 @@ MwIDAQAB
     }
 
     /**
-     * Test the lti_glaaster_get_ims_role helper function.
+     * Test the glaaster_get_ims_role helper function.
      *
-     * @dataProvider lti_glaaster_get_ims_role_provider
-     * @covers ::lti_glaaster_get_ims_role()
+     * @dataProvider glaaster_get_ims_role_provider
+     * @covers ::glaaster_get_ims_role()
      *
      * @param bool $islti2 whether the method is called with LTI 2.0 role names or not.
      * @param string $rolename the name of the role (student, teacher, admin)
      * @param null|string $switchedto the role to switch to, or false if not using the 'switch to' functionality.
      * @param string $expected the expected role name.
      */
-    public function test_lti_glaaster_get_ims_role(
+    public function test_glaaster_get_ims_role(
         bool $islti2,
         string $rolename,
         ?string $switchedto,
@@ -1976,17 +1976,17 @@ MwIDAQAB
             role_switch($role->id, context_course::instance($course->id));
         }
 
-        $this->assertEquals($expected, lti_glaaster_get_ims_role($user, 0, $course->id, $islti2));
+        $this->assertEquals($expected, glaaster_get_ims_role($user, 0, $course->id, $islti2));
     }
 
     /**
-     * Test lti_glaaster_get_lti_types_and_proxies with no limit or offset.
+     * Test glaaster_get_lti_types_and_proxies with no limit or offset.
      */
-    public function test_lti_glaaster_get_lti_types_and_proxies_with_no_limit(): void {
+    public function test_glaaster_get_lti_types_and_proxies_with_no_limit(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $this->generate_tool_types_and_proxies(10);
-        [$proxies, $types] = lti_glaaster_get_lti_types_and_proxies();
+        [$proxies, $types] = glaaster_get_lti_types_and_proxies();
 
         $this->assertCount(10, $proxies);
         $this->assertCount(10, $types);
@@ -2015,111 +2015,111 @@ MwIDAQAB
     }
 
     /**
-     * Test lti_glaaster_get_lti_types_and_proxies with limits.
+     * Test glaaster_get_lti_types_and_proxies with limits.
      */
-    public function test_lti_glaaster_get_lti_types_and_proxies_with_limit(): void {
+    public function test_glaaster_get_lti_types_and_proxies_with_limit(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $this->generate_tool_types_and_proxies(10);
 
         // Get the middle 10 data sets (of 20 total).
-        [$proxies, $types] = lti_glaaster_get_lti_types_and_proxies(10, 5);
+        [$proxies, $types] = glaaster_get_lti_types_and_proxies(10, 5);
 
         $this->assertCount(5, $proxies);
         $this->assertCount(5, $types);
 
         // Get the last 5 data sets with large limit (of 20 total).
-        [$proxies, $types] = lti_glaaster_get_lti_types_and_proxies(50, 15);
+        [$proxies, $types] = glaaster_get_lti_types_and_proxies(50, 15);
 
         $this->assertCount(0, $proxies);
         $this->assertCount(5, $types);
 
         // Get the last 13 data sets with large limit (of 20 total).
-        [$proxies, $types] = lti_glaaster_get_lti_types_and_proxies(50, 7);
+        [$proxies, $types] = glaaster_get_lti_types_and_proxies(50, 7);
 
         $this->assertCount(3, $proxies);
         $this->assertCount(10, $types);
     }
 
     /**
-     * Test lti_glaaster_get_lti_types_and_proxies with limits and only fetching orphaned proxies.
+     * Test glaaster_get_lti_types_and_proxies with limits and only fetching orphaned proxies.
      */
-    public function test_lti_glaaster_get_lti_types_and_proxies_with_limit_and_orphaned_proxies(): void {
+    public function test_glaaster_get_lti_types_and_proxies_with_limit_and_orphaned_proxies(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $this->generate_tool_types_and_proxies(10, 5);
 
         // Get the first 10 data sets (of 15 total).
-        [$proxies, $types] = lti_glaaster_get_lti_types_and_proxies(10, 0, true);
+        [$proxies, $types] = glaaster_get_lti_types_and_proxies(10, 0, true);
 
         $this->assertCount(5, $proxies);
         $this->assertCount(5, $types);
 
         // Get the middle 10 data sets with large limit (of 15 total).
-        [$proxies, $types] = lti_glaaster_get_lti_types_and_proxies(10, 2, true);
+        [$proxies, $types] = glaaster_get_lti_types_and_proxies(10, 2, true);
 
         $this->assertCount(3, $proxies);
         $this->assertCount(7, $types);
 
         // Get the last 5 data sets with large limit (of 15 total).
-        [$proxies, $types] = lti_glaaster_get_lti_types_and_proxies(50, 10, true);
+        [$proxies, $types] = glaaster_get_lti_types_and_proxies(50, 10, true);
 
         $this->assertCount(0, $proxies);
         $this->assertCount(5, $types);
     }
 
     /**
-     * Test lti_glaaster_get_lti_types_and_proxies_count.
+     * Test glaaster_get_lti_types_and_proxies_count.
      */
-    public function test_lti_glaaster_get_lti_types_and_proxies_count_with_no_filters(): void {
+    public function test_glaaster_get_lti_types_and_proxies_count_with_no_filters(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $this->generate_tool_types_and_proxies(10, 5);
 
-        $totalcount = lti_glaaster_get_lti_types_and_proxies_count();
+        $totalcount = glaaster_get_lti_types_and_proxies_count();
         $this->assertEquals(25, $totalcount); // 10 types, 15 proxies.
     }
 
     /**
-     * Test lti_glaaster_get_lti_types_and_proxies_count only counting orphaned proxies.
+     * Test glaaster_get_lti_types_and_proxies_count only counting orphaned proxies.
      */
-    public function test_lti_glaaster_get_lti_types_and_proxies_count_with_only_orphaned_proxies(): void {
+    public function test_glaaster_get_lti_types_and_proxies_count_with_only_orphaned_proxies(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $this->generate_tool_types_and_proxies(10, 5);
 
-        $orphanedcount = lti_glaaster_get_lti_types_and_proxies_count(true);
+        $orphanedcount = glaaster_get_lti_types_and_proxies_count(true);
         $this->assertEquals(15, $orphanedcount); // 10 types, 5 proxies.
     }
 
     /**
-     * Test lti_glaaster_get_lti_types_and_proxies_count only matching tool type with toolproxyid.
+     * Test glaaster_get_lti_types_and_proxies_count only matching tool type with toolproxyid.
      */
-    public function test_lti_glaaster_get_lti_types_and_proxies_count_type_with_proxyid(): void {
+    public function test_glaaster_get_lti_types_and_proxies_count_type_with_proxyid(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         ['proxies' => $proxies] = $this->generate_tool_types_and_proxies(10, 5);
 
-        $countwithproxyid = lti_glaaster_get_lti_types_and_proxies_count(false, $proxies[0]->id);
+        $countwithproxyid = glaaster_get_lti_types_and_proxies_count(false, $proxies[0]->id);
         $this->assertEquals(16, $countwithproxyid); // 1 type, 15 proxies.
     }
 
     /**
      * Verify that empty curl responses lead to the proper moodle_exception, not to XML ValueError.
      *
-     * @covers ::lti_glaaster_load_cartridge()
+     * @covers ::glaaster_load_cartridge()
      */
-    public function test_empty_reponse_lti_glaaster_load_cartridge(): void {
+    public function test_empty_reponse_glaaster_load_cartridge(): void {
         // Mock the curl response to empty string, this is hardly
         // reproducible in real life (only Windows + GHA).
         curl::mock_response('');
 
         $this->expectException(moodle_exception::class);
-        lti_glaaster_load_cartridge('http://example.com/mocked/empty/response', []);
+        glaaster_load_cartridge('http://example.com/mocked/empty/response', []);
     }
 
     /**
-     * Test for lti_glaaster_get_lti_types_by_course.
+     * Test for glaaster_get_lti_types_by_course.
      *
      * Note: This includes verification of the broken legacy behaviour in which the inclusion of course and site tools
      * could be controlled independently, based on the capabilities 'mod/glaaster:addmanualinstance' (to include course
@@ -2127,10 +2127,10 @@ MwIDAQAB
      * 'mod/glaaster:addpreconfiguredinstance' (to include site tools). This behaviour is deprecated in 4.3 and all
      * preconfigured tools are controlled by the single capability 'mod/glaaster:addpreconfiguredinstance'.
      *
-     * @covers ::lti_glaaster_get_lti_types_by_course()
+     * @covers ::glaaster_get_lti_types_by_course()
      * @return void
      */
-    public function test_lti_glaaster_get_lti_types_by_course(): void {
+    public function test_glaaster_get_lti_types_by_course(): void {
         $this->resetAfterTest();
 
         global $DB;
@@ -2146,20 +2146,20 @@ MwIDAQAB
         $ltigenerator->create_tool_types([
             'name' => 'site tool do not show',
             'baseurl' => 'http://example.com/tool/1',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_NO,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_NO,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
         ]);
         $ltigenerator->create_tool_types([
             'name' => 'site tool preconfigured only',
             'baseurl' => 'http://example.com/tool/2',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_PRECONFIGURED,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
         ]);
         $ltigenerator->create_tool_types([
             'name' => 'site tool preconfigured and activity chooser',
             'baseurl' => 'http://example.com/tool/3',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
         ]);
         $ltigenerator->create_course_tool_types([
             'name' => 'course tool preconfigured and activity chooser',
@@ -2169,15 +2169,15 @@ MwIDAQAB
         $ltigenerator->create_tool_types([
             'name' => 'site tool preconfigured and activity chooser, restricted to category 2',
             'baseurl' => 'http://example.com/tool/5',
-            'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
-            'state' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
             'lti_coursecategories' => $coursecat2->id,
         ]);
 
         $this->setUser($teacher); // Important: this deprecated method depends on the global user for cap checks.
 
         // Request using the default 'coursevisible' param will include all tools except the one configured as "Do not show".
-        $coursetooltypes = lti_glaaster_get_lti_types_by_course($course->id);
+        $coursetooltypes = glaaster_get_lti_types_by_course($course->id);
         $this->assertDebuggingCalled();
         $this->assertCount(3, $coursetooltypes);
         $this->assertEmpty(array_diff(
@@ -2187,7 +2187,7 @@ MwIDAQAB
 
         // Request for only those tools configured to show in the activity chooser for the teacher.
         $coursetooltypes =
-            lti_glaaster_get_lti_types_by_course($course->id, [LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER]);
+            glaaster_get_lti_types_by_course($course->id, [GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER]);
         $this->assertDebuggingCalled();
         $this->assertCount(2, $coursetooltypes);
         $this->assertEmpty(array_diff(
@@ -2197,7 +2197,7 @@ MwIDAQAB
 
         // Request for only those tools configured to show as a preconfigured tool for the teacher.
         $coursetooltypes =
-            lti_glaaster_get_lti_types_by_course($course->id, [LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED]);
+            glaaster_get_lti_types_by_course($course->id, [GLAASTER_COURSEVISIBLE_PRECONFIGURED]);
         $this->assertDebuggingCalled();
         $this->assertCount(1, $coursetooltypes);
         $this->assertEmpty(array_diff(
@@ -2207,7 +2207,7 @@ MwIDAQAB
 
         // Request for teacher2 in course2 (course category 2).
         $this->setUser($teacher2);
-        $coursetooltypes = lti_glaaster_get_lti_types_by_course($course2->id);
+        $coursetooltypes = glaaster_get_lti_types_by_course($course2->id);
         $this->assertDebuggingCalled();
         $this->assertCount(3, $coursetooltypes);
         $this->assertEmpty(array_diff(
@@ -2225,7 +2225,7 @@ MwIDAQAB
             $teacherrole->id,
             course::instance($course->id)
         );
-        $coursetooltypes = lti_glaaster_get_lti_types_by_course($course->id);
+        $coursetooltypes = glaaster_get_lti_types_by_course($course->id);
         $this->assertDebuggingCalled();
         $this->assertCount(0, $coursetooltypes);
         $this->unassignUserCapability(

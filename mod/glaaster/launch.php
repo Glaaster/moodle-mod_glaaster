@@ -78,18 +78,18 @@ $cm = get_coursemodule_from_id('glaaster', $cmid, 0, false, MUST_EXIST);
 $lti = $DB->get_record('glaaster', ['id' => $cm->instance], '*', MUST_EXIST);
 
 $typeid = $lti->typeid;
-if (empty($typeid) && ($tool = lti_glaaster_get_tool_by_url_match($lti->toolurl))) {
+if (empty($typeid) && ($tool = glaaster_get_tool_by_url_match($lti->toolurl))) {
     $typeid = $tool->id;
 }
 if ($typeid) {
-    $config = lti_glaaster_get_type_config($typeid);
+    $config = glaaster_get_type_config($typeid);
     $missingtooltype = empty($config);
     if (!$missingtooltype) {
-        $config = lti_glaaster_get_type_type_config($typeid);
-        if ($config->lti_ltiversion === LTI_GLAASTER_VERSION_1P3) {
+        $config = glaaster_get_type_type_config($typeid);
+        if ($config->lti_ltiversion === GLAASTER_VERSION_1P3) {
             if (!isset($SESSION->lti_initiatelogin_status)) {
                 $msgtype = 'basic-lti-launch-request';
-                echo lti_glaaster_initiate_login(
+                echo glaaster_initiate_login(
                     $cm->course,
                     $cmid,
                     $lti,
@@ -135,4 +135,4 @@ if ($triggerview) {
 }
 
 $lti->cmid = $cm->id;
-lti_glaaster_launch_tool($lti, $foruserid);
+glaaster_launch_tool($lti, $foruserid);

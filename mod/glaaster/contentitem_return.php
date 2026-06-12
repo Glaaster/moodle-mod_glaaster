@@ -43,7 +43,7 @@ $PAGE->set_context($context);
 
 // Cross-Site causes the cookie to be lost if not POSTed from same site.
 // The repost param is stripped before LTI 1.1 signature validation in
-// GlaasterOAuthRequest::from_request().
+// OAuthRequest::from_request() (moodle\mod\lti\OAuthRequest).
 if (!optional_param('repost', false, PARAM_BOOL) && !isloggedin()) {
     header_remove("Set-Cookie");
     $output = $PAGE->get_renderer('mod_glaaster');
@@ -55,7 +55,7 @@ if (!optional_param('repost', false, PARAM_BOOL) && !isloggedin()) {
 }
 
 if (!empty($jwt)) {
-    $params = lti_glaaster_convert_from_jwt($id, $jwt);
+    $params = glaaster_convert_from_jwt($id, $jwt);
     $consumerkey = $params['oauth_consumer_key'] ?? '';
     $messagetype = $params['lti_message_type'] ?? '';
     $version = $params['lti_version'] ?? '';
@@ -69,7 +69,7 @@ if (!empty($jwt)) {
     $items = optional_param('content_items', '', PARAM_RAW);
     $errormsg = optional_param('lti_errormsg', '', PARAM_TEXT);
     $msg = optional_param('lti_msg', '', PARAM_TEXT);
-    lti_glaaster_verify_oauth_signature($id, $consumerkey);
+    glaaster_verify_oauth_signature($id, $consumerkey);
 }
 
 $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
@@ -82,7 +82,7 @@ $redirecturl = null;
 $returndata = null;
 if (empty($errormsg) && !empty($items)) {
     try {
-        $returndata = lti_glaaster_tool_configuration_from_content_item($id, $messagetype, $version, $consumerkey, $items);
+        $returndata = glaaster_tool_configuration_from_content_item($id, $messagetype, $version, $consumerkey, $items);
     } catch (moodle_exception $e) {
         $errormsg = $e->getMessage();
     }

@@ -41,64 +41,64 @@ use mod_glaaster\local\ltiglaasterservice\service_base;
 use mod_glaaster\local\ltiopenid\jwks_helper;
 use mod_glaaster\local\ltiopenid\registration_helper;
 use mod_glaaster\local\types_helper;
-use moodle\mod\glaaster as lti;
+use moodle\mod\lti as lti;
 
 global $CFG;
-require_once($CFG->dirroot . '/mod/glaaster/OAuth.php');
+require_once($CFG->dirroot . '/mod/lti/OAuth.php');
 require_once($CFG->libdir . '/weblib.php');
 require_once($CFG->dirroot . '/course/modlib.php');
-require_once($CFG->dirroot . '/mod/glaaster/TrivialStore.php');
+require_once($CFG->dirroot . '/mod/lti/TrivialStore.php');
 
-define('LTI_GLAASTER_URL_DOMAIN_REGEX', '/(?:https?:\/\/)?(?:www\.)?([^\/]+)(?:\/|$)/i');
+define('GLAASTER_URL_DOMAIN_REGEX', '/(?:https?:\/\/)?(?:www\.)?([^\/]+)(?:\/|$)/i');
 
-define('LTI_GLAASTER_LAUNCH_CONTAINER_DEFAULT', 1);
-define('LTI_GLAASTER_LAUNCH_CONTAINER_EMBED', 2);
-define('LTI_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS', 3);
-define('LTI_GLAASTER_LAUNCH_CONTAINER_WINDOW', 4);
-define('LTI_GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW', 5);
+define('GLAASTER_LAUNCH_CONTAINER_DEFAULT', 1);
+define('GLAASTER_LAUNCH_CONTAINER_EMBED', 2);
+define('GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS', 3);
+define('GLAASTER_LAUNCH_CONTAINER_WINDOW', 4);
+define('GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW', 5);
 
-define('LTI_GLAASTER_TOOL_STATE_ANY', 0);
-define('LTI_GLAASTER_TOOL_STATE_CONFIGURED', 1);
-define('LTI_GLAASTER_TOOL_STATE_PENDING', 2);
-define('LTI_GLAASTER_TOOL_STATE_REJECTED', 3);
-define('LTI_GLAASTER_TOOL_PROXY_TAB', 4);
+define('GLAASTER_TOOL_STATE_ANY', 0);
+define('GLAASTER_TOOL_STATE_CONFIGURED', 1);
+define('GLAASTER_TOOL_STATE_PENDING', 2);
+define('GLAASTER_TOOL_STATE_REJECTED', 3);
+define('GLAASTER_TOOL_PROXY_TAB', 4);
 
-define('LTI_GLAASTER_TOOL_PROXY_STATE_CONFIGURED', 1);
-define('LTI_GLAASTER_TOOL_PROXY_STATE_PENDING', 2);
-define('LTI_GLAASTER_TOOL_PROXY_STATE_ACCEPTED', 3);
-define('LTI_GLAASTER_TOOL_PROXY_STATE_REJECTED', 4);
+define('GLAASTER_TOOL_PROXY_STATE_CONFIGURED', 1);
+define('GLAASTER_TOOL_PROXY_STATE_PENDING', 2);
+define('GLAASTER_TOOL_PROXY_STATE_ACCEPTED', 3);
+define('GLAASTER_TOOL_PROXY_STATE_REJECTED', 4);
 
-define('LTI_GLAASTER_SETTING_NEVER', 0);
-define('LTI_GLAASTER_SETTING_ALWAYS', 1);
-define('LTI_GLAASTER_SETTING_DELEGATE', 2);
+define('GLAASTER_SETTING_NEVER', 0);
+define('GLAASTER_SETTING_ALWAYS', 1);
+define('GLAASTER_SETTING_DELEGATE', 2);
 
-define('LTI_GLAASTER_COURSEVISIBLE_NO', 0);
-define('LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED', 1);
-define('LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER', 2);
+define('GLAASTER_COURSEVISIBLE_NO', 0);
+define('GLAASTER_COURSEVISIBLE_PRECONFIGURED', 1);
+define('GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER', 2);
 
-define('LTI_GLAASTER_VERSION_1', 'LTI-1p0');
-define('LTI_GLAASTER_VERSION_2', 'LTI-2p0');
-define('LTI_GLAASTER_VERSION_1P3', '1.3.0');
-define('LTI_GLAASTER_RSA_KEY', 'RSA_KEY');
-define('LTI_GLAASTER_JWK_KEYSET', 'JWK_KEYSET');
+define('GLAASTER_VERSION_1', 'LTI-1p0');
+define('GLAASTER_VERSION_2', 'LTI-2p0');
+define('GLAASTER_VERSION_1P3', '1.3.0');
+define('GLAASTER_RSA_KEY', 'RSA_KEY');
+define('GLAASTER_JWK_KEYSET', 'JWK_KEYSET');
 
-define('LTI_GLAASTER_DEFAULT_ORGID_SITEID', 'SITEID');
-define('LTI_GLAASTER_DEFAULT_ORGID_SITEHOST', 'SITEHOST');
+define('GLAASTER_DEFAULT_ORGID_SITEID', 'SITEID');
+define('GLAASTER_DEFAULT_ORGID_SITEHOST', 'SITEHOST');
 
-define('LTI_GLAASTER_ACCESS_TOKEN_LIFE', 3600);
+define('GLAASTER_ACCESS_TOKEN_LIFE', 3600);
 
 // Standard prefix for JWT claims.
-define('LTI_GLAASTER_JWT_CLAIM_PREFIX', 'https://purl.imsglobal.org/spec/lti');
+define('GLAASTER_JWT_CLAIM_PREFIX', 'https://purl.imsglobal.org/spec/lti');
 
 // Tool domain url prod.
-define('LTI_GLAASTER_TOOLDOMAIN', 'lti.glaaster.com');
+define('GLAASTER_TOOLDOMAIN', 'lti.glaaster.com');
 
 /**
  * Return the mapping for standard message types to JWT message_type claim.
  *
  * @return array
  */
-function lti_glaaster_get_jwt_message_type_mapping() {
+function glaaster_get_jwt_message_type_mapping() {
     return [
         'basic-lti-launch-request' => 'LtiResourceLinkRequest',
         'ContentItemSelectionRequest' => 'LtiDeepLinkingRequest',
@@ -112,9 +112,9 @@ function lti_glaaster_get_jwt_message_type_mapping() {
  *
  * @return array
  */
-function lti_glaaster_get_jwt_claim_mapping() {
+function glaaster_get_jwt_claim_mapping() {
     $mapping = [];
-    $services = lti_glaaster_get_services();
+    $services = glaaster_get_services();
     foreach ($services as $service) {
         $mapping = array_merge($mapping, $service->get_jwt_claim_mappings());
     }
@@ -447,14 +447,14 @@ function lti_glaaster_get_jwt_claim_mapping() {
  * @return object|null
  * @since  Moodle 3.9
  */
-function lti_glaaster_get_instance_type(object $instance): ?object {
+function glaaster_get_instance_type(object $instance): ?object {
     if (empty($instance->typeid)) {
-        if (!$tool = lti_glaaster_get_tool_by_url_match($instance->toolurl, $instance->course)) {
-            $tool = lti_glaaster_get_tool_by_url_match($instance->securetoolurl, $instance->course);
+        if (!$tool = glaaster_get_tool_by_url_match($instance->toolurl, $instance->course)) {
+            $tool = glaaster_get_tool_by_url_match($instance->securetoolurl, $instance->course);
         }
         return $tool;
     }
-    return lti_glaaster_get_type($instance->typeid);
+    return glaaster_get_type($instance->typeid);
 }
 
 /**
@@ -473,7 +473,7 @@ function lti_glaaster_get_instance_type(object $instance): ?object {
  * @return array the endpoint URL and parameters (including the signature)
  * @since  Moodle 3.0
  */
-function lti_glaaster_get_launch_data(
+function glaaster_get_launch_data(
     $instance,
     $nonce = '',
     $messagetype = 'basic-lti-launch-request',
@@ -487,17 +487,17 @@ function lti_glaaster_get_launch_data(
 ) {
     global $PAGE, $USER;
     $messagetype = $messagetype ? $messagetype : 'basic-lti-launch-request';
-    $tool = lti_glaaster_get_instance_type($instance);
+    $tool = glaaster_get_instance_type($instance);
     if ($tool) {
         $typeid = $tool->id;
         $ltiversion = $tool->ltiversion;
     } else {
         $typeid = null;
-        $ltiversion = LTI_GLAASTER_VERSION_1;
+        $ltiversion = GLAASTER_VERSION_1;
     }
 
     if ($typeid) {
-        $typeconfig = lti_glaaster_get_type_config($typeid);
+        $typeconfig = glaaster_get_type_config($typeid);
     } else {
         // There is no admin configuration for this tool. Use configuration in the lti instance record plus some defaults.
         $typeconfig = (array) $instance;
@@ -510,14 +510,14 @@ function lti_glaaster_get_launch_data(
     }
 
     if (isset($tool->toolproxyid)) {
-        $toolproxy = lti_glaaster_get_tool_proxy($tool->toolproxyid);
+        $toolproxy = glaaster_get_tool_proxy($tool->toolproxyid);
         $key = $toolproxy->guid;
         $secret = $toolproxy->secret;
     } else {
         $toolproxy = null;
         if (!empty($instance->resourcekey)) {
             $key = $instance->resourcekey;
-        } else if ($ltiversion === LTI_GLAASTER_VERSION_1P3) {
+        } else if ($ltiversion === GLAASTER_VERSION_1P3) {
             $key = $tool->clientid;
         } else if (!empty($typeconfig['resourcekey'])) {
             $key = $typeconfig['resourcekey'];
@@ -537,7 +537,7 @@ function lti_glaaster_get_launch_data(
     $endpoint = trim($endpoint);
 
     // If the current request is using SSL and a secure tool URL is specified, use it.
-    if (lti_glaaster_request_is_using_ssl() && !empty($instance->securetoolurl)) {
+    if (glaaster_request_is_using_ssl() && !empty($instance->securetoolurl)) {
         $endpoint = trim($instance->securetoolurl);
     }
 
@@ -548,18 +548,18 @@ function lti_glaaster_get_launch_data(
         }
 
         if ($endpoint !== '') {
-            $endpoint = lti_glaaster_ensure_url_is_https($endpoint);
+            $endpoint = glaaster_ensure_url_is_https($endpoint);
         }
     } else if ($endpoint !== '' && !strstr($endpoint, '://')) {
         $endpoint = 'http://' . $endpoint;
     }
 
-    $orgid = lti_glaaster_get_organizationid($typeconfig);
+    $orgid = glaaster_get_organizationid($typeconfig);
 
     $course = $PAGE->course;
     $islti2 = isset($tool->toolproxyid);
     $allparams =
-        lti_glaaster_build_request(
+        glaaster_build_request(
             $instance,
             $typeconfig,
             $course,
@@ -575,17 +575,17 @@ function lti_glaaster_get_launch_data(
             $filepath
         );
     if ($islti2) {
-        $requestparams = lti_glaaster_build_request_lti2($tool, $allparams);
+        $requestparams = glaaster_build_request_lti2($tool, $allparams);
     } else {
         $requestparams = $allparams;
     }
     $requestparams =
-        array_merge($requestparams, lti_glaaster_build_standard_message($instance, $orgid, $ltiversion, $messagetype));
+        array_merge($requestparams, glaaster_build_standard_message($instance, $orgid, $ltiversion, $messagetype));
     $customstr = '';
     if (isset($typeconfig['customparameters'])) {
         $customstr = $typeconfig['customparameters'];
     }
-    $services = lti_glaaster_get_services();
+    $services = glaaster_get_services();
     foreach ($services as $service) {
         [$endpoint, $customstr] = $service->override_endpoint(
             $messagetype,
@@ -598,7 +598,7 @@ function lti_glaaster_get_launch_data(
     $requestparams =
         array_merge(
             $requestparams,
-            lti_glaaster_build_custom_parameters(
+            glaaster_build_custom_parameters(
                 $toolproxy,
                 $tool,
                 $instance,
@@ -609,7 +609,7 @@ function lti_glaaster_get_launch_data(
             )
         );
 
-    $launchcontainer = lti_glaaster_get_launch_container($instance, $typeconfig);
+    $launchcontainer = glaaster_get_launch_container($instance, $typeconfig);
     $returnurlparams = [
         'course' => $course->id,
         'launch_container' => $launchcontainer,
@@ -622,19 +622,19 @@ function lti_glaaster_get_launch_data(
     $returnurl = $url->out(false);
 
     if (isset($typeconfig['forcessl']) && ($typeconfig['forcessl'] == '1')) {
-        $returnurl = lti_glaaster_ensure_url_is_https($returnurl);
+        $returnurl = glaaster_ensure_url_is_https($returnurl);
     }
 
     $target = '';
     switch ($launchcontainer) {
-        case LTI_GLAASTER_LAUNCH_CONTAINER_EMBED:
-        case LTI_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS:
+        case GLAASTER_LAUNCH_CONTAINER_EMBED:
+        case GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS:
             $target = 'iframe';
             break;
-        case LTI_GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW:
+        case GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW:
             $target = 'frame';
             break;
-        case LTI_GLAASTER_LAUNCH_CONTAINER_WINDOW:
+        case GLAASTER_LAUNCH_CONTAINER_WINDOW:
             $target = 'window';
             break;
     }
@@ -646,7 +646,7 @@ function lti_glaaster_get_launch_data(
 
     // Add the parameters configured by the LTI services.
     if ($typeid && !$islti2) {
-        $services = lti_glaaster_get_services();
+        $services = glaaster_get_services();
         foreach ($services as $service) {
             $serviceparameters = $service->get_launch_parameters(
                 'basic-lti-launch-request',
@@ -657,7 +657,7 @@ function lti_glaaster_get_launch_data(
             );
             foreach ($serviceparameters as $paramkey => $paramvalue) {
                 $requestparams['custom_' . $paramkey] =
-                    lti_glaaster_parse_custom_parameter(
+                    glaaster_parse_custom_parameter(
                         $toolproxy,
                         $tool,
                         $requestparams,
@@ -683,11 +683,11 @@ function lti_glaaster_get_launch_data(
         }
     }
 
-    if ((!empty($key) && !empty($secret)) || ($ltiversion === LTI_GLAASTER_VERSION_1P3)) {
-        if ($ltiversion !== LTI_GLAASTER_VERSION_1P3) {
-            $parms = lti_glaaster_sign_parameters($requestparams, $endpoint, 'POST', $key, $secret);
+    if ((!empty($key) && !empty($secret)) || ($ltiversion === GLAASTER_VERSION_1P3)) {
+        if ($ltiversion !== GLAASTER_VERSION_1P3) {
+            $parms = glaaster_sign_parameters($requestparams, $endpoint, 'POST', $key, $secret);
         } else {
-            $parms = lti_glaaster_sign_jwt($requestparams, $endpoint, $key, $typeid, $nonce);
+            $parms = glaaster_sign_jwt($requestparams, $endpoint, $key, $typeid, $nonce);
         }
 
         $endpointurl = new moodle_url($endpoint);
@@ -717,11 +717,11 @@ function lti_glaaster_get_launch_data(
  * @param int $foruserid for user param, optional
  * @return string The HTML code containing the javascript code for the launch
  */
-function lti_glaaster_launch_tool($instance, $foruserid = 0) {
-    [$endpoint, $parms] = lti_glaaster_get_launch_data($instance, '', '', $foruserid);
+function glaaster_launch_tool($instance, $foruserid = 0) {
+    [$endpoint, $parms] = glaaster_get_launch_data($instance, '', '', $foruserid);
     $debuglaunch = ($instance->debuglaunch == 1);
 
-    $content = lti_glaaster_post_launch_html($parms, $endpoint, $debuglaunch);
+    $content = glaaster_post_launch_html($parms, $endpoint, $debuglaunch);
 
     echo $content;
 }
@@ -731,16 +731,16 @@ function lti_glaaster_launch_tool($instance, $foruserid = 0) {
  *
  * @param object $toolproxy Tool Proxy instance object
  */
-function lti_glaaster_register($toolproxy) {
+function glaaster_register($toolproxy) {
     $endpoint = $toolproxy->regurl;
 
     // Change the status to pending.
-    $toolproxy->state = LTI_GLAASTER_TOOL_PROXY_STATE_PENDING;
-    lti_glaaster_update_tool_proxy($toolproxy);
+    $toolproxy->state = GLAASTER_TOOL_PROXY_STATE_PENDING;
+    glaaster_update_tool_proxy($toolproxy);
 
-    $requestparams = lti_glaaster_build_registration_request($toolproxy);
+    $requestparams = glaaster_build_registration_request($toolproxy);
 
-    $content = lti_glaaster_post_launch_html($requestparams, $endpoint, false);
+    $content = glaaster_post_launch_html($requestparams, $endpoint, false);
 
     echo $content;
 }
@@ -751,7 +751,7 @@ function lti_glaaster_register($toolproxy) {
  * @param object $toolproxy Tool Proxy instance object
  * @return array Registration request parameters
  */
-function lti_glaaster_build_registration_request($toolproxy) {
+function glaaster_build_registration_request($toolproxy) {
     $key = $toolproxy->guid;
     $secret = $toolproxy->secret;
 
@@ -763,7 +763,7 @@ function lti_glaaster_build_registration_request($toolproxy) {
     $requestparams['reg_url'] = $toolproxy->regurl;
 
     // Add the profile URL.
-    $profileservice = lti_glaaster_get_service_by_name('profile');
+    $profileservice = glaaster_get_service_by_name('profile');
     $profileservice->set_tool_proxy($toolproxy);
     $requestparams['tc_profile_url'] = $profileservice->parse_value('$ToolConsumerProfile.url');
 
@@ -782,13 +782,13 @@ function lti_glaaster_build_registration_request($toolproxy) {
  * @param object $typeconfig
  * @return string
  */
-function lti_glaaster_get_organizationid($typeconfig) {
+function glaaster_get_organizationid($typeconfig) {
     global $CFG;
     // Default the organizationid if not specified.
     if (empty($typeconfig['organizationid'])) {
         if (
-            ($typeconfig['organizationid_default'] ?? LTI_GLAASTER_DEFAULT_ORGID_SITEHOST) ==
-            LTI_GLAASTER_DEFAULT_ORGID_SITEHOST
+            ($typeconfig['organizationid_default'] ?? GLAASTER_DEFAULT_ORGID_SITEHOST) ==
+            GLAASTER_DEFAULT_ORGID_SITEHOST
         ) {
             $urlparts = parse_url($CFG->wwwroot);
             return $urlparts['host'];
@@ -818,7 +818,7 @@ function lti_glaaster_get_organizationid($typeconfig) {
  *
  * @return array                    Request details
  */
-function lti_glaaster_build_request(
+function glaaster_build_request(
     $instance,
     $typeconfig,
     $course,
@@ -839,7 +839,7 @@ function lti_glaaster_build_request(
         $instance->cmid = 0;
     }
 
-    $role = lti_glaaster_get_ims_role($USER, $instance->cmid, $instance->course, $islti2);
+    $role = glaaster_get_ims_role($USER, $instance->cmid, $instance->course, $islti2);
 
     $requestparams = [
         'user_id' => $USER->id,
@@ -906,10 +906,10 @@ function lti_glaaster_build_request(
     // Send user's name and email data if appropriate.
     if (
         $islti2 ||
-        $typeconfig['sendname'] == LTI_GLAASTER_SETTING_ALWAYS ||
-        ($typeconfig['sendname'] == LTI_GLAASTER_SETTING_DELEGATE &&
+        $typeconfig['sendname'] == GLAASTER_SETTING_ALWAYS ||
+        ($typeconfig['sendname'] == GLAASTER_SETTING_DELEGATE &&
         isset($instance->instructorchoicesendname) &&
-            $instance->instructorchoicesendname == LTI_GLAASTER_SETTING_ALWAYS)
+            $instance->instructorchoicesendname == GLAASTER_SETTING_ALWAYS)
     ) {
         $requestparams['lis_person_name_given'] = $USER->firstname;
         $requestparams['lis_person_name_family'] = $USER->lastname;
@@ -919,10 +919,10 @@ function lti_glaaster_build_request(
 
     if (
         $islti2 ||
-        $typeconfig['sendemailaddr'] == LTI_GLAASTER_SETTING_ALWAYS ||
-        ($typeconfig['sendemailaddr'] == LTI_GLAASTER_SETTING_DELEGATE &&
+        $typeconfig['sendemailaddr'] == GLAASTER_SETTING_ALWAYS ||
+        ($typeconfig['sendemailaddr'] == GLAASTER_SETTING_DELEGATE &&
             isset($instance->instructorchoicesendemailaddr) &&
-            $instance->instructorchoicesendemailaddr == LTI_GLAASTER_SETTING_ALWAYS)
+            $instance->instructorchoicesendemailaddr == GLAASTER_SETTING_ALWAYS)
     ) {
         $requestparams['lis_person_contact_email_primary'] = $USER->email;
     }
@@ -938,10 +938,10 @@ function lti_glaaster_build_request(
  *
  * @return array                    Request details
  */
-function lti_glaaster_build_request_lti2($tool, $params) {
+function glaaster_build_request_lti2($tool, $params) {
     $requestparams = [];
 
-    $capabilities = lti_glaaster_get_capabilities();
+    $capabilities = glaaster_get_capabilities();
     $enabledcapabilities = explode("\n", $tool->enabledcapability);
     foreach ($enabledcapabilities as $capability) {
         if (array_key_exists($capability, $capabilities)) {
@@ -967,15 +967,15 @@ function lti_glaaster_build_request_lti2($tool, $params) {
  *
  * @return array                    Request details
  * @deprecated since Moodle 3.7 MDL-62599 - please do not use this function any more.
- * @see lti_glaaster_build_standard_message()
+ * @see glaaster_build_standard_message()
  */
-function lti_glaaster_build_standard_request($instance, $orgid, $islti2, $messagetype = 'basic-lti-launch-request') {
+function glaaster_build_standard_request($instance, $orgid, $islti2, $messagetype = 'basic-lti-launch-request') {
     if (!$islti2) {
-        $ltiversion = LTI_GLAASTER_VERSION_1;
+        $ltiversion = GLAASTER_VERSION_1;
     } else {
-        $ltiversion = LTI_GLAASTER_VERSION_2;
+        $ltiversion = GLAASTER_VERSION_2;
     }
-    return lti_glaaster_build_standard_message($instance, $orgid, $ltiversion, $messagetype);
+    return glaaster_build_standard_message($instance, $orgid, $ltiversion, $messagetype);
 }
 
 /**
@@ -988,7 +988,7 @@ function lti_glaaster_build_standard_request($instance, $orgid, $islti2, $messag
  *
  * @return array                    Message parameters
  */
-function lti_glaaster_build_standard_message(
+function glaaster_build_standard_message(
     $instance,
     $orgid,
     $ltiversion,
@@ -1044,7 +1044,7 @@ function lti_glaaster_build_standard_message(
  *
  * @return array                    Custom parameters
  */
-function lti_glaaster_build_custom_parameters(
+function glaaster_build_custom_parameters(
     $toolproxy,
     $tool,
     $instance,
@@ -1058,10 +1058,10 @@ function lti_glaaster_build_custom_parameters(
     // has given permission.
     $custom = [];
     if ($customstr) {
-        $custom = lti_glaaster_split_custom_parameters($toolproxy, $tool, $params, $customstr, $islti2);
+        $custom = glaaster_split_custom_parameters($toolproxy, $tool, $params, $customstr, $islti2);
     }
     if ($instructorcustomstr) {
-        $custom = array_merge(lti_glaaster_split_custom_parameters(
+        $custom = array_merge(glaaster_split_custom_parameters(
             $toolproxy,
             $tool,
             $params,
@@ -1070,22 +1070,22 @@ function lti_glaaster_build_custom_parameters(
         ), $custom);
     }
     if ($islti2) {
-        $custom = array_merge(lti_glaaster_split_custom_parameters(
+        $custom = array_merge(glaaster_split_custom_parameters(
             $toolproxy,
             $tool,
             $params,
             $tool->parameter,
             true
         ), $custom);
-        $settings = lti_glaaster_get_tool_settings($tool->toolproxyid);
-        $custom = array_merge($custom, lti_glaaster_get_custom_parameters($toolproxy, $tool, $params, $settings));
+        $settings = glaaster_get_tool_settings($tool->toolproxyid);
+        $custom = array_merge($custom, glaaster_get_custom_parameters($toolproxy, $tool, $params, $settings));
         if (!empty($instance->course)) {
-            $settings = lti_glaaster_get_tool_settings($tool->toolproxyid, $instance->course);
-            $custom = array_merge($custom, lti_glaaster_get_custom_parameters($toolproxy, $tool, $params, $settings));
+            $settings = glaaster_get_tool_settings($tool->toolproxyid, $instance->course);
+            $custom = array_merge($custom, glaaster_get_custom_parameters($toolproxy, $tool, $params, $settings));
             if (!empty($instance->id)) {
-                $settings = lti_glaaster_get_tool_settings($tool->toolproxyid, $instance->course, $instance->id);
+                $settings = glaaster_get_tool_settings($tool->toolproxyid, $instance->course, $instance->id);
                 $custom =
-                    array_merge($custom, lti_glaaster_get_custom_parameters($toolproxy, $tool, $params, $settings));
+                    array_merge($custom, glaaster_get_custom_parameters($toolproxy, $tool, $params, $settings));
             }
         }
     }
@@ -1126,7 +1126,7 @@ function lti_glaaster_build_custom_parameters(
  * @throws moodle_exception When the LTI tool type does not exist.
  * @throws coding_exception For invalid media type and presentation target parameters.
  */
-function lti_glaaster_build_content_item_selection_request(
+function glaaster_build_content_item_selection_request(
     $id,
     $course,
     moodle_url $returnurl,
@@ -1145,7 +1145,7 @@ function lti_glaaster_build_content_item_selection_request(
 ) {
     global $USER;
 
-    $tool = lti_glaaster_get_type($id);
+    $tool = glaaster_get_type($id);
     // Validate parameters.
     if (!$tool) {
         throw new moodle_exception('errortooltypenotfound', 'mod_glaaster');
@@ -1162,18 +1162,18 @@ function lti_glaaster_build_content_item_selection_request(
         $title = $tool->name;
     }
 
-    $typeconfig = lti_glaaster_get_type_config($id);
+    $typeconfig = glaaster_get_type_config($id);
     $key = '';
     $secret = '';
     $islti2 = false;
     $islti13 = false;
     if (isset($tool->toolproxyid)) {
         $islti2 = true;
-        $toolproxy = lti_glaaster_get_tool_proxy($tool->toolproxyid);
+        $toolproxy = glaaster_get_tool_proxy($tool->toolproxyid);
         $key = $toolproxy->guid;
         $secret = $toolproxy->secret;
     } else {
-        $islti13 = $tool->ltiversion === LTI_GLAASTER_VERSION_1P3;
+        $islti13 = $tool->ltiversion === GLAASTER_VERSION_1P3;
         $toolproxy = null;
         if ($islti13 && !empty($tool->clientid)) {
             $key = $tool->clientid;
@@ -1218,18 +1218,18 @@ function lti_glaaster_build_content_item_selection_request(
     $instance = new stdClass();
     $instance->course = $course->id;
     $requestparams =
-        lti_glaaster_build_request($instance, $typeconfig, $course, $id, $islti2, $resourceid, $resourcecourseid);
+        glaaster_build_request($instance, $typeconfig, $course, $id, $islti2, $resourceid, $resourcecourseid);
 
     // Get LTI2-specific request parameters and merge to the request parameters if applicable.
     if ($islti2) {
-        $lti2params = lti_glaaster_build_request_lti2($tool, $requestparams);
+        $lti2params = glaaster_build_request_lti2($tool, $requestparams);
         $requestparams = array_merge($requestparams, $lti2params);
     }
 
     // Get standard request parameters and merge to the request parameters.
-    $orgid = lti_glaaster_get_organizationid($typeconfig);
+    $orgid = glaaster_get_organizationid($typeconfig);
     $standardparams =
-        lti_glaaster_build_standard_message(null, $orgid, $tool->ltiversion, 'ContentItemSelectionRequest');
+        glaaster_build_standard_message(null, $orgid, $tool->ltiversion, 'ContentItemSelectionRequest');
     $requestparams = array_merge($requestparams, $standardparams);
 
     // Get custom request parameters and merge to the request parameters.
@@ -1238,12 +1238,12 @@ function lti_glaaster_build_content_item_selection_request(
         $customstr = $typeconfig['customparameters'];
     }
     $customparams =
-        lti_glaaster_build_custom_parameters($toolproxy, $tool, $instance, $requestparams, $customstr, '', $islti2);
+        glaaster_build_custom_parameters($toolproxy, $tool, $instance, $requestparams, $customstr, '', $islti2);
     $requestparams = array_merge($requestparams, $customparams);
 
     // Add the parameters configured by the LTI services.
     if ($id && !$islti2) {
-        $services = lti_glaaster_get_services();
+        $services = glaaster_get_services();
         foreach ($services as $service) {
             $serviceparameters = $service->get_launch_parameters(
                 'ContentItemSelectionRequest',
@@ -1253,7 +1253,7 @@ function lti_glaaster_build_content_item_selection_request(
             );
             foreach ($serviceparameters as $paramkey => $paramvalue) {
                 $requestparams['custom_' . $paramkey] =
-                    lti_glaaster_parse_custom_parameter(
+                    glaaster_parse_custom_parameter(
                         $toolproxy,
                         $tool,
                         $requestparams,
@@ -1313,9 +1313,9 @@ function lti_glaaster_build_content_item_selection_request(
     $requestparams['title'] = $title;
     $requestparams['text'] = $text;
     if (!$islti13) {
-        $signedparams = lti_glaaster_sign_parameters($requestparams, $toolurlout, 'POST', $key, $secret);
+        $signedparams = glaaster_sign_parameters($requestparams, $toolurlout, 'POST', $key, $secret);
     } else {
-        $signedparams = lti_glaaster_sign_jwt($requestparams, $toolurlout, $key, $id, $nonce);
+        $signedparams = glaaster_sign_jwt($requestparams, $toolurlout, $key, $id, $nonce);
     }
     $toolurlparams = $toolurl->params();
 
@@ -1356,18 +1356,18 @@ function lti_glaaster_build_content_item_selection_request(
  * @param string $consumerkey The consumer key.
  * @return stdClass Tool type
  * @throws moodle_exception
- * @throws lti\GlaasterOAuthException
+ * @throws lti\OAuthException
  */
-function lti_glaaster_verify_oauth_signature($typeid, $consumerkey) {
-    $tool = lti_glaaster_get_type($typeid);
+function glaaster_verify_oauth_signature($typeid, $consumerkey) {
+    $tool = glaaster_get_type($typeid);
     // Validate parameters.
     if (!$tool) {
         throw new moodle_exception('errortooltypenotfound', 'mod_glaaster');
     }
-    $typeconfig = lti_glaaster_get_type_config($typeid);
+    $typeconfig = glaaster_get_type_config($typeid);
 
     if (isset($tool->toolproxyid)) {
-        $toolproxy = lti_glaaster_get_tool_proxy($tool->toolproxyid);
+        $toolproxy = glaaster_get_tool_proxy($tool->toolproxyid);
         $key = $toolproxy->guid;
         $secret = $toolproxy->secret;
     } else {
@@ -1388,16 +1388,16 @@ function lti_glaaster_verify_oauth_signature($typeid, $consumerkey) {
         throw new moodle_exception('errorincorrectconsumerkey', 'mod_glaaster');
     }
 
-    $store = new lti\TrivialGlaasterOAuthDataStore();
+    $store = new lti\TrivialOAuthDataStore();
     $store->add_consumer($key, $secret);
-    $server = new lti\GlaasterOAuthServer($store);
-    $method = new lti\GlaasterOAuthSignatureMethod_HMAC_SHA1();
+    $server = new lti\OAuthServer($store);
+    $method = new lti\OAuthSignatureMethod_HMAC_SHA1();
     $server->add_signature_method($method);
-    $request = lti\GlaasterOAuthRequest::from_request();
+    $request = lti\OAuthRequest::from_request();
     try {
         $server->verify_request($request);
-    } catch (lti\GlaasterOAuthException $e) {
-        throw new lti\GlaasterOAuthException("OAuth signature failed: " . $e->getMessage());
+    } catch (lti\OAuthException $e) {
+        throw new lti\OAuthException("OAuth signature failed: " . $e->getMessage());
     }
 
     return $tool;
@@ -1418,7 +1418,7 @@ function lti_glaaster_verify_oauth_signature($typeid, $consumerkey) {
  * @throws BeforeValidException         Provided JWT is trying to be used before it's been created as defined by 'iat'
  * @throws ExpiredException             Provided JWT has since expired, as defined by the 'exp' claim
  */
-function lti_glaaster_verify_with_keyset($jwtparam, $keyseturl, $clientid) {
+function glaaster_verify_with_keyset($jwtparam, $keyseturl, $clientid) {
     // Attempts to retrieve cached keyset.
     $cache = cache::make('mod_glaaster', 'keyset');
     $keyset = $cache->get($clientid);
@@ -1465,8 +1465,8 @@ function lti_glaaster_verify_with_keyset($jwtparam, $keyseturl, $clientid) {
  * @throws BeforeValidException         Provided JWT is trying to be used before it's been created as defined by 'iat'
  * @throws ExpiredException             Provided JWT has since expired, as defined by the 'exp' claim
  */
-function lti_glaaster_verify_jwt_signature($typeid, $consumerkey, $jwtparam) {
-    $tool = lti_glaaster_get_type($typeid);
+function glaaster_verify_jwt_signature($typeid, $consumerkey, $jwtparam) {
+    $tool = glaaster_get_type($typeid);
 
     // Validate parameters.
     if (!$tool) {
@@ -1476,7 +1476,7 @@ function lti_glaaster_verify_jwt_signature($typeid, $consumerkey, $jwtparam) {
         throw new moodle_exception('JWT security not supported with LTI 2');
     }
 
-    $typeconfig = lti_glaaster_get_type_config($typeid);
+    $typeconfig = glaaster_get_type_config($typeid);
 
     $key = $tool->clientid ?? '';
 
@@ -1484,20 +1484,20 @@ function lti_glaaster_verify_jwt_signature($typeid, $consumerkey, $jwtparam) {
         throw new moodle_exception('errorincorrectconsumerkey', 'mod_glaaster');
     }
 
-    if (empty($typeconfig['keytype']) || $typeconfig['keytype'] === LTI_GLAASTER_RSA_KEY) {
+    if (empty($typeconfig['keytype']) || $typeconfig['keytype'] === GLAASTER_RSA_KEY) {
         $publickey = $typeconfig['publickey'] ?? '';
         if (empty($publickey)) {
             throw new moodle_exception('No public key configured');
         }
         // Attemps to verify jwt with RSA key.
         JWT::decode($jwtparam, new Key($publickey, 'RS256'));
-    } else if ($typeconfig['keytype'] === LTI_GLAASTER_JWK_KEYSET) {
+    } else if ($typeconfig['keytype'] === GLAASTER_JWK_KEYSET) {
         $keyseturl = $typeconfig['publickeyset'] ?? '';
         if (empty($keyseturl)) {
             throw new moodle_exception('No public keyset configured');
         }
         // Attempts to verify jwt with jwk keyset.
-        lti_glaaster_verify_with_keyset($jwtparam, $keyseturl, $tool->clientid);
+        glaaster_verify_with_keyset($jwtparam, $keyseturl, $tool->clientid);
     } else {
         throw new moodle_exception('Invalid public key type');
     }
@@ -1567,22 +1567,22 @@ function glaaster_content_item_to_form(object $tool, object $typeconfig, object 
     } else {
         $config->typeid = $tool->id;
     }
-    $config->instructorchoicesendname = LTI_GLAASTER_SETTING_NEVER;
-    $config->instructorchoicesendemailaddr = LTI_GLAASTER_SETTING_NEVER;
+    $config->instructorchoicesendname = GLAASTER_SETTING_NEVER;
+    $config->instructorchoicesendemailaddr = GLAASTER_SETTING_NEVER;
 
     // Since 4.3, the launch container is dictated by the value set in tool configuration and isn't controllable by content items.
-    $config->launchcontainer = LTI_GLAASTER_LAUNCH_CONTAINER_DEFAULT;
+    $config->launchcontainer = GLAASTER_LAUNCH_CONTAINER_DEFAULT;
 
     if (isset($item->custom)) {
         $config->instructorcustomparameters = glaaster_params_to_string($item->custom);
     }
 
     // Sets grade/line item info.
-    $config->instructorchoiceacceptgrades = LTI_GLAASTER_SETTING_NEVER;
+    $config->instructorchoiceacceptgrades = GLAASTER_SETTING_NEVER;
     $config->lineitemsubreviewurl = '';
     $config->lineitemsubreviewparams = '';
     if (isset($item->lineItem)) {
-        $config->instructorchoiceacceptgrades = LTI_GLAASTER_SETTING_ALWAYS;
+        $config->instructorchoiceacceptgrades = GLAASTER_SETTING_ALWAYS;
         $config->lineitemtag = $item->lineItem->tag ?? '';
         $config->lineitemresourceid = $item->lineItem->resourceId ?? '';
         $config->grade_modgrade_point = $item->lineItem->scoreMaximum ?? 100;
@@ -1618,16 +1618,16 @@ function glaaster_content_item_to_form(object $tool, object $typeconfig, object 
  * @param string $contentitemsjson The JSON string for the content_items parameter.
  * @return stdClass The array of module information objects.
  * @throws moodle_exception
- * @throws lti\GlaasterOAuthException
+ * @throws lti\OAuthException
  */
-function lti_glaaster_tool_configuration_from_content_item(
+function glaaster_tool_configuration_from_content_item(
     $typeid,
     $messagetype,
     $ltiversion,
     $consumerkey,
     $contentitemsjson
 ) {
-    $tool = lti_glaaster_get_type($typeid);
+    $tool = glaaster_get_type($typeid);
     // Validate parameters.
     if (!$tool) {
         throw new moodle_exception('errortooltypenotfound', 'mod_glaaster');
@@ -1644,7 +1644,7 @@ function lti_glaaster_tool_configuration_from_content_item(
     // Check LTI versions from our side and the response's side. Show debugging if they don't match.
     // No need to throw exceptions for now since LTI version does not seem to be used in this processing at the moment.
     $expectedversion = $tool->ltiversion;
-    $islti2 = ($expectedversion === LTI_GLAASTER_VERSION_2);
+    $islti2 = ($expectedversion === GLAASTER_VERSION_2);
     if ($ltiversion !== $expectedversion) {
         debugging("lti_version from response does not match the tool's configuration. Tool: {$expectedversion}," .
             " Response: {$ltiversion}", DEBUG_DEVELOPER);
@@ -1661,7 +1661,7 @@ function lti_glaaster_tool_configuration_from_content_item(
     $config = null;
     $items = $items->{'@graph'};
     if (!empty($items)) {
-        $typeconfig = lti_glaaster_get_type_type_config($tool->id);
+        $typeconfig = glaaster_get_type_type_config($tool->id);
         if (count($items) == 1) {
             $config = glaaster_content_item_to_form($tool, $typeconfig, $items[0]);
         } else {
@@ -1682,7 +1682,7 @@ function lti_glaaster_tool_configuration_from_content_item(
  * @param string $param JSON string representing new Deep-Linking format
  * @return string  JSON representation of content-items
  */
-function lti_glaaster_convert_content_items($param) {
+function glaaster_convert_content_items($param) {
     $items = [];
     $json = json_decode($param);
     if (!empty($json) && is_array($json)) {
@@ -1804,7 +1804,7 @@ function lti_glaaster_convert_content_items($param) {
  *
  * @return string                   HTML for tab
  */
-function lti_glaaster_get_tool_table(array $tools, string $id) {
+function glaaster_get_tool_table(array $tools, string $id) {
     global $OUTPUT;
     $html = '';
 
@@ -1860,11 +1860,11 @@ function lti_glaaster_get_tool_table(array $tools, string $id) {
 
             $deleteaction = 'delete';
 
-            if ($type->state == LTI_GLAASTER_TOOL_STATE_CONFIGURED) {
+            if ($type->state == GLAASTER_TOOL_STATE_CONFIGURED) {
                 $accepthtml = '';
             }
 
-            if ($type->state != LTI_GLAASTER_TOOL_STATE_REJECTED) {
+            if ($type->state != GLAASTER_TOOL_STATE_REJECTED) {
                 $deleteaction = 'reject';
                 $delete = get_string('reject', 'glaaster');
             }
@@ -1878,7 +1878,7 @@ function lti_glaaster_get_tool_table(array $tools, string $id) {
                 ['title' => $update, 'class' => 'editing_update']
             );
 
-            if (($type->state != LTI_GLAASTER_TOOL_STATE_REJECTED) || empty($type->toolproxyid)) {
+            if (($type->state != GLAASTER_TOOL_STATE_REJECTED) || empty($type->toolproxyid)) {
                 $deleteurl = clone ($baseurl);
                 $deleteurl->param('action', $deleteaction);
                 $deletehtml = $OUTPUT->action_icon(
@@ -1923,7 +1923,7 @@ function lti_glaaster_get_tool_table(array $tools, string $id) {
  *
  * @return string                   HTML for tab
  */
-function lti_glaaster_glaaster_get_tool_proxy_table($toolproxies, $id) {
+function glaaster_get_tool_proxy_table($toolproxies, $id) {
     global $OUTPUT;
 
     if (!empty($toolproxies)) {
@@ -1972,13 +1972,13 @@ EOD;
 
             $deleteaction = 'delete';
 
-            if ($toolproxy->state != LTI_GLAASTER_TOOL_PROXY_STATE_CONFIGURED) {
+            if ($toolproxy->state != GLAASTER_TOOL_PROXY_STATE_CONFIGURED) {
                 $accepthtml = '';
             }
 
             if (
-                ($toolproxy->state == LTI_GLAASTER_TOOL_PROXY_STATE_CONFIGURED) ||
-                ($toolproxy->state == LTI_GLAASTER_TOOL_PROXY_STATE_PENDING)
+                ($toolproxy->state == GLAASTER_TOOL_PROXY_STATE_CONFIGURED) ||
+                ($toolproxy->state == GLAASTER_TOOL_PROXY_STATE_PENDING)
             ) {
                 $delete = get_string('cancel', 'glaaster');
             }
@@ -2032,7 +2032,7 @@ EOD;
  *
  * @return array List of enabled capabilities
  */
-function lti_glaaster_get_enabled_capabilities($tool) {
+function glaaster_get_enabled_capabilities($tool) {
     if (!isset($tool)) {
         return [];
     }
@@ -2070,7 +2070,7 @@ function lti_glaaster_get_enabled_capabilities($tool) {
  *
  * @return array of custom parameters
  */
-function lti_glaaster_split_parameters($customstr) {
+function glaaster_split_parameters($customstr) {
     $customstr = str_replace("\r\n", "\n", $customstr);
     $customstr = str_replace("\n\r", "\n", $customstr);
     $customstr = str_replace("\r", "\n", $customstr);
@@ -2099,14 +2099,14 @@ function lti_glaaster_split_parameters($customstr) {
  *
  * @return array of custom parameters
  */
-function lti_glaaster_split_custom_parameters($toolproxy, $tool, $params, $customstr, $islti2 = false) {
-    $splitted = lti_glaaster_split_parameters($customstr);
+function glaaster_split_custom_parameters($toolproxy, $tool, $params, $customstr, $islti2 = false) {
+    $splitted = glaaster_split_parameters($customstr);
     $retval = [];
     foreach ($splitted as $key => $val) {
-        $val = lti_glaaster_parse_custom_parameter($toolproxy, $tool, $params, $val, $islti2);
-        $key2 = lti_glaaster_map_keyname($key);
+        $val = glaaster_parse_custom_parameter($toolproxy, $tool, $params, $val, $islti2);
+        $key2 = glaaster_map_keyname($key);
         $retval['custom_' . $key2] = $val;
-        if (($islti2 || ($tool->ltiversion === LTI_GLAASTER_VERSION_1P3)) && ($key != $key2)) {
+        if (($islti2 || ($tool->ltiversion === GLAASTER_VERSION_1P3)) && ($key != $key2)) {
             $retval['custom_' . $key] = $val;
         }
     }
@@ -2123,11 +2123,11 @@ function lti_glaaster_split_custom_parameters($toolproxy, $tool, $params, $custo
  *
  * @return array    Array of custom parameters
  */
-function lti_glaaster_get_custom_parameters($toolproxy, $tool, $params, $parameters) {
+function glaaster_get_custom_parameters($toolproxy, $tool, $params, $parameters) {
     $retval = [];
     foreach ($parameters as $key => $val) {
-        $key2 = lti_glaaster_map_keyname($key);
-        $val = lti_glaaster_parse_custom_parameter($toolproxy, $tool, $params, $val, true);
+        $key2 = glaaster_map_keyname($key);
+        $val = glaaster_parse_custom_parameter($toolproxy, $tool, $params, $val, true);
         $retval['custom_' . $key2] = $val;
         if ($key != $key2) {
             $retval['custom_' . $key] = $val;
@@ -2147,7 +2147,7 @@ function lti_glaaster_get_custom_parameters($toolproxy, $tool, $params, $paramet
  *
  * @return string Parsed value of custom parameter
  */
-function lti_glaaster_parse_custom_parameter($toolproxy, $tool, $params, $value, $islti2) {
+function glaaster_parse_custom_parameter($toolproxy, $tool, $params, $value, $islti2) {
     // This is required as {${$valarr[0]}->{$valarr[1]}}" may be using the USER or COURSE var.
     global $USER, $COURSE;
 
@@ -2156,9 +2156,9 @@ function lti_glaaster_parse_custom_parameter($toolproxy, $tool, $params, $value,
             $value = substr($value, 1);
         } else if (substr($value, 0, 1) == '$') {
             $value1 = substr($value, 1);
-            $enabledcapabilities = lti_glaaster_get_enabled_capabilities($tool);
+            $enabledcapabilities = glaaster_get_enabled_capabilities($tool);
             if (!$islti2 || in_array($value1, $enabledcapabilities)) {
-                $capabilities = lti_glaaster_get_capabilities();
+                $capabilities = glaaster_get_capabilities();
                 if (array_key_exists($value1, $capabilities)) {
                     $val = $capabilities[$value1];
                     if ($val) {
@@ -2172,11 +2172,11 @@ function lti_glaaster_parse_custom_parameter($toolproxy, $tool, $params, $value,
                             $value = format_string($value);
                         }
                     } else {
-                        $value = lti_glaaster_calculate_custom_parameter($value1);
+                        $value = glaaster_calculate_custom_parameter($value1);
                     }
                 } else {
                     $val = $value;
-                    $services = lti_glaaster_get_services();
+                    $services = glaaster_get_services();
                     foreach ($services as $service) {
                         $service->set_tool_proxy($toolproxy);
                         $service->set_type($tool);
@@ -2199,7 +2199,7 @@ function lti_glaaster_parse_custom_parameter($toolproxy, $tool, $params, $value,
  *
  * @return string Calculated value of custom parameter
  */
-function lti_glaaster_calculate_custom_parameter($value) {
+function glaaster_calculate_custom_parameter($value) {
     global $USER, $COURSE;
 
     switch ($value) {
@@ -2248,7 +2248,7 @@ function glaaster_get_course_history($course) {
  * @param bool $tolower Do we want to convert the key into lower case?
  * @return string       Processed name
  */
-function lti_glaaster_map_keyname($key, $tolower = true) {
+function glaaster_map_keyname($key, $tolower = true) {
     if ($tolower) {
         $newkey = '';
         $key = core_text::strtolower(trim($key));
@@ -2275,7 +2275,7 @@ function lti_glaaster_map_keyname($key, $tolower = true) {
  *
  * @return string A role string suitable for passing with an LTI launch
  */
-function lti_glaaster_get_ims_role($user, $cmid, $courseid, $islti2) {
+function glaaster_get_ims_role($user, $cmid, $courseid, $islti2) {
     $roles = [];
 
     if (empty($cmid)) {
@@ -2319,7 +2319,7 @@ function lti_glaaster_get_ims_role($user, $cmid, $courseid, $islti2) {
  *
  * @return array        Tool Configuration
  */
-function lti_glaaster_get_type_config($typeid) {
+function glaaster_get_type_config($typeid) {
     global $DB;
 
     $query = "SELECT name, value
@@ -2362,10 +2362,10 @@ function lti_glaaster_get_type_config($typeid) {
  * @return string|array The domain extracted from the URL
  * @throws dml_exception
  */
-function lti_glaaster_get_tools_by_url($url, $state, $courseid = null): array|string {
-    $domain = lti_glaaster_get_domain_from_url($url);
+function glaaster_get_tools_by_url($url, $state, $courseid = null): array|string {
+    $domain = glaaster_get_domain_from_url($url);
 
-    return lti_glaaster_get_tools_by_domain($domain, $state, $courseid);
+    return glaaster_get_tools_by_domain($domain, $state, $courseid);
 }
 
 /**
@@ -2377,7 +2377,7 @@ function lti_glaaster_get_tools_by_url($url, $state, $courseid = null): array|st
  * @return array Records of tool types matching the domain
  * @throws dml_exception
  */
-function lti_glaaster_get_tools_by_domain($domain, $state = null, $courseid = null): array {
+function glaaster_get_tools_by_domain($domain, $state = null, $courseid = null): array {
     global $DB, $SITE;
 
     $statefilter = '';
@@ -2416,7 +2416,7 @@ function lti_glaaster_get_tools_by_domain($domain, $state = null, $courseid = nu
  *
  * @return array
  */
-function lti_glaaster_filter_get_types($course) {
+function glaaster_filter_get_types($course) {
     global $DB;
 
     if (!empty($course)) {
@@ -2436,10 +2436,10 @@ function lti_glaaster_filter_get_types($course) {
  * Given an array of tools, filter them based on their state
  *
  * @param array $tools An array of lti_types records
- * @param int $state One of the LTI_GLAASTER_TOOL_STATE_* constants
+ * @param int $state One of the GLAASTER_TOOL_STATE_* constants
  * @return array
  */
-function lti_glaaster_filter_tool_types(array $tools, $state) {
+function glaaster_filter_tool_types(array $tools, $state) {
     $return = [];
     foreach ($tools as $key => $tool) {
         if ($tool->state == $state) {
@@ -2454,11 +2454,11 @@ function lti_glaaster_filter_tool_types(array $tools, $state) {
  *
  * @param int $courseid The id of the course to retieve types for
  * @param array $coursevisible options for 'coursevisible' field,
- *        default [LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED, LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER]
+ *        default [GLAASTER_COURSEVISIBLE_PRECONFIGURED, GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER]
  * @return stdClass[] All the lti types visible in the given course
  * @deprecated since Moodle 4.3
  */
-function lti_glaaster_get_lti_types_by_course($courseid, $coursevisible = null) {
+function glaaster_get_lti_types_by_course($courseid, $coursevisible = null) {
     debugging(
         __FUNCTION__ .
         '() is deprecated. Please use \mod_glaaster\local\types_helper::get_lti_types_by_course() instead.',
@@ -2474,7 +2474,7 @@ function lti_glaaster_get_lti_types_by_course($courseid, $coursevisible = null) 
  *
  * @return array Array of lti types
  */
-function lti_glaaster_get_types_for_add_instance() {
+function glaaster_get_types_for_add_instance() {
     global $COURSE, $USER;
 
     // Always return the 'manual' type option, despite manual config being deprecated, so that we have it for legacy instances.
@@ -2501,7 +2501,7 @@ function glaaster_get_configured_types($courseid, $sectionreturn = 0) {
     $preconfiguredtypes = types_helper::get_lti_types_by_course(
         $courseid,
         $USER->id,
-        [LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER]
+        [GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER]
     );
 
     foreach ($preconfiguredtypes as $ltitype) {
@@ -2549,10 +2549,10 @@ function glaaster_get_configured_types($courseid, $sectionreturn = 0) {
  * @param string $url The URL to extract the domain from
  * @return string|null The extracted domain, or null if no match is found
  */
-function lti_glaaster_get_domain_from_url($url) {
+function glaaster_get_domain_from_url($url) {
     $matches = [];
 
-    if (preg_match(LTI_GLAASTER_URL_DOMAIN_REGEX, $url ?? '', $matches)) {
+    if (preg_match(GLAASTER_URL_DOMAIN_REGEX, $url ?? '', $matches)) {
         return $matches[1];
     }
 }
@@ -2566,10 +2566,10 @@ function lti_glaaster_get_domain_from_url($url) {
  *
  * @return stdClass|null The best matching tool type, or null if no match found
  */
-function lti_glaaster_get_tool_by_url_match($url, $courseid = null, $state = LTI_GLAASTER_TOOL_STATE_CONFIGURED) {
-    $possibletools = lti_glaaster_get_tools_by_url($url, $state, $courseid);
+function glaaster_get_tool_by_url_match($url, $courseid = null, $state = GLAASTER_TOOL_STATE_CONFIGURED) {
+    $possibletools = glaaster_get_tools_by_url($url, $state, $courseid);
 
-    return lti_glaaster_get_best_tool_by_url($url, $possibletools, $courseid);
+    return glaaster_get_best_tool_by_url($url, $possibletools, $courseid);
 }
 
 /**
@@ -2578,7 +2578,7 @@ function lti_glaaster_get_tool_by_url_match($url, $courseid = null, $state = LTI
  * @param string $url The URL to generate a thumbprint for
  * @return string The thumbprint of the URL
  */
-function lti_glaaster_get_url_thumbprint($url) {
+function glaaster_get_url_thumbprint($url) {
     // Parse URL requires a schema otherwise everything goes into 'path'.  Fixed 5.4.7 or later.
     if (preg_match('/https?:\/\//', $url) !== 1) {
         $url = 'http://' . $url;
@@ -2621,17 +2621,17 @@ function lti_glaaster_get_url_thumbprint($url) {
  *
  * @return stdClass|null The best matching tool, or null if no match found
  */
-function lti_glaaster_get_best_tool_by_url($url, $tools, $courseid = null) {
+function glaaster_get_best_tool_by_url($url, $tools, $courseid = null) {
     if (count($tools) === 0) {
         return null;
     }
 
-    $urllower = lti_glaaster_get_url_thumbprint($url);
+    $urllower = glaaster_get_url_thumbprint($url);
 
     foreach ($tools as $tool) {
         $tool->_matchscore = 0;
 
-        $toolbaseurllower = lti_glaaster_get_url_thumbprint($tool->baseurl);
+        $toolbaseurllower = glaaster_get_url_thumbprint($tool->baseurl);
 
         if ($urllower === $toolbaseurllower) {
             // 100 points for exact thumbprint match.
@@ -2675,12 +2675,12 @@ function lti_glaaster_get_best_tool_by_url($url, $tools, $courseid = null) {
  * @param string $key The key to look up
  * @return array An array of shared secrets associated with the key
  */
-function lti_glaaster_get_shared_secrets_by_key($key) {
+function glaaster_get_shared_secrets_by_key($key) {
     global $DB;
 
     // Look up the shared secret for the specified key in both the types_config table (for configured tools)
     // And in the lti resource table for ad-hoc tools.
-    $lti13 = LTI_GLAASTER_VERSION_1P3;
+    $lti13 = GLAASTER_VERSION_1P3;
     $query = "SELECT " . $DB->sql_compare_text('t2.value', 256) . " AS value
                 FROM {glaaster_types_config} t1
                 JOIN {glaaster_types_config} t2 ON t1.typeid = t2.typeid
@@ -2703,9 +2703,9 @@ function lti_glaaster_get_shared_secrets_by_key($key) {
 
     $sharedsecrets =
         $DB->get_records_sql($query, [
-            'configured1' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'configured1' => GLAASTER_TOOL_STATE_CONFIGURED,
             'ltiversion' => $lti13,
-            'configured2' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+            'configured2' => GLAASTER_TOOL_STATE_CONFIGURED,
             'key1' => $key,
             'key2' => $key,
             'key3' => $key,
@@ -2725,7 +2725,7 @@ function lti_glaaster_get_shared_secrets_by_key($key) {
  *
  * @param int $id Configuration id
  */
-function lti_glaaster_delete_type($id) {
+function glaaster_delete_type($id) {
     global $DB;
 
     $DB->delete_records('glaaster_types', ['id' => $id]);
@@ -2739,7 +2739,7 @@ function lti_glaaster_delete_type($id) {
  * @param int $id Configuration id
  * @param int $state State to set
  */
-function lti_glaaster_set_state_for_type($id, $state) {
+function glaaster_set_state_for_type($id, $state) {
     global $DB;
 
     $DB->update_record('glaaster_types', (object) ['id' => $id, 'state' => $state]);
@@ -2752,9 +2752,9 @@ function lti_glaaster_set_state_for_type($id, $state) {
  *
  * @return array Basic LTI configuration details
  */
-function lti_glaaster_get_config($ltiobject): array {
+function glaaster_get_config($ltiobject): array {
     $typeconfig = (array) $ltiobject;
-    $additionalconfig = lti_glaaster_get_type_config($ltiobject->typeid);
+    $additionalconfig = glaaster_get_type_config($ltiobject->typeid);
     $typeconfig = array_merge($typeconfig, $additionalconfig);
     return $typeconfig;
 }
@@ -2768,11 +2768,11 @@ function lti_glaaster_get_config($ltiobject): array {
  * @return object configuration
  *
  */
-function lti_glaaster_get_type_config_from_instance($id) {
+function glaaster_get_type_config_from_instance($id) {
     global $DB;
 
     $instance = $DB->get_record('glaaster', ['id' => $id]);
-    $config = lti_glaaster_get_config($instance);
+    $config = glaaster_get_config($instance);
 
     $type = new stdClass();
     $type->lti_fix = $id;
@@ -2802,11 +2802,11 @@ function lti_glaaster_get_type_config_from_instance($id) {
  *
  * @return stdClass Configuration details
  */
-function lti_glaaster_get_type_type_config($id) {
+function glaaster_get_type_type_config($id) {
     global $DB;
 
     $basicltitype = $DB->get_record('glaaster_types', ['id' => $id]);
-    $config = lti_glaaster_get_type_config($id);
+    $config = glaaster_get_type_config($id);
 
     $type = new stdClass();
 
@@ -2886,7 +2886,7 @@ function lti_glaaster_get_type_type_config($id) {
         $type->lti_organizationid_default = $config['organizationid_default'];
     } else {
         // Tool was configured before this option was available and the default then was host.
-        $type->lti_organizationid_default = LTI_GLAASTER_DEFAULT_ORGID_SITEHOST;
+        $type->lti_organizationid_default = GLAASTER_DEFAULT_ORGID_SITEHOST;
     }
     if (isset($config['organizationid'])) {
         $type->lti_organizationid = $config['organizationid'];
@@ -2938,13 +2938,13 @@ function lti_glaaster_get_type_type_config($id) {
  * @param stdClass $config The configuration object containing the settings
  * @return void
  */
-function lti_glaaster_prepare_type_for_save($type, $config) {
+function glaaster_prepare_type_for_save($type, $config) {
     if (isset($config->lti_toolurl)) {
         $type->baseurl = $config->lti_toolurl;
         if (isset($config->lti_tooldomain)) {
             $type->tooldomain = $config->lti_tooldomain;
         } else {
-            $type->tooldomain = lti_glaaster_get_domain_from_url($config->lti_toolurl);
+            $type->tooldomain = glaaster_get_domain_from_url($config->lti_toolurl);
         }
     }
     if (isset($config->lti_description)) {
@@ -2959,7 +2959,7 @@ function lti_glaaster_prepare_type_for_save($type, $config) {
     if (isset($config->lti_clientid)) {
         $type->clientid = $config->lti_clientid;
     }
-    if ((!empty($type->ltiversion) && $type->ltiversion === LTI_GLAASTER_VERSION_1P3) && empty($type->clientid)) {
+    if ((!empty($type->ltiversion) && $type->ltiversion === GLAASTER_VERSION_1P3) && empty($type->clientid)) {
         $type->clientid = registration_helper::get()->new_clientid();
     } else if (empty($type->clientid)) {
         $type->clientid = null;
@@ -3008,12 +3008,12 @@ function lti_glaaster_prepare_type_for_save($type, $config) {
  * @param stdClass $config The configuration object containing the settings
  * @return void
  */
-function lti_glaaster_update_type(stdClass $type, stdClass $config) {
+function glaaster_update_type(stdClass $type, stdClass $config) {
     global $DB, $CFG;
 
-    lti_glaaster_prepare_type_for_save($type, $config);
+    glaaster_prepare_type_for_save($type, $config);
 
-    if (lti_glaaster_request_is_using_ssl() && !empty($type->secureicon)) {
+    if (glaaster_request_is_using_ssl() && !empty($type->secureicon)) {
         $clearcache = !isset($config->oldicon) || ($config->oldicon !== $type->secureicon);
     } else {
         $clearcache = isset($type->icon) && (!isset($config->oldicon) || ($config->oldicon !== $type->icon));
@@ -3027,17 +3027,17 @@ function lti_glaaster_update_type(stdClass $type, stdClass $config) {
                 $record->typeid = $type->id;
                 $record->name = substr($key, 4);
                 $record->value = $value;
-                lti_glaaster_update_config($record);
+                glaaster_update_config($record);
             }
             if (substr($key, 0, 11) == 'ltiglaasterservice_' && !is_null($value)) {
                 $record = new stdClass();
                 $record->typeid = $type->id;
                 $record->name = $key;
                 $record->value = $value;
-                lti_glaaster_update_config($record);
+                glaaster_update_config($record);
             }
         }
-        if (isset($type->toolproxyid) && $type->ltiversion === LTI_GLAASTER_VERSION_1P3) {
+        if (isset($type->toolproxyid) && $type->ltiversion === GLAASTER_VERSION_1P3) {
             // We need to remove the tool proxy for this tool to function under 1.3.
             $toolproxyid = $type->toolproxyid;
             $DB->delete_records('glaaster_tool_settings', ['toolproxyid' => $toolproxyid]);
@@ -3047,7 +3047,7 @@ function lti_glaaster_update_type(stdClass $type, stdClass $config) {
         }
         $DB->delete_records('glaaster_types_categories', ['typeid' => $type->id]);
         if (isset($config->lti_coursecategories) && !empty($config->lti_coursecategories)) {
-            lti_glaaster_type_add_categories($type->id, $config->lti_coursecategories);
+            glaaster_type_add_categories($type->id, $config->lti_coursecategories);
         }
         require_once($CFG->libdir . '/modinfolib.php');
         if ($clearcache) {
@@ -3080,7 +3080,7 @@ function lti_glaaster_update_type(stdClass $type, stdClass $config) {
  * @param string $lticoursecategories Comma separated list of course categories.
  * @return void
  */
-function lti_glaaster_type_add_categories(int $typeid, string $lticoursecategories = ''): void {
+function glaaster_type_add_categories(int $typeid, string $lticoursecategories = ''): void {
     global $DB;
     $coursecategories = explode(',', $lticoursecategories);
     foreach ($coursecategories as $coursecategory) {
@@ -3095,17 +3095,17 @@ function lti_glaaster_type_add_categories(int $typeid, string $lticoursecategori
  * @param stdClass $config The configuration object containing the settings
  * @return int The ID of the newly created type
  */
-function lti_glaaster_add_type($type, $config) {
+function glaaster_add_type($type, $config) {
     global $USER, $SITE, $DB;
 
-    lti_glaaster_prepare_type_for_save($type, $config);
+    glaaster_prepare_type_for_save($type, $config);
 
     if (!isset($type->state)) {
-        $type->state = LTI_GLAASTER_TOOL_STATE_PENDING;
+        $type->state = GLAASTER_TOOL_STATE_PENDING;
     }
 
     if (!isset($type->ltiversion)) {
-        $type->ltiversion = LTI_GLAASTER_VERSION_1;
+        $type->ltiversion = GLAASTER_VERSION_1;
     }
 
     if (!isset($type->timecreated)) {
@@ -3143,11 +3143,11 @@ function lti_glaaster_add_type($type, $config) {
                 $record->name = $fieldname;
                 $record->value = $value;
 
-                lti_glaaster_add_config($record);
+                glaaster_add_config($record);
             }
         }
         if (isset($config->lti_coursecategories) && !empty($config->lti_coursecategories)) {
-            lti_glaaster_type_add_categories($id, $config->lti_coursecategories);
+            glaaster_type_add_categories($id, $config->lti_coursecategories);
         }
     }
 
@@ -3158,11 +3158,11 @@ function lti_glaaster_add_type($type, $config) {
  * Given an array of tool proxies, filter them based on their state
  *
  * @param array $toolproxies An array of lti_tool_proxies records
- * @param int $state One of the LTI_GLAASTER_TOOL_PROXY_STATE_* constants
+ * @param int $state One of the GLAASTER_TOOL_PROXY_STATE_* constants
  *
  * @return array
  */
-function lti_glaaster_filter_tool_proxy_types(array $toolproxies, $state) {
+function glaaster_filter_tool_proxy_types(array $toolproxies, $state) {
     $return = [];
     foreach ($toolproxies as $key => $toolproxy) {
         if ($toolproxy->state == $state) {
@@ -3179,7 +3179,7 @@ function lti_glaaster_filter_tool_proxy_types(array $toolproxies, $state) {
  *
  * @return object
  */
-function lti_glaaster_glaaster_get_tool_proxy_from_guid($toolproxyguid) {
+function glaaster_get_tool_proxy_from_guid($toolproxyguid) {
     global $DB;
 
     $toolproxy = $DB->get_record('glaaster_tool_proxies', ['guid' => $toolproxyguid]);
@@ -3194,7 +3194,7 @@ function lti_glaaster_glaaster_get_tool_proxy_from_guid($toolproxyguid) {
  *
  * @return array The record of the tool proxy with this url
  */
-function lti_glaaster_get_tool_proxies_from_registration_url($regurl) {
+function glaaster_get_tool_proxies_from_registration_url($regurl) {
     global $DB;
 
     return $DB->get_records_sql(
@@ -3211,7 +3211,7 @@ function lti_glaaster_get_tool_proxies_from_registration_url($regurl) {
  *
  * @return mixed Tool Proxy details
  */
-function lti_glaaster_get_tool_proxy($id) {
+function glaaster_get_tool_proxy($id) {
     global $DB;
 
     $toolproxy = $DB->get_record('glaaster_tool_proxies', ['id' => $id]);
@@ -3224,7 +3224,7 @@ function lti_glaaster_get_tool_proxy($id) {
  * @param bool $orphanedonly Only retrieves tool proxies that have no type associated with them
  * @return array of basicLTI types
  */
-function lti_glaaster_get_tool_proxies($orphanedonly) {
+function glaaster_get_tool_proxies($orphanedonly) {
     global $DB;
 
     if ($orphanedonly) {
@@ -3249,8 +3249,8 @@ function lti_glaaster_get_tool_proxies($orphanedonly) {
  *
  * @return mixed  Tool Proxy details
  */
-function lti_glaaster_glaaster_get_tool_proxy_config($id) {
-    $toolproxy = lti_glaaster_get_tool_proxy($id);
+function glaaster_get_tool_proxy_config($id) {
+    $toolproxy = glaaster_get_tool_proxy($id);
 
     $tp = new stdClass();
     $tp->lti_registrationname = $toolproxy->name;
@@ -3270,7 +3270,7 @@ function lti_glaaster_glaaster_get_tool_proxy_config($id) {
  *
  * @return int  Record id number
  */
-function lti_glaaster_add_tool_proxy($config) {
+function glaaster_add_tool_proxy($config) {
     global $USER, $DB;
 
     $toolproxy = new stdClass();
@@ -3283,7 +3283,7 @@ function lti_glaaster_add_tool_proxy($config) {
     if (isset($config->lti_capabilities)) {
         $toolproxy->capabilityoffered = implode("\n", $config->lti_capabilities);
     } else {
-        $toolproxy->capabilityoffered = implode("\n", array_keys(lti_glaaster_get_capabilities()));
+        $toolproxy->capabilityoffered = implode("\n", array_keys(glaaster_get_capabilities()));
     }
     if (isset($config->lti_services)) {
         $toolproxy->serviceoffered = implode("\n", $config->lti_services);
@@ -3291,19 +3291,19 @@ function lti_glaaster_add_tool_proxy($config) {
         $func = function ($s) {
             return $s->get_id();
         };
-        $servicenames = array_map($func, lti_glaaster_get_services());
+        $servicenames = array_map($func, glaaster_get_services());
         $toolproxy->serviceoffered = implode("\n", $servicenames);
     }
     if (isset($config->toolproxyid) && !empty($config->toolproxyid)) {
         $toolproxy->id = $config->toolproxyid;
-        if (!isset($toolproxy->state) || ($toolproxy->state != LTI_GLAASTER_TOOL_PROXY_STATE_ACCEPTED)) {
-            $toolproxy->state = LTI_GLAASTER_TOOL_PROXY_STATE_CONFIGURED;
+        if (!isset($toolproxy->state) || ($toolproxy->state != GLAASTER_TOOL_PROXY_STATE_ACCEPTED)) {
+            $toolproxy->state = GLAASTER_TOOL_PROXY_STATE_CONFIGURED;
             $toolproxy->guid = random_string();
             $toolproxy->secret = random_string();
         }
-        $id = lti_glaaster_update_tool_proxy($toolproxy);
+        $id = glaaster_update_tool_proxy($toolproxy);
     } else {
-        $toolproxy->state = LTI_GLAASTER_TOOL_PROXY_STATE_CONFIGURED;
+        $toolproxy->state = GLAASTER_TOOL_PROXY_STATE_CONFIGURED;
         $toolproxy->timemodified = time();
         $toolproxy->timecreated = $toolproxy->timemodified;
         if (!isset($toolproxy->createdby)) {
@@ -3324,7 +3324,7 @@ function lti_glaaster_add_tool_proxy($config) {
  *
  * @return int    Record id number
  */
-function lti_glaaster_update_tool_proxy($toolproxy) {
+function glaaster_update_tool_proxy($toolproxy) {
     global $DB;
 
     $toolproxy->timemodified = time();
@@ -3338,12 +3338,12 @@ function lti_glaaster_update_tool_proxy($toolproxy) {
  *
  * @param int $id Tool Proxy id
  */
-function lti_glaaster_delete_tool_proxy($id) {
+function glaaster_delete_tool_proxy($id) {
     global $DB;
     $DB->delete_records('glaaster_tool_settings', ['toolproxyid' => $id]);
     $tools = $DB->get_records('glaaster_types', ['toolproxyid' => $id]);
     foreach ($tools as $tool) {
-        lti_glaaster_delete_type($tool->id);
+        glaaster_delete_type($tool->id);
     }
     $DB->delete_records('glaaster_tool_proxies', ['id' => $id]);
 }
@@ -3362,7 +3362,7 @@ function lti_glaaster_delete_tool_proxy($id) {
  * @param int $toolproxyid If not 0, only return tool types that have this tool proxy id.
  * @return array list(proxies[], types[]) List containing array of tool proxies and array of tool types.
  */
-function lti_glaaster_get_lti_types_and_proxies(
+function glaaster_get_lti_types_and_proxies(
     int $limit = 0,
     int $offset = 0,
     bool $orphanedonly = false,
@@ -3414,7 +3414,7 @@ function lti_glaaster_get_lti_types_and_proxies(
  * @param int $toolproxyid If not 0, only count tool types that have this tool proxy id.
  * @return int Count of tools.
  */
-function lti_glaaster_get_lti_types_and_proxies_count(bool $orphanedonly = false, int $toolproxyid = 0): int {
+function glaaster_get_lti_types_and_proxies_count(bool $orphanedonly = false, int $toolproxyid = 0): int {
     global $DB;
 
     $typessql = "SELECT count(*)
@@ -3439,7 +3439,7 @@ function lti_glaaster_get_lti_types_and_proxies_count(bool $orphanedonly = false
  *
  * @return int Record id number
  */
-function lti_glaaster_add_config($config) {
+function glaaster_add_config($config) {
     global $DB;
 
     return $DB->insert_record('glaaster_types_config', $config);
@@ -3452,7 +3452,7 @@ function lti_glaaster_add_config($config) {
  *
  * @return mixed Record id number
  */
-function lti_glaaster_update_config($config) {
+function glaaster_update_config($config) {
     global $DB;
 
     $old = $DB->get_record('glaaster_types_config', ['typeid' => $config->typeid, 'name' => $config->name]);
@@ -3475,7 +3475,7 @@ function lti_glaaster_update_config($config) {
  *
  * @return array  Array settings
  */
-function lti_glaaster_get_tool_settings($toolproxyid, $courseid = null, $instanceid = null) {
+function glaaster_get_tool_settings($toolproxyid, $courseid = null, $instanceid = null) {
     global $DB;
 
     $settings = [];
@@ -3506,7 +3506,7 @@ function lti_glaaster_get_tool_settings($toolproxyid, $courseid = null, $instanc
  * @param int $courseid Id of course (null if system settings)
  * @param int $instanceid Id of course module (null if system or context settings)
  */
-function lti_glaaster_set_tool_settings($settings, $toolproxyid, $courseid = null, $instanceid = null) {
+function glaaster_set_tool_settings($settings, $toolproxyid, $courseid = null, $instanceid = null) {
     global $DB;
 
     $json = json_encode($settings);
@@ -3554,15 +3554,15 @@ function lti_glaaster_set_tool_settings($settings, $toolproxyid, $courseid = nul
  * @param string $oauthconsumersecret
  * @return array|null
  */
-function lti_glaaster_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $oauthconsumersecret) {
+function glaaster_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $oauthconsumersecret) {
     $parms = $oldparms;
 
     $testtoken = '';
 
     // TODO: Switch to core oauthlib once implemented - MDL-30149.
-    $hmacmethod = new lti\GlaasterOAuthSignatureMethod_HMAC_SHA1();
-    $testconsumer = new lti\GlaasterOAuthConsumer($oauthconsumerkey, $oauthconsumersecret, null);
-    $accreq = lti\GlaasterOAuthRequest::from_consumer_and_token($testconsumer, $testtoken, $method, $endpoint, $parms);
+    $hmacmethod = new lti\OAuthSignatureMethod_HMAC_SHA1();
+    $testconsumer = new lti\OAuthConsumer($oauthconsumerkey, $oauthconsumersecret, null);
+    $accreq = lti\OAuthRequest::from_consumer_and_token($testconsumer, $testtoken, $method, $endpoint, $parms);
     $accreq->sign_request($hmacmethod, $testconsumer, $testtoken);
 
     $newparms = $accreq->get_parameters();
@@ -3581,13 +3581,13 @@ function lti_glaaster_sign_parameters($oldparms, $endpoint, $method, $oauthconsu
  * @param string $nonce Nonce value to use
  * @return array|null
  */
-function lti_glaaster_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0, $nonce = '') {
+function glaaster_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0, $nonce = '') {
     global $CFG;
 
     if (empty($typeid)) {
         $typeid = 0;
     }
-    $messagetypemapping = lti_glaaster_get_jwt_message_type_mapping();
+    $messagetypemapping = glaaster_get_jwt_message_type_mapping();
     if (isset($parms['lti_message_type']) && array_key_exists($parms['lti_message_type'], $messagetypemapping)) {
         $parms['lti_message_type'] = $messagetypemapping[$parms['lti_message_type']];
     }
@@ -3613,7 +3613,7 @@ function lti_glaaster_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0
     if (empty($nonce)) {
         $nonce = bin2hex(openssl_random_pseudo_bytes(10));
     }
-    $claimmapping = lti_glaaster_get_jwt_claim_mapping();
+    $claimmapping = glaaster_get_jwt_claim_mapping();
     $payload = [
         'nonce' => $nonce,
         'iat' => $now,
@@ -3621,8 +3621,8 @@ function lti_glaaster_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0
     ];
     $payload['iss'] = $CFG->wwwroot;
     $payload['aud'] = $oauthconsumerkey;
-    $payload[LTI_GLAASTER_JWT_CLAIM_PREFIX . '/claim/deployment_id'] = strval($typeid);
-    $payload[LTI_GLAASTER_JWT_CLAIM_PREFIX . '/claim/target_link_uri'] = $endpoint;
+    $payload[GLAASTER_JWT_CLAIM_PREFIX . '/claim/deployment_id'] = strval($typeid);
+    $payload[GLAASTER_JWT_CLAIM_PREFIX . '/claim/target_link_uri'] = $endpoint;
     if (isset($parms['resource_id'])) {
         $payload['resource_id'] = $parms['resource_id'];
     }
@@ -3642,7 +3642,7 @@ function lti_glaaster_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0
         $payload['filepath'] = $parms['filepath'];
     }
     foreach ($parms as $key => $value) {
-        $claim = LTI_GLAASTER_JWT_CLAIM_PREFIX;
+        $claim = GLAASTER_JWT_CLAIM_PREFIX;
         if (array_key_exists($key, $claimmapping)) {
             $mapping = $claimmapping[$key];
             $type = $mapping["type"] ?? "string";
@@ -3689,7 +3689,7 @@ function lti_glaaster_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0
  * @return array  message parameters
  * @throws moodle_exception
  */
-function lti_glaaster_convert_from_jwt($typeid, $jwtparam) {
+function glaaster_convert_from_jwt($typeid, $jwtparam) {
     $params = [];
     $parts = explode('.', $jwtparam);
     $ok = (count($parts) === 3);
@@ -3699,10 +3699,10 @@ function lti_glaaster_convert_from_jwt($typeid, $jwtparam) {
         $ok = !is_null($claims) && !empty($claims['iss']);
     }
     if ($ok) {
-        lti_glaaster_verify_jwt_signature($typeid, $claims['iss'], $jwtparam);
+        glaaster_verify_jwt_signature($typeid, $claims['iss'], $jwtparam);
         $params['oauth_consumer_key'] = $claims['iss'];
-        foreach (lti_glaaster_get_jwt_claim_mapping() as $key => $mapping) {
-            $claim = LTI_GLAASTER_JWT_CLAIM_PREFIX;
+        foreach (glaaster_get_jwt_claim_mapping() as $key => $mapping) {
+            $claim = GLAASTER_JWT_CLAIM_PREFIX;
             if (!empty($mapping['suffix'])) {
                 $claim .= "-{$mapping['suffix']}";
             }
@@ -3737,7 +3737,7 @@ function lti_glaaster_convert_from_jwt($typeid, $jwtparam) {
                     $params[$key] = $value;
                 }
             }
-            $claim = LTI_GLAASTER_JWT_CLAIM_PREFIX . '/claim/custom';
+            $claim = GLAASTER_JWT_CLAIM_PREFIX . '/claim/custom';
             if (isset($claims[$claim])) {
                 $custom = $claims[$claim];
                 if (is_array($custom)) {
@@ -3746,7 +3746,7 @@ function lti_glaaster_convert_from_jwt($typeid, $jwtparam) {
                     }
                 }
             }
-            $claim = LTI_GLAASTER_JWT_CLAIM_PREFIX . '/claim/ext';
+            $claim = GLAASTER_JWT_CLAIM_PREFIX . '/claim/ext';
             if (isset($claims[$claim])) {
                 $ext = $claims[$claim];
                 if (is_array($ext)) {
@@ -3758,9 +3758,9 @@ function lti_glaaster_convert_from_jwt($typeid, $jwtparam) {
         }
     }
     if (isset($params['content_items'])) {
-        $params['content_items'] = lti_glaaster_convert_content_items($params['content_items']);
+        $params['content_items'] = glaaster_convert_content_items($params['content_items']);
     }
-    $messagetypemapping = lti_glaaster_get_jwt_message_type_mapping();
+    $messagetypemapping = glaaster_get_jwt_message_type_mapping();
     if (isset($params['lti_message_type']) && array_key_exists($params['lti_message_type'], $messagetypemapping)) {
         $params['lti_message_type'] = $messagetypemapping[$params['lti_message_type']];
     }
@@ -3775,7 +3775,7 @@ function lti_glaaster_convert_from_jwt($typeid, $jwtparam) {
  * @param bool $debug Debug (true/false)
  * @return string
  */
-function lti_glaaster_post_launch_html($newparms, $endpoint, $debug = false) {
+function glaaster_post_launch_html($newparms, $endpoint, $debug = false) {
     $r = "<form action=\"" . $endpoint .
         "\" name=\"ltiLaunchForm\" id=\"ltiLaunchForm\" method=\"post\" encType=\"application/x-www-form-urlencoded\">\n";
 
@@ -3853,7 +3853,7 @@ function lti_glaaster_post_launch_html($newparms, $endpoint, $debug = false) {
  * @param string $filepath Base64-encoded filepath for folder launches
  * @return string
  */
-function lti_glaaster_initiate_login(
+function glaaster_initiate_login(
     $courseid,
     $cmid,
     $instance,
@@ -3872,7 +3872,7 @@ function lti_glaaster_initiate_login(
     global $SESSION;
 
     $params =
-        lti_glaaster_build_login_request(
+        glaaster_build_login_request(
             $courseid,
             $cmid,
             $instance,
@@ -3928,7 +3928,7 @@ function lti_glaaster_initiate_login(
  * @param string $filepath Base64-encoded filepath for folder launches
  * @return array Login request parameters
  */
-function lti_glaaster_build_login_request(
+function glaaster_build_login_request(
     $courseid,
     $cmid,
     $instance,
@@ -3965,7 +3965,7 @@ function lti_glaaster_build_login_request(
             base64_encode($text);
     }
     $endpoint = trim($endpoint);
-    $services = lti_glaaster_get_services();
+    $services = glaaster_get_services();
     foreach ($services as $service) {
         [$endpoint] = $service->override_endpoint(
             $messagetype ?? 'basic-lti-launch-request',
@@ -3989,7 +3989,7 @@ function lti_glaaster_build_login_request(
     }
     // If SSL is forced make sure https is on the normal launch URL.
     if (isset($config->lti_forcessl) && ($config->lti_forcessl == '1')) {
-        $endpoint = lti_glaaster_ensure_url_is_https($endpoint);
+        $endpoint = glaaster_ensure_url_is_https($endpoint);
     } else if (!strstr($endpoint, '://')) {
         $endpoint = 'http://' . $endpoint;
     }
@@ -4010,7 +4010,7 @@ function lti_glaaster_build_login_request(
  * @param int $typeid Tool type id
  * @return stdClass|null Tool type record or null if not found
  */
-function lti_glaaster_get_type($typeid) {
+function glaaster_get_type($typeid) {
     global $DB;
 
     return $DB->get_record('glaaster_types', ['id' => $typeid]);
@@ -4023,12 +4023,12 @@ function lti_glaaster_get_type($typeid) {
  * @param array $toolconfig Tool configuration
  * @return string Launch container
  */
-function lti_glaaster_get_launch_container($lti, $toolconfig) {
+function glaaster_get_launch_container($lti, $toolconfig) {
     if (empty($lti->launchcontainer)) {
-        $lti->launchcontainer = LTI_GLAASTER_LAUNCH_CONTAINER_DEFAULT;
+        $lti->launchcontainer = GLAASTER_LAUNCH_CONTAINER_DEFAULT;
     }
 
-    if ($lti->launchcontainer == LTI_GLAASTER_LAUNCH_CONTAINER_DEFAULT) {
+    if ($lti->launchcontainer == GLAASTER_LAUNCH_CONTAINER_DEFAULT) {
         if (isset($toolconfig['launchcontainer'])) {
             $launchcontainer = $toolconfig['launchcontainer'];
         }
@@ -4036,8 +4036,8 @@ function lti_glaaster_get_launch_container($lti, $toolconfig) {
         $launchcontainer = $lti->launchcontainer;
     }
 
-    if (empty($launchcontainer) || $launchcontainer == LTI_GLAASTER_LAUNCH_CONTAINER_DEFAULT) {
-        $launchcontainer = LTI_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+    if (empty($launchcontainer) || $launchcontainer == GLAASTER_LAUNCH_CONTAINER_DEFAULT) {
+        $launchcontainer = GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
     }
 
     $devicetype = core_useragent::get_device_type();
@@ -4046,7 +4046,7 @@ function lti_glaaster_get_launch_container($lti, $toolconfig) {
     // Opening the popup window also had some issues in testing
     // For mobile devices, always take up the entire screen to ensure the best experience.
     if ($devicetype === core_useragent::DEVICETYPE_MOBILE || $devicetype === core_useragent::DEVICETYPE_TABLET) {
-        $launchcontainer = LTI_GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW;
+        $launchcontainer = GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW;
     }
 
     return $launchcontainer;
@@ -4057,7 +4057,7 @@ function lti_glaaster_get_launch_container($lti, $toolconfig) {
  *
  * @return bool True if the request is using SSL, false otherwise.
  */
-function lti_glaaster_request_is_using_ssl() {
+function glaaster_request_is_using_ssl() {
     global $CFG;
     return (stripos($CFG->wwwroot, 'https://') === 0);
 }
@@ -4068,7 +4068,7 @@ function lti_glaaster_request_is_using_ssl() {
  * @param string $url The URL to check.
  * @return string The URL with HTTPS if it was not already set.
  */
-function lti_glaaster_ensure_url_is_https($url) {
+function glaaster_ensure_url_is_https($url) {
     if (!strstr($url, '://')) {
         $url = 'https://' . $url;
     } else {
@@ -4087,7 +4087,7 @@ function lti_glaaster_ensure_url_is_https($url) {
  * @param string $rawbody
  * @return bool
  */
-function lti_glaaster_should_log_request($rawbody) {
+function glaaster_should_log_request($rawbody) {
     global $CFG;
 
     if (empty($CFG->mod_glaaster_log_users)) {
@@ -4129,11 +4129,11 @@ function lti_glaaster_should_log_request($rawbody) {
  *
  * @param string $rawbody
  */
-function lti_glaaster_log_request($rawbody) {
+function glaaster_log_request($rawbody) {
     if ($tempdir = make_temp_directory('mod_glaaster', false)) {
         if ($tempfile = tempnam($tempdir, 'mod_glaaster_request' . date('YmdHis'))) {
             $content = "Request Headers:\n";
-            foreach (moodle\mod\glaaster\GlaasterOAuthUtil::get_headers() as $header => $value) {
+            foreach (moodle\mod\lti\OAuthUtil::get_headers() as $header => $value) {
                 $content .= "$header: $value\n";
             }
             $content .= "Request Body:\n";
@@ -4151,7 +4151,7 @@ function lti_glaaster_log_request($rawbody) {
  * @param string $responsexml The response XML
  * @param Exception $e If there was an exception, pass that too
  */
-function lti_glaaster_log_response($responsexml, $e = null) {
+function glaaster_log_response($responsexml, $e = null) {
     if ($tempdir = make_temp_directory('mod_glaaster', false)) {
         if ($tempfile = tempnam($tempdir, 'mod_glaaster_response' . date('YmdHis'))) {
             $content = '';
@@ -4180,10 +4180,10 @@ function lti_glaaster_log_response($responsexml, $e = null) {
  * @param stdClass $instance
  * @return array Can be empty if no type is found
  */
-function lti_glaaster_get_type_config_by_instance($instance) {
+function glaaster_get_type_config_by_instance($instance) {
     $typeid = null;
     if (empty($instance->typeid)) {
-        $tool = lti_glaaster_get_tool_by_url_match($instance->toolurl, $instance->course);
+        $tool = glaaster_get_tool_by_url_match($instance->toolurl, $instance->course);
         if ($tool) {
             $typeid = $tool->id;
         }
@@ -4191,7 +4191,7 @@ function lti_glaaster_get_type_config_by_instance($instance) {
         $typeid = $instance->typeid;
     }
     if (!empty($typeid)) {
-        return lti_glaaster_get_type_config($typeid);
+        return glaaster_get_type_config($typeid);
     }
     return [];
 }
@@ -4202,7 +4202,7 @@ function lti_glaaster_get_type_config_by_instance($instance) {
  * @param stdClass $instance
  * @param array $typeconfig
  */
-function lti_glaaster_force_type_config_settings($instance, array $typeconfig) {
+function glaaster_force_type_config_settings($instance, array $typeconfig) {
     $forced = [
         'instructorchoicesendname' => 'sendname',
         'instructorchoicesendemailaddr' => 'sendemailaddr',
@@ -4211,7 +4211,7 @@ function lti_glaaster_force_type_config_settings($instance, array $typeconfig) {
     foreach ($forced as $instanceparam => $typeconfigparam) {
         if (
             array_key_exists($typeconfigparam, $typeconfig) &&
-            $typeconfig[$typeconfigparam] != LTI_GLAASTER_SETTING_DELEGATE
+            $typeconfig[$typeconfigparam] != GLAASTER_SETTING_DELEGATE
         ) {
             $instance->$instanceparam = $typeconfig[$typeconfigparam];
         }
@@ -4223,7 +4223,7 @@ function lti_glaaster_force_type_config_settings($instance, array $typeconfig) {
  *
  * @return array List of capability names (without a dollar sign prefix)
  */
-function lti_glaaster_get_capabilities() {
+function glaaster_get_capabilities() {
     $capabilities = [
         'basic-lti-launch-request' => '',
         'ContentItemSelectionRequest' => '',
@@ -4275,7 +4275,7 @@ function lti_glaaster_get_capabilities() {
  *
  * @return array List of services
  */
-function lti_glaaster_get_services() {
+function glaaster_get_services() {
     $services = [];
     $definedservices = core_component::get_plugin_list('ltiglaasterservice');
     foreach ($definedservices as $name => $location) {
@@ -4293,7 +4293,7 @@ function lti_glaaster_get_services() {
  *
  * @return bool|service_base Service
  */
-function lti_glaaster_get_service_by_name($servicename) {
+function glaaster_get_service_by_name($servicename) {
     $service = false;
     $classname = "\\ltiglaasterservice_{$servicename}\\local\\service\\{$servicename}";
     if (class_exists($classname)) {
@@ -4311,7 +4311,7 @@ function lti_glaaster_get_service_by_name($servicename) {
  *
  * @return mod_glaaster\local\ltiglaasterservice\service_base Service
  */
-function lti_glaaster_get_service_by_resource_id($services, $resourceid) {
+function glaaster_get_service_by_resource_id($services, $resourceid) {
     $service = false;
     foreach ($services as $aservice) {
         foreach ($aservice->get_resources() as $resource) {
@@ -4334,8 +4334,8 @@ function lti_glaaster_get_service_by_resource_id($services, $resourceid) {
  *
  * @return array List of scopes
  */
-function lti_glaaster_get_permitted_service_scopes($type, $typeconfig) {
-    $services = lti_glaaster_get_services();
+function glaaster_get_permitted_service_scopes($type, $typeconfig) {
+    $services = glaaster_get_services();
     $scopes = [];
     foreach ($services as $service) {
         $service->set_type($type);
@@ -4356,7 +4356,7 @@ function lti_glaaster_get_permitted_service_scopes($type, $typeconfig) {
  *
  * @return array Contexts
  */
-function lti_glaaster_get_contexts($json) {
+function glaaster_get_contexts($json) {
     $contexts = [];
     if (isset($json->{'@context'})) {
         foreach ($json->{'@context'} as $context) {
@@ -4377,7 +4377,7 @@ function lti_glaaster_get_contexts($json) {
  *
  * @return string Fully-qualified ID
  */
-function lti_glaaster_get_fqid($contexts, $id) {
+function glaaster_get_fqid($contexts, $id) {
     $parts = explode(':', $id, 2);
     if (count($parts) > 1) {
         if (array_key_exists($parts[0], $contexts)) {
@@ -4517,15 +4517,15 @@ function glaaster_get_tool_type_state_info(stdClass $type) {
     $isrejected = false;
     $isunknown = false;
     switch ($type->state) {
-        case LTI_GLAASTER_TOOL_STATE_CONFIGURED:
+        case GLAASTER_TOOL_STATE_CONFIGURED:
             $state = get_string('active', 'mod_glaaster');
             $isconfigured = true;
             break;
-        case LTI_GLAASTER_TOOL_STATE_PENDING:
+        case GLAASTER_TOOL_STATE_PENDING:
             $state = get_string('pending', 'mod_glaaster');
             $ispending = true;
             break;
-        case LTI_GLAASTER_TOOL_STATE_REJECTED:
+        case GLAASTER_TOOL_STATE_REJECTED:
             $state = get_string('rejected', 'mod_glaaster');
             $isrejected = true;
             break;
@@ -4551,7 +4551,7 @@ function glaaster_get_tool_type_state_info(stdClass $type) {
  *
  * @return array An array with configuration details
  */
-function glaaster_glaaster_get_tool_type_config($type) {
+function glaaster_get_tool_type_config($type) {
     global $CFG;
     $platformid = $CFG->wwwroot;
     $clientid = $type->clientid;
@@ -4582,8 +4582,8 @@ function glaaster_glaaster_get_tool_type_config($type) {
  *
  * @return array An array of text descriptions of each of the capabilities this tool type requires
  */
-function glaaster_glaaster_get_tool_type_capability_groups($type) {
-    $capabilities = lti_glaaster_get_enabled_capabilities($type);
+function glaaster_get_tool_type_capability_groups($type) {
+    $capabilities = glaaster_get_enabled_capabilities($type);
     $groups = [];
     $hascourse = false;
     $hasactivities = false;
@@ -4621,7 +4621,7 @@ function glaaster_glaaster_get_tool_type_capability_groups($type) {
  *
  * @return array An array of ids of the instances of this tool type
  */
-function glaaster_glaaster_get_tool_type_instance_ids($type) {
+function glaaster_get_tool_type_instance_ids($type) {
     global $DB;
 
     return array_keys($DB->get_fieldset_select('glaaster', 'id', 'typeid = ?', [$type->id]));
@@ -4637,8 +4637,8 @@ function glaaster_glaaster_get_tool_type_instance_ids($type) {
 function glaaster_serialise_tool_type(stdClass $type) {
     global $CFG;
 
-    $capabilitygroups = glaaster_glaaster_get_tool_type_capability_groups($type);
-    $instanceids = glaaster_glaaster_get_tool_type_instance_ids($type);
+    $capabilitygroups = glaaster_get_tool_type_capability_groups($type);
+    $instanceids = glaaster_get_tool_type_instance_ids($type);
     // Clean the name. We don't want tags here.
     $name = clean_param($type->name, PARAM_NOTAGS);
     if (!empty($type->description)) {
@@ -4673,9 +4673,9 @@ function glaaster_serialise_tool_type(stdClass $type) {
  * @param stdClass $type The tool type object to be filled in
  * @since Moodle 3.1
  */
-function lti_glaaster_load_type_if_cartridge($type) {
-    if (!empty($type->lti_toolurl) && lti_glaaster_is_cartridge($type->lti_toolurl)) {
-        lti_glaaster_load_type_from_cartridge($type->lti_toolurl, $type);
+function glaaster_load_type_if_cartridge($type) {
+    if (!empty($type->lti_toolurl) && glaaster_is_cartridge($type->lti_toolurl)) {
+        glaaster_load_type_from_cartridge($type->lti_toolurl, $type);
     }
 }
 
@@ -4685,9 +4685,9 @@ function lti_glaaster_load_type_if_cartridge($type) {
  * @param stdClass $lti The tools config
  * @since Moodle 3.1
  */
-function lti_glaaster_load_tool_if_cartridge($lti) {
-    if (!empty($lti->toolurl) && lti_glaaster_is_cartridge($lti->toolurl)) {
-        lti_glaaster_load_tool_from_cartridge($lti->toolurl, $lti);
+function glaaster_load_tool_if_cartridge($lti) {
+    if (!empty($lti->toolurl) && glaaster_is_cartridge($lti->toolurl)) {
+        glaaster_load_tool_from_cartridge($lti->toolurl, $lti);
     }
 }
 
@@ -4698,7 +4698,7 @@ function lti_glaaster_load_tool_if_cartridge($lti) {
  * @return True if the url is for a cartridge
  * @since Moodle 3.1
  */
-function lti_glaaster_is_cartridge($url) {
+function glaaster_is_cartridge($url) {
     // If it is empty, it's not a cartridge.
     if (empty($url)) {
         return false;
@@ -4709,7 +4709,7 @@ function lti_glaaster_is_cartridge($url) {
     }
     // Even if it doesn't have .xml, load the url to check if it's a cartridge..
     try {
-        $toolinfo = lti_glaaster_load_cartridge(
+        $toolinfo = glaaster_load_cartridge(
             $url,
             [
                 "launch_url" => "launchurl",
@@ -4732,8 +4732,8 @@ function lti_glaaster_is_cartridge($url) {
  * @throws moodle_exception if the cartridge could not be loaded correctly
  * @since Moodle 3.1
  */
-function lti_glaaster_load_type_from_cartridge($url, $type) {
-    $toolinfo = lti_glaaster_load_cartridge(
+function glaaster_load_type_from_cartridge($url, $type) {
+    $toolinfo = glaaster_load_cartridge(
         $url,
         [
             "title" => "lti_typename",
@@ -4785,8 +4785,8 @@ function lti_glaaster_load_type_from_cartridge($url, $type) {
  * @throws moodle_exception if the cartridge could not be loaded correctly
  * @since Moodle 3.1
  */
-function lti_glaaster_load_tool_from_cartridge($url, $lti) {
-    $toolinfo = lti_glaaster_load_cartridge(
+function glaaster_load_tool_from_cartridge($url, $lti) {
+    $toolinfo = glaaster_load_cartridge(
         $url,
         [
             "title" => "name",
@@ -4832,7 +4832,7 @@ function lti_glaaster_load_tool_from_cartridge($url, $lti) {
  * @throws moodle_exception if the cartridge could not be loaded correctly
  * @since Moodle 3.1
  */
-function lti_glaaster_load_cartridge($url, $map, $propertiesmap = []) {
+function glaaster_load_cartridge($url, $map, $propertiesmap = []) {
     global $CFG;
     require_once($CFG->libdir . "/filelib.php");
 
@@ -4916,7 +4916,7 @@ function glaaster_get_tag($tagname, $xpath, $attribute = null) {
  *
  * @return stdClass Access token
  */
-function lti_glaaster_new_access_token($typeid, $scopes) {
+function glaaster_new_access_token($typeid, $scopes) {
     global $DB;
 
     // Make sure the token doesn't exist (even if it should be almost impossible with the random generation).
@@ -4934,7 +4934,7 @@ function lti_glaaster_new_access_token($typeid, $scopes) {
     $newtoken->token = $generatedtoken;
 
     $newtoken->timecreated = time();
-    $newtoken->validuntil = $newtoken->timecreated + LTI_GLAASTER_ACCESS_TOKEN_LIFE;
+    $newtoken->validuntil = $newtoken->timecreated + GLAASTER_ACCESS_TOKEN_LIFE;
     $newtoken->lastaccess = null;
 
     $DB->insert_record('glaaster_access_tokens', $newtoken);
@@ -4955,7 +4955,7 @@ function lti_glaaster_new_access_token($typeid, $scopes) {
  *
  * @deprecated since Moodle 4.3
  */
-function lti_glaaster_libxml_disable_entity_loader(bool $value): bool {
+function glaaster_libxml_disable_entity_loader(bool $value): bool {
     debugging(__FUNCTION__ . '() is deprecated, please do not use it any more', DEBUG_DEVELOPER);
     return true;
 }
@@ -4979,7 +4979,7 @@ function glaaster_retrieve_instance_from_tooldomain() {
     global $DB;
 
     // Get tool domain from config (allows environment-specific configuration).
-    $tooldomain = get_config('mod_glaaster', 'tooldomain') ?: LTI_GLAASTER_TOOLDOMAIN;
+    $tooldomain = get_config('mod_glaaster', 'tooldomain') ?: GLAASTER_TOOLDOMAIN;
 
     // Get tool type configuration by domain.
     $type = $DB->get_record('glaaster_types', ['tooldomain' => $tooldomain]);
@@ -5141,7 +5141,7 @@ function mod_glaaster_load_js() {
  * @param int|null $launchid
  * @return stdClass
  */
-function lti_glaaster_build_sourcedid($instanceid, $userid, $servicesalt, $typeid = null, $launchid = null) {
+function glaaster_build_sourcedid($instanceid, $userid, $servicesalt, $typeid = null, $launchid = null) {
     $data = new \stdClass();
 
     $data->instanceid = $instanceid;

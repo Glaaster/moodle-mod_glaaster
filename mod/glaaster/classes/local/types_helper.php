@@ -36,7 +36,7 @@ class types_helper {
      * @param int $courseid the id of the course.
      * @param int $userid the id of the user.
      * @param array $coursevisible options for 'coursevisible' field, which will default to
-     *        [LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED, LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER] if omitted.
+     *        [GLAASTER_COURSEVISIBLE_PRECONFIGURED, GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER] if omitted.
      * @return stdClass[] the array of tool type objects.
      */
     public static function get_lti_types_by_course(int $courseid, int $userid, array $coursevisible = []): array {
@@ -47,7 +47,7 @@ class types_helper {
         }
 
         if (empty($coursevisible)) {
-            $coursevisible = [LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED, LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER];
+            $coursevisible = [GLAASTER_COURSEVISIBLE_PRECONFIGURED, GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER];
         }
         [$coursevisiblesql, $coursevisparams] = $DB->get_in_or_equal($coursevisible, SQL_PARAMS_NAMED, 'coursevisible');
         [$coursevisiblesql1, $coursevisparams1] = $DB->get_in_or_equal($coursevisible, SQL_PARAMS_NAMED, 'coursevisible');
@@ -77,10 +77,10 @@ class types_helper {
             [
                 'siteid' => $SITE->id,
                 'courseid' => $courseid,
-                'active' => LTI_GLAASTER_TOOL_STATE_CONFIGURED,
+                'active' => GLAASTER_TOOL_STATE_CONFIGURED,
                 'categoryid' => $coursecategory,
-                'coursevisible' => LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
-                'lticoursevisibleno' => LTI_GLAASTER_COURSEVISIBLE_NO,
+                'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+                'lticoursevisibleno' => GLAASTER_COURSEVISIBLE_NO,
             ] + $coursevisparams + $coursevisparams1 + $coursevisoverriddenparams
         );
     }
@@ -104,10 +104,10 @@ class types_helper {
 
         require_capability('mod/glaaster:addcoursetool', $context);
 
-        $ltitype = lti_glaaster_get_type(typeid: $tooltypeid);
-        if ($ltitype && ($ltitype->coursevisible != LTI_GLAASTER_COURSEVISIBLE_NO)) {
+        $ltitype = glaaster_get_type(typeid: $tooltypeid);
+        if ($ltitype && ($ltitype->coursevisible != GLAASTER_COURSEVISIBLE_NO)) {
             $coursevisible =
-                $showinactivitychooser ? LTI_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER : LTI_GLAASTER_COURSEVISIBLE_PRECONFIGURED;
+                $showinactivitychooser ? GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER : GLAASTER_COURSEVISIBLE_PRECONFIGURED;
             $ltitype->coursevisible = $coursevisible;
 
             $config = new stdClass();
@@ -115,7 +115,7 @@ class types_helper {
 
             if (intval($ltitype->course) != intval(get_site()->id)) {
                 // It is course tool - just update it.
-                lti_glaaster_update_type($ltitype, $config);
+                glaaster_update_type($ltitype, $config);
             } else {
                 $coursecategory = $DB->get_field('course', 'category', ['id' => $courseid]);
                 $sql = "SELECT COUNT(*) AS count

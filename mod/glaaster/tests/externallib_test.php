@@ -394,7 +394,7 @@ final class externallib_test extends mod_glaaster_testcase {
 
         $this->assertEquals('Test proxy', $proxy->name);
         $this->assertEquals($this->getExternalTestFileUrl('/test.html'), $proxy->regurl);
-        $this->assertEquals(LTI_GLAASTER_TOOL_PROXY_STATE_PENDING, $proxy->state);
+        $this->assertEquals(GLAASTER_TOOL_PROXY_STATE_PENDING, $proxy->state);
         $this->assertEquals(implode("\n", $capabilities), $proxy->capabilityoffered);
     }
 
@@ -427,21 +427,21 @@ final class externallib_test extends mod_glaaster_testcase {
         $this->setAdminUser();
         $proxy = mod_glaaster_external::create_tool_proxy('Test proxy', $this->getExternalTestFileUrl('/test.html'), [], []);
         $proxy = (object) external_api::clean_returnvalue(mod_glaaster_external::create_tool_proxy_returns(), $proxy);
-        $this->assertNotEmpty(lti_glaaster_get_tool_proxy($proxy->id));
+        $this->assertNotEmpty(glaaster_get_tool_proxy($proxy->id));
 
         $proxy = mod_glaaster_external::delete_tool_proxy($proxy->id);
         $proxy = (object) external_api::clean_returnvalue(mod_glaaster_external::delete_tool_proxy_returns(), $proxy);
 
         $this->assertEquals('Test proxy', $proxy->name);
         $this->assertEquals($this->getExternalTestFileUrl('/test.html'), $proxy->regurl);
-        $this->assertEquals(LTI_GLAASTER_TOOL_PROXY_STATE_PENDING, $proxy->state);
-        $this->assertEmpty(lti_glaaster_get_tool_proxy($proxy->id));
+        $this->assertEquals(GLAASTER_TOOL_PROXY_STATE_PENDING, $proxy->state);
+        $this->assertEmpty(glaaster_get_tool_proxy($proxy->id));
     }
 
     /**
      * Test glaaster_get_tool_proxy_registration_request.
      */
-    public function test_mod_glaaster_glaaster_get_tool_proxy_registration_request(): void {
+    public function test_mod_glaaster_get_tool_proxy_registration_request(): void {
         $this->setAdminUser();
         $proxy = mod_glaaster_external::create_tool_proxy('Test proxy', $this->getExternalTestFileUrl('/test.html'), [], []);
         $proxy = (object) external_api::clean_returnvalue(mod_glaaster_external::create_tool_proxy_returns(), $proxy);
@@ -467,12 +467,12 @@ final class externallib_test extends mod_glaaster_testcase {
         // Create a tool type, associated with that proxy.
         $type = new stdClass();
         $data = new stdClass();
-        $type->state = LTI_GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->toolproxyid = $proxy->id;
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
-        lti_glaaster_add_type($type, $data);
+        glaaster_add_type($type, $data);
 
         $types = mod_glaaster_external::get_tool_types($proxy->id);
         $types = external_api::clean_returnvalue(mod_glaaster_external::get_tool_types_returns(), $types);
@@ -494,9 +494,9 @@ final class externallib_test extends mod_glaaster_testcase {
         $this->assertEquals('Example tool', $type['name']);
         $this->assertEquals('Example tool description', $type['description']);
         $this->assertEquals('https://download.moodle.org/unittest/test.jpg', $type['urls']['icon']);
-        $typeentry = lti_glaaster_get_type($type['id']);
+        $typeentry = glaaster_get_type($type['id']);
         $this->assertEquals('http://www.example.com/lti/provider.php', $typeentry->baseurl);
-        $config = lti_glaaster_get_type_config($type['id']);
+        $config = glaaster_get_type_config($type['id']);
         $this->assertTrue(isset($config['sendname']));
         $this->assertTrue(isset($config['sendemailaddr']));
         $this->assertTrue(isset($config['acceptgrades']));
@@ -539,7 +539,7 @@ final class externallib_test extends mod_glaaster_testcase {
         $type = external_api::clean_returnvalue(mod_glaaster_external::create_tool_type_returns(), $type);
 
         $type =
-            mod_glaaster_external::update_tool_type($type['id'], 'New name', 'New description', LTI_GLAASTER_TOOL_STATE_PENDING);
+            mod_glaaster_external::update_tool_type($type['id'], 'New name', 'New description', GLAASTER_TOOL_STATE_PENDING);
         $type = external_api::clean_returnvalue(mod_glaaster_external::update_tool_type_returns(), $type);
 
         $this->assertEquals('New name', $type['name']);
@@ -554,11 +554,11 @@ final class externallib_test extends mod_glaaster_testcase {
         $this->setAdminUser();
         $type = mod_glaaster_external::create_tool_type($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'), '', '');
         $type = external_api::clean_returnvalue(mod_glaaster_external::create_tool_type_returns(), $type);
-        $this->assertNotEmpty(lti_glaaster_get_type($type['id']));
+        $this->assertNotEmpty(glaaster_get_type($type['id']));
 
         $type = mod_glaaster_external::delete_tool_type($type['id']);
         $type = external_api::clean_returnvalue(mod_glaaster_external::delete_tool_type_returns(), $type);
-        $this->assertEmpty(lti_glaaster_get_type($type['id']));
+        $this->assertEmpty(glaaster_get_type($type['id']));
     }
 
     /**
@@ -568,7 +568,7 @@ final class externallib_test extends mod_glaaster_testcase {
         $this->setAdminUser();
         $type = mod_glaaster_external::create_tool_type($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'), '', '');
         $type = external_api::clean_returnvalue(mod_glaaster_external::create_tool_type_returns(), $type);
-        $this->assertNotEmpty(lti_glaaster_get_type($type['id']));
+        $this->assertNotEmpty(glaaster_get_type($type['id']));
 
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
