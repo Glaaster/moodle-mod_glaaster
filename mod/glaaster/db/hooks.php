@@ -24,17 +24,11 @@
  */
 
 use core\hook\output\before_footer_html_generation;
-use core\hook\output\before_standard_top_of_body_html_generation;
 use mod_glaaster\hook_callbacks;
 
 defined('MOODLE_INTERNAL') || die();
 
 $callbacks = [
-    [
-        'hook' => before_standard_top_of_body_html_generation::class,
-        'callback' => [hook_callbacks::class, 'before_standard_top_of_body_html_generation'],
-        'priority' => 0,
-    ],
     [
         'hook' => before_footer_html_generation::class,
         'callback' => [hook_callbacks::class, 'before_footer_html_generation'],
