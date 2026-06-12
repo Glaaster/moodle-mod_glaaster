@@ -111,34 +111,20 @@ if (!empty($errormsg)) {
         $launchcontainer == MOD_GLAASTER_LAUNCH_CONTAINER_EMBED ||
         $launchcontainer == MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS
     ) {
-        // Output a page containing some script to break out of frames and redirect them.
-
-        echo '<html><body>';
-
-        $script = "
-            <script type=\"text/javascript\">
-            //<![CDATA[
-                if(window != top){
-                    top.location.href = '{$url}';
-                } else {
-                    window.location.href = '{$url}';
-                }
-            //]]
-            </script>
-        ";
+        // Output a page containing script to break out of frames and redirect them.
+        $PAGE->set_url(new moodle_url('/mod/glaaster/return.php', ['course' => $courseid]));
+        $PAGE->set_title(strip_tags($course->shortname));
+        $PAGE->set_heading($course->fullname);
+        $PAGE->set_pagelayout('embedded');
 
         $clickhere = get_string('return_to_course', 'glaaster', (object) ['link' => $url]);
 
-        $noscript = "
-            <noscript>
-                {$clickhere}
-            </noscript>
-        ";
-
-        echo $script;
-        echo $noscript;
-
-        echo '</body></html>';
+        $PAGE->requires->js_call_amd('mod_glaaster/return_framebreak', 'init', [$url]);
+        echo $OUTPUT->header();
+        echo $OUTPUT->render_from_template('mod_glaaster/return_framebreak', [
+            'clickhere' => $clickhere,
+        ]);
+        echo $OUTPUT->footer();
     } else {
         // If no error, take them back to the course.
         redirect($url);

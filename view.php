@@ -257,70 +257,36 @@ if ($foruserid) {
 unset($SESSION->lti_initiatelogin_status);
 if (($launchcontainer == MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW)) {
     if (!$forceview) {
-        echo "<script language=\"javascript\">//<![CDATA[\n";
-        echo "window.open('{$launchurl->out(true)}','lti-$cm->id');";
-        echo "//]]\n";
-        echo "</script>\n";
-        echo "<p>" . get_string("basiclti_in_new_window", "lti") . "</p>\n";
+        $PAGE->requires->js_call_amd('mod_glaaster/view', 'initWindowLaunch', [$launchurl->out(true), $cm->id]);
+        echo '<p>' . get_string('basiclti_in_new_window', 'lti') . "</p>\n";
     }
     echo html_writer::start_tag('p');
     echo html_writer::link(
         $launchurl->out(false),
-        get_string("basiclti_in_new_window_open", "lti"),
+        get_string('basiclti_in_new_window_open', 'lti'),
         ['target' => '_blank']
     );
     echo html_writer::end_tag('p');
 } else {
-    $content = '';
-    // Build the allowed URL, since we know what it will be from $lti->toolurl,
-    // If the specified toolurl is invalid the iframe won't load, but we still want to avoid parse related errors here.
-    // So we set an empty default allowed url, and only build a real one if the parse is successful.
+    // Build the allowed URL from $lti->toolurl. Empty default avoids parse errors for invalid URLs.
     $ltiallow = '';
     $urlparts = parse_url($toolurl);
     if ($urlparts && array_key_exists('scheme', $urlparts) && array_key_exists('host', $urlparts)) {
         $ltiallow = $urlparts['scheme'] . '://' . $urlparts['host'];
-        // If a port has been specified we append that too.
         if (array_key_exists('port', $urlparts)) {
             $ltiallow .= ':' . $urlparts['port'];
         }
     }
 
-    // Request the launch content with an iframe tag.
-    $attributes = [];
-    $attributes['id'] = "contentframe";
-    $attributes['height'] = '700px';
-    $attributes['width'] = '100%';
-    $attributes['src'] = $launchurl;
-    $attributes['allow'] = "microphone $ltiallow; " .
-        "camera $ltiallow; " .
-        "geolocation $ltiallow; " .
-        "midi $ltiallow; " .
-        "encrypted-media $ltiallow; " .
-        "autoplay $ltiallow";
-    $attributes['allowfullscreen'] = 1;
-    $iframehtml = html_writer::tag('iframe', $content, $attributes);
-    echo $iframehtml;
+    $allowattr = "microphone $ltiallow; camera $ltiallow; geolocation $ltiallow; " .
+        "midi $ltiallow; encrypted-media $ltiallow; autoplay $ltiallow";
 
-    // Output script to make the iframe tag be as large as possible.
-    $resize = '
-    <script type="text/javascript">
-        //<![CDATA[
-            YUI().use("node", "event", function(Y) {
-                const frame = Y.one("#contentframe");
-                // The bottom of the iframe wasn\'t visible on some themes. Probably because of border widths, etc.
-                const padding = 15;
-                const resize = function(e) {
-                   frame.setStyle("height", window.innerHeight * 0.88 - padding + "px");
-                };
-                frame.setStyle("margin-bottom", "60px");
-                resize();
-                Y.on("windowresize", resize);
-              });
-          //]]
-        </script>
-';
+    echo $OUTPUT->render_from_template('mod_glaaster/view_iframe', [
+        'src' => $launchurl->out(false),
+        'allow' => $allowattr,
+    ]);
 
-    echo $resize;
+    $PAGE->requires->js_call_amd('mod_glaaster/view', 'initIframeResize');
 }
 
 $PAGE->requires->js('/mod/glaaster/assets/js/iframe-loader.js');

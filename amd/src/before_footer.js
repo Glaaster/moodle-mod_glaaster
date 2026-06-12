@@ -42,7 +42,7 @@ const SUPPORTEDFILEICONS = ['f/pdf', 'f/image', 'f/document', 'f/powerpoint', 'f
  * @param {boolean} config.webserviceConfigured - Whether Glaaster webservice is configured
  * @param {boolean} config.debugEnabled - Whether debug mode is active
  */
-export default function init(config) {
+export function init(config) {
     'use strict';
 
     const {instanceId, webservicesEnabled, webserviceConfigured, debugEnabled} = config;
