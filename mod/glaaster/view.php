@@ -124,13 +124,6 @@ if ($coursemoduleid !== 0 && empty($filename) && empty($filepath)) {
         throw new moodle_exception('filenotfound', 'error', '', $targetfilename);
     }
 
-    $SESSION->glaaster_folder_file = [
-        'file' => $match,
-        'context' => $contextfolder,
-        'folder_cm' => $coursemoduleorigin,
-        'filename' => $targetfilename,
-        'filepath' => $targetfilepath,
-    ];
 }
 
 $typeid = $lti->typeid;
