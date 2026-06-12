@@ -63,9 +63,10 @@ if (!empty($jwt)) {
     $errormsg = $params['lti_errormsg'] ?? '';
     $msg = $params['lti_msg'] ?? '';
 } else {
-    $consumerkey = required_param('oauth_consumer_key', PARAM_RAW);
+    $consumerkey = required_param('oauth_consumer_key', PARAM_ALPHANUMEXT);
     $messagetype = required_param('lti_message_type', PARAM_TEXT);
     $version = required_param('lti_version', PARAM_TEXT);
+    // JSON payload validated via json_decode + structure check in glaaster_tool_configuration_from_content_item().
     $items = optional_param('content_items', '', PARAM_RAW);
     $errormsg = optional_param('lti_errormsg', '', PARAM_TEXT);
     $msg = optional_param('lti_msg', '', PARAM_TEXT);

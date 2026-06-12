@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/mod/glaaster/locallib.php');
 $id = required_param('id', PARAM_INT);
 $courseid = required_param('course', PARAM_INT);
 $title = optional_param('title', '', PARAM_TEXT);
-$text = optional_param('text', '', PARAM_RAW);
+$text = optional_param('text', '', PARAM_ALPHANUMEXT);
 
 $config = glaaster_get_type_type_config($id);
 if ($config->lti_ltiversion === GLAASTER_VERSION_1P3) {
