@@ -73,7 +73,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
         );
 
         $items->add_database_table(
-            'lti_tool_proxies',
+            'glaaster_tool_proxies',
             [
                 'name' => 'privacy:metadata:lti_tool_proxies:name',
                 'createdby' => 'privacy:metadata:createdby',
@@ -137,25 +137,16 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
 
-        if (!is_a($context, context_module::class)) {
-            return;
+        if ($context instanceof context_course) {
+            $sql = "SELECT ltit.createdby AS userid
+                      FROM {glaaster_types} ltit
+                     WHERE ltit.course = :courseid";
+            $params = ['courseid' => $context->instanceid];
+            $userlist->add_from_sql('userid', $sql, $params);
+        } else if ($context instanceof context_system) {
+            $sql = "SELECT createdby AS userid FROM {glaaster_tool_proxies}";
+            $userlist->add_from_sql('userid', $sql, []);
         }
-
-        // Fetch all LTI types.
-        $sql = "SELECT ltit.createdby AS userid
-                 FROM {context} c
-                 JOIN {course} course
-                   ON c.contextlevel = :contextlevel
-                  AND c.instanceid = course.id
-                 JOIN {glaaster_types} ltit
-                   ON ltit.course = course.id
-                WHERE c.id = :contextid";
-
-        $params = [
-            'contextlevel' => CONTEXT_COURSE,
-            'contextid' => $context->id,
-        ];
-        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -320,8 +311,12 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @param context $context the context to delete in.
      */
     public static function delete_data_for_all_users_in_context(context $context) {
-        if (!$context instanceof context_module) {
-            return;
+        global $DB;
+
+        if ($context instanceof context_course) {
+            $DB->delete_records('glaaster_types', ['course' => $context->instanceid]);
+        } else if ($context instanceof context_system) {
+            $DB->delete_records('glaaster_tool_proxies', []);
         }
     }
 
@@ -331,8 +326,23 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @param approved_contextlist $contextlist a list of contexts approved for deletion.
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
+        global $DB;
+
         if (empty($contextlist->count())) {
             return;
+        }
+
+        $user = $contextlist->get_user();
+
+        foreach ($contextlist->get_contexts() as $context) {
+            if ($context instanceof context_course) {
+                $DB->delete_records('glaaster_types', [
+                    'course'    => $context->instanceid,
+                    'createdby' => $user->id,
+                ]);
+            } else if ($context instanceof context_system) {
+                $DB->delete_records('glaaster_tool_proxies', ['createdby' => $user->id]);
+            }
         }
     }
 
@@ -342,5 +352,25 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @param approved_userlist $userlist The approved context and user information to delete information for.
      */
     public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        $userids = $userlist->get_userids();
+
+        if (empty($userids)) {
+            return;
+        }
+
+        [$insql, $inparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+
+        if ($context instanceof context_course) {
+            $DB->delete_records_select(
+                'glaaster_types',
+                "course = :courseid AND createdby $insql",
+                array_merge(['courseid' => $context->instanceid], $inparams)
+            );
+        } else if ($context instanceof context_system) {
+            $DB->delete_records_select('glaaster_tool_proxies', "createdby $insql", $inparams);
+        }
     }
 }
