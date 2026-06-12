@@ -41,11 +41,6 @@ $pending = get_string('pending', 'glaaster');
 $accepted = get_string('accepted', 'glaaster');
 $rejected = get_string('rejected', 'glaaster');
 
-$name = get_string('name', 'glaaster');
-$url = get_string('registrationurl', 'glaaster');
-$action = get_string('action', 'glaaster');
-$createdon = get_string('createdon', 'glaaster');
-
 $toolproxies = $DB->get_records('glaaster_tool_proxies');
 
 $configuredtoolproxies = glaaster_filter_tool_proxy_types($toolproxies, MOD_GLAASTER_TOOL_PROXY_STATE_CONFIGURED);
@@ -61,118 +56,42 @@ $rejectedtoolproxies = glaaster_filter_tool_proxy_types($toolproxies, MOD_GLAAST
 $rejectedtoolproxieshtml = glaaster_get_tool_proxy_table($rejectedtoolproxies, 'tp_rejected');
 
 $tab = optional_param('tab', '', PARAM_ALPHAEXT);
-$configuredselected = '';
-$pendingselected = '';
-$acceptedselected = '';
-$rejectedselected = '';
-switch ($tab) {
-    case 'tp_pending':
-        $pendingselected = 'class="selected"';
-        break;
-    case 'tp_accepted':
-        $acceptedselected = 'class="selected"';
-        break;
-    case 'tp_rejected':
-        $rejectedselected = 'class="selected"';
-        break;
-    default:
-        $configuredselected = 'class="selected"';
-        break;
-}
-$registertype = get_string('registertype', 'glaaster');
-$config = get_string('manage_tools', 'glaaster');
 
-$registertypeurl = "{$CFG->wwwroot}/mod/glaaster/registersettings.php?action=add&amp;sesskey={$USER->sesskey}&amp;tab=tool_proxy";
+$registertypeurl = new moodle_url(
+    '/mod/glaaster/registersettings.php',
+    ['action' => 'add', 'sesskey' => sesskey(), 'tab' => 'tool_proxy']
+);
 
-$template = <<<EOD
-<div id="tp_tabs" class="yui-navset">
-    <ul id="tp_tab_heading" class="yui-nav" style="display:none">
-        <li {$configuredselected}>
-            <a href="#tab1">
-                <em>$configured</em>
-            </a>
-        </li>
-        <li {$pendingselected}>
-            <a href="#tab2">
-                <em>$pending</em>
-            </a>
-        </li>
-        <li {$acceptedselected}>
-            <a href="#tab3">
-                <em>$accepted</em>
-            </a>
-        </li>
-        <li {$rejectedselected}>
-            <a href="#tab4">
-                <em>$rejected</em>
-            </a>
-        </li>
-    </ul>
-    <div class="yui-content">
-        <div>
-            <div><a style="margin-top:.25em" href="{$registertypeurl}">{$registertype}</a></div>
-            $configuredtoolproxieshtml
-        </div>
-        <div>
-            $pendingtoolproxieshtml
-        </div>
-        <div>
-            $acceptedtoolproxieshtml
-        </div>
-        <div>
-            $rejectedtoolproxieshtml
-        </div>
-    </div>
-</div>
-
-<script type="text/javascript">
-//<![CDATA[
-    YUI().use('yui2-tabview', 'yui2-datatable', function(Y) {
-        //If javascript is disabled, they will just see the three tabs one after another
-        var tp_tab_heading = document.getElementById('tp_tab_heading');
-        tp_tab_heading.style.display = '';
-
-        new Y.YUI2.widget.TabView('tp_tabs');
-
-        var setupTools = function(id, sort){
-            var tp_tool_proxies = Y.YUI2.util.Dom.get(id);
-
-            if(tp_tool_proxies){
-                var dataSource = new Y.YUI2.util.DataSource(tp_tool_proxies);
-
-                var configuredColumns = [
-                    {key:'name', label:'$name', sortable:true},
-                    {key:'url', label:'$url', sortable:true},
-                    {key:'timecreated', label:'$createdon', sortable:true},
-                    {key:'action', label:'$action'}
-                ];
-
-                dataSource.responseType = Y.YUI2.util.DataSource.TYPE_HTMLTABLE;
-                dataSource.responseSchema = {
-                    fields: [
-                        {key:'name'},
-                        {key:'url'},
-                        {key:'timecreated'},
-                        {key:'action'}
-                    ]
-                };
-
-                new Y.YUI2.widget.DataTable(id + '_container', configuredColumns, dataSource,
-                    {
-                        sortedBy: sort
-                    }
-                );
-            }
-        };
-
-        setupTools('tp_configured_tool_proxies', {key:'name', dir:'asc'});
-        setupTools('tp_pending_tool_proxies', {key:'timecreated', dir:'desc'});
-        setupTools('tp_accepted_tool_proxies', {key:'timecreated', dir:'desc'});
-        setupTools('tp_rejected_tool_proxies', {key:'timecreated', dir:'desc'});
-    });
-//]]
-</script>
-EOD;
+$tabs = [
+    [
+        'id' => 'tp_configured',
+        'label' => $configured,
+        'selected' => ($tab === '' || $tab === 'tp_configured'),
+        'content' => html_writer::link(
+            $registertypeurl,
+            get_string('registertype', 'glaaster'),
+            ['class' => 'd-block mb-2']
+        ) . $configuredtoolproxieshtml,
+    ],
+    [
+        'id' => 'tp_pending',
+        'label' => $pending,
+        'selected' => ($tab === 'tp_pending'),
+        'content' => $pendingtoolproxieshtml,
+    ],
+    [
+        'id' => 'tp_accepted',
+        'label' => $accepted,
+        'selected' => ($tab === 'tp_accepted'),
+        'content' => $acceptedtoolproxieshtml,
+    ],
+    [
+        'id' => 'tp_rejected',
+        'label' => $rejected,
+        'selected' => ($tab === 'tp_rejected'),
+        'content' => $rejectedtoolproxieshtml,
+    ],
+];
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('manage_tool_proxies', 'glaaster'), 2);
@@ -181,7 +100,7 @@ echo $OUTPUT->heading(new lang_string('toolproxy', 'glaaster') .
 
 echo $OUTPUT->box_start('generalbox');
 
-echo $template;
+echo $OUTPUT->render_from_template('mod_glaaster/tool_proxies_tabs', ['tabs' => $tabs]);
 
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();

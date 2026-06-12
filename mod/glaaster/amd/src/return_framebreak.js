@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,32 +13,32 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_glaaster;
-
-use core\hook\output\before_footer_html_generation;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/mod/glaaster/locallib.php');
-
 /**
- * This file contains hook callbacks for the Glaaster module.
+ * Breaks out of a frame and redirects to the course URL.
  *
- * @package    mod_glaaster
- * @copyright  2025 Glaaster
+ * Used by return.php when the LTI tool is embedded and needs to navigate
+ * the top frame back to the course after completion.
+ *
+ * @module     mod_glaaster/return_framebreak
+ * @copyright  2024 Glaaster
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class hook_callbacks {
+define([], function() {
+
     /**
-     * Runs before the HTTP footer is generated.
+     * Redirect the top frame (or current window) to the given URL.
      *
-     * @param before_footer_html_generation $hook
+     * @param {string} url Destination URL
      */
-    public static function before_footer_html_generation(before_footer_html_generation $hook): void {
-        global $PAGE;
-        $config = mod_glaaster_get_js_config();
-        $PAGE->requires->js_call_amd('mod_glaaster/before_footer', 'init', [$config]);
-    }
-}
+    const init = function(url) {
+        if (window !== top) {
+            top.location.href = url;
+        } else {
+            window.location.href = url;
+        }
+    };
+
+    return {
+        init: init,
+    };
+});
