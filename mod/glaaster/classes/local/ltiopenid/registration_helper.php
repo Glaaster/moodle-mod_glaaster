@@ -135,10 +135,10 @@ class registration_helper {
         $config->lti_tooldomain = $domain;
         $config->lti_typename = $clientname;
         $config->lti_description = $description;
-        $config->lti_ltiversion = GLAASTER_VERSION_1P3;
-        $config->lti_organizationid_default = GLAASTER_DEFAULT_ORGID_SITEID;
+        $config->lti_ltiversion = MOD_GLAASTER_VERSION_1P3;
+        $config->lti_organizationid_default = MOD_GLAASTER_DEFAULT_ORGID_SITEID;
         $config->lti_icon = $logouri;
-        $config->lti_coursevisible = GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
+        $config->lti_coursevisible = MOD_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
         $config->lti_contentitem = 0;
         // Sets Content Item.
         if (!empty($messages)) {
@@ -166,13 +166,13 @@ class registration_helper {
             $config->lti_customparameters = implode(PHP_EOL, $paramssarray);
         }
         // Sets launch container.
-        $config->lti_launchcontainer = GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+        $config->lti_launchcontainer = MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
 
         // Sets Service info based on scopes.
         $config->ltiglaasterservice_memberships = 0;
         $config->ltiglaasterservice_toolsettings = 0;
         $config->ltiglaasterservice_gradesynchronization = 0;
-        $config->lti_acceptgrades = GLAASTER_SETTING_NEVER;
+        $config->lti_acceptgrades = MOD_GLAASTER_SETTING_NEVER;
         if (isset($scopes)) {
             // Sets Names and Role Provisioning info.
             if (in_array(self::SCOPE_NRPS, $scopes)) {
@@ -189,32 +189,32 @@ class registration_helper {
             $haslineitem = in_array(self::SCOPE_AGS_LINEITEM, $scopes);
             if ($hasscore && $haslineitem) {
                 $config->ltiglaasterservice_gradesynchronization = 2;
-                $config->lti_acceptgrades = GLAASTER_SETTING_DELEGATE;
+                $config->lti_acceptgrades = MOD_GLAASTER_SETTING_DELEGATE;
             } else if ($hasscore || $haslineitem) {
                 $config->ltiglaasterservice_gradesynchronization = 1;
-                $config->lti_acceptgrades = GLAASTER_SETTING_DELEGATE;
+                $config->lti_acceptgrades = MOD_GLAASTER_SETTING_DELEGATE;
             }
         }
 
         // Sets privacy settings.
-        $config->lti_sendname = GLAASTER_SETTING_NEVER;
-        $config->lti_sendemailaddr = GLAASTER_SETTING_NEVER;
+        $config->lti_sendname = MOD_GLAASTER_SETTING_NEVER;
+        $config->lti_sendemailaddr = MOD_GLAASTER_SETTING_NEVER;
         if (isset($claims)) {
             // Sets name privacy settings.
 
             if (in_array('name', $claims)) {
-                $config->lti_sendname = GLAASTER_SETTING_ALWAYS;
+                $config->lti_sendname = MOD_GLAASTER_SETTING_ALWAYS;
             }
             if (in_array('given_name', $claims)) {
-                $config->lti_sendname = GLAASTER_SETTING_ALWAYS;
+                $config->lti_sendname = MOD_GLAASTER_SETTING_ALWAYS;
             }
             if (in_array('family_name', $claims)) {
-                $config->lti_sendname = GLAASTER_SETTING_ALWAYS;
+                $config->lti_sendname = MOD_GLAASTER_SETTING_ALWAYS;
             }
 
             // Sets email privacy settings.
             if (in_array('email', $claims)) {
-                $config->lti_sendemailaddr = GLAASTER_SETTING_ALWAYS;
+                $config->lti_sendemailaddr = MOD_GLAASTER_SETTING_ALWAYS;
             }
         }
         return $config;
@@ -270,7 +270,7 @@ class registration_helper {
         $lticonfigurationresponse = [];
         $ltiversion = $type ? $type->ltiversion : $config->ltiversion;
         $lticonfigurationresponse['version'] = $ltiversion;
-        if ($ltiversion === GLAASTER_VERSION_1P3) {
+        if ($ltiversion === MOD_GLAASTER_VERSION_1P3) {
             $registrationresponse['client_id'] = $type ? $type->clientid : $config->clientid;
             $registrationresponse['response_types'] = ['id_token'];
             $registrationresponse['jwks_uri'] = $config->publickeyset;
@@ -279,9 +279,9 @@ class registration_helper {
             $registrationresponse['redirect_uris'] = explode(PHP_EOL, $config->redirectionuris);
             $registrationresponse['application_type'] = 'web';
             $registrationresponse['token_endpoint_auth_method'] = 'private_key_jwt';
-        } else if ($ltiversion === GLAASTER_VERSION_1 && $type) {
+        } else if ($ltiversion === MOD_GLAASTER_VERSION_1 && $type) {
             $this->add_previous_key_claim($lticonfigurationresponse, $config->resourcekey, $config->password);
-        } else if ($ltiversion === GLAASTER_VERSION_2 && $type) {
+        } else if ($ltiversion === MOD_GLAASTER_VERSION_2 && $type) {
             $toolproxy = $this->get_tool_proxy($type->toolproxyid);
             $this->add_previous_key_claim($lticonfigurationresponse, $toolproxy['guid'], $toolproxy['secret']);
         }
@@ -317,12 +317,12 @@ class registration_helper {
         $registrationresponse['scope'] = implode(' ', $scopesresponse);
 
         $claimsresponse = ['sub', 'iss'];
-        if ($config->sendname ?? '' == GLAASTER_SETTING_ALWAYS) {
+        if ($config->sendname ?? '' == MOD_GLAASTER_SETTING_ALWAYS) {
             $claimsresponse[] = 'name';
             $claimsresponse[] = 'family_name';
             $claimsresponse[] = 'given_name';
         }
-        if ($config->sendemailaddr ?? '' == GLAASTER_SETTING_ALWAYS) {
+        if ($config->sendemailaddr ?? '' == MOD_GLAASTER_SETTING_ALWAYS) {
             $claimsresponse[] = 'email';
         }
         $lticonfigurationresponse['claims'] = $claimsresponse;

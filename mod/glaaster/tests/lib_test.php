@@ -430,8 +430,8 @@ final class lib_test extends advanced_testcase {
             'ltiversion' => 'LTI-1p0',
             'timecreated' => $time,
             'timemodified' => $time,
-            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
-            'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => MOD_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => MOD_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
         ];
         $sitetoolrecordnonchooser = (object) [
             'name' => 'Site level tool which is NOT available in the course activity chooser',
@@ -441,8 +441,8 @@ final class lib_test extends advanced_testcase {
             'ltiversion' => 'LTI-1p0',
             'timecreated' => $time,
             'timemodified' => $time,
-            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
-            'coursevisible' => GLAASTER_COURSEVISIBLE_PRECONFIGURED,
+            'state' => MOD_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => MOD_GLAASTER_COURSEVISIBLE_PRECONFIGURED,
         ];
         $course1toolrecord = (object) [
             'name' => 'Course created tool which is available in the activity chooser',
@@ -452,8 +452,8 @@ final class lib_test extends advanced_testcase {
             'ltiversion' => 'LTI-1p0',
             'timecreated' => $time,
             'timemodified' => $time,
-            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
-            'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => MOD_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => MOD_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
         ];
         $course2toolrecord = (object) [
             'name' => 'Course created tool which is available in the activity chooser',
@@ -463,8 +463,8 @@ final class lib_test extends advanced_testcase {
             'ltiversion' => 'LTI-1p0',
             'timecreated' => $time,
             'timemodified' => $time,
-            'state' => GLAASTER_TOOL_STATE_CONFIGURED,
-            'coursevisible' => GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => MOD_GLAASTER_TOOL_STATE_CONFIGURED,
+            'coursevisible' => MOD_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER,
         ];
         $tool1id = $DB->insert_record('glaaster_types', $sitetoolrecord);
         $tool2id = $DB->insert_record('glaaster_types', $sitetoolrecordnonchooser);

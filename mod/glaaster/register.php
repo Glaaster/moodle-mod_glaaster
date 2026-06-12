@@ -42,8 +42,8 @@ $toolproxies = $DB->get_records('glaaster_tool_proxies');
 $duplicate = false;
 foreach ($toolproxies as $key => $toolproxy) {
     if (
-        ($toolproxy->state == GLAASTER_TOOL_PROXY_STATE_PENDING) ||
-        ($toolproxy->state == GLAASTER_TOOL_PROXY_STATE_ACCEPTED)
+        ($toolproxy->state == MOD_GLAASTER_TOOL_PROXY_STATE_PENDING) ||
+        ($toolproxy->state == MOD_GLAASTER_TOOL_PROXY_STATE_ACCEPTED)
     ) {
         if ($toolproxy->regurl == $toolproxies[$id]->regurl) {
             $duplicate = true;

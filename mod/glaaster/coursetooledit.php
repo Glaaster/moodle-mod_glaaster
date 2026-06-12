@@ -68,7 +68,7 @@ if ($form->is_cancelled()) {
         $redirecturl = new moodle_url('/mod/glaaster/coursetools.php', ['id' => $courseid]);
         $notice = get_string('courseexternaltooleditsuccess', 'mod_glaaster');
     } else {
-        $type = (object) ['state' => GLAASTER_TOOL_STATE_CONFIGURED, 'course' => $data->course];
+        $type = (object) ['state' => MOD_GLAASTER_TOOL_STATE_CONFIGURED, 'course' => $data->course];
         glaaster_load_type_if_cartridge($data);
         glaaster_add_type($type, $data);
         $redirecturl = new moodle_url('/mod/glaaster/coursetools.php', ['id' => $courseid]);

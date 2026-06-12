@@ -112,10 +112,10 @@ class mod_glaaster_generator extends testing_module_generator {
         $data['baseurl'] = (new moodle_url($data['baseurl']))->out(false); // Permits relative URLs in behat features.
 
         // Sensible defaults permitting the tool type to be used in a launch.
-        $data['lti_acceptgrades'] = $data['lti_acceptgrades'] ?? GLAASTER_SETTING_ALWAYS;
-        $data['lti_sendname'] = $data['lti_sendname'] ?? GLAASTER_SETTING_ALWAYS;
-        $data['lti_sendemailaddr'] = $data['lti_sendname'] ?? GLAASTER_SETTING_ALWAYS;
-        $data['lti_launchcontainer'] = $data['lti_launchcontainer'] ?? GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+        $data['lti_acceptgrades'] = $data['lti_acceptgrades'] ?? MOD_GLAASTER_SETTING_ALWAYS;
+        $data['lti_sendname'] = $data['lti_sendname'] ?? MOD_GLAASTER_SETTING_ALWAYS;
+        $data['lti_sendemailaddr'] = $data['lti_sendname'] ?? MOD_GLAASTER_SETTING_ALWAYS;
+        $data['lti_launchcontainer'] = $data['lti_launchcontainer'] ?? MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
 
         ['type' => $type, 'config' => $config] = $this->get_type_and_config_from_data($data);
 
@@ -166,15 +166,15 @@ class mod_glaaster_generator extends testing_module_generator {
         }
 
         $type['baseurl'] = (new moodle_url($type['baseurl']))->out(false); // Permits relative URLs in behat features.
-        $type['coursevisible'] = $type['coursevisible'] ?? GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
-        $type['state'] = GLAASTER_TOOL_STATE_CONFIGURED; // The default for course tools.
+        $type['coursevisible'] = $type['coursevisible'] ?? MOD_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
+        $type['state'] = MOD_GLAASTER_TOOL_STATE_CONFIGURED; // The default for course tools.
 
         // Sensible defaults permitting the tool type to be used in a launch.
-        $type['lti_acceptgrades'] = $type['lti_acceptgrades'] ?? GLAASTER_SETTING_ALWAYS;
-        $type['lti_sendname'] = $type['lti_sendname'] ?? GLAASTER_SETTING_ALWAYS;
-        $type['lti_sendemailaddr'] = $type['lti_sendemailaddr'] ?? GLAASTER_SETTING_ALWAYS;
-        $type['lti_coursevisible'] = $type['coursevisible'] ?? GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
-        $type['lti_launchcontainer'] = $type['lti_launchcontainer'] ?? GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+        $type['lti_acceptgrades'] = $type['lti_acceptgrades'] ?? MOD_GLAASTER_SETTING_ALWAYS;
+        $type['lti_sendname'] = $type['lti_sendname'] ?? MOD_GLAASTER_SETTING_ALWAYS;
+        $type['lti_sendemailaddr'] = $type['lti_sendemailaddr'] ?? MOD_GLAASTER_SETTING_ALWAYS;
+        $type['lti_coursevisible'] = $type['coursevisible'] ?? MOD_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER;
+        $type['lti_launchcontainer'] = $type['lti_launchcontainer'] ?? MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
 
         // Required for cartridge processing support.
         $type['lti_toolurl'] = $type['baseurl'];

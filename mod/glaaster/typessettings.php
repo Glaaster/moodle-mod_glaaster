@@ -117,10 +117,10 @@ if (!empty($returnurl)) {
 }
 
 if ($action == 'accept') {
-    glaaster_set_state_for_type($id, GLAASTER_TOOL_STATE_CONFIGURED);
+    glaaster_set_state_for_type($id, MOD_GLAASTER_TOOL_STATE_CONFIGURED);
     redirect($redirect);
 } else if ($action == 'reject') {
-    glaaster_set_state_for_type($id, GLAASTER_TOOL_STATE_REJECTED);
+    glaaster_set_state_for_type($id, MOD_GLAASTER_TOOL_STATE_REJECTED);
     redirect($redirect);
 } else if ($action == 'delete') {
     glaaster_delete_type($id);
@@ -154,7 +154,7 @@ if ($data = $form->get_data()) {
 
         redirect($redirect);
     } else {
-        $type->state = GLAASTER_TOOL_STATE_CONFIGURED;
+        $type->state = MOD_GLAASTER_TOOL_STATE_CONFIGURED;
         glaaster_load_type_if_cartridge($data);
         glaaster_add_type($type, $data);
 

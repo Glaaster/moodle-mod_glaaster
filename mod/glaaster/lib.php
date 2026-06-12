@@ -278,7 +278,7 @@ function glaaster_get_all_content_items(content_item $defaultmodulecontentitem):
     $types = [];
 
     foreach (glaaster_get_lti_types() as $ltitype) {
-        if ($ltitype->coursevisible != GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER) {
+        if ($ltitype->coursevisible != MOD_GLAASTER_COURSEVISIBLE_ACTIVITYCHOOSER) {
             continue;
         }
         $type = new stdClass();
@@ -379,7 +379,7 @@ function glaaster_get_coursemodule_info($coursemodule) {
 
     // Does the link open in a new window?
     $launchcontainer = glaaster_get_launch_container($lti, $toolconfig);
-    if ($launchcontainer == GLAASTER_LAUNCH_CONTAINER_WINDOW) {
+    if ($launchcontainer == MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW) {
         $launchurl = new moodle_url('/mod/glaaster/launch.php', ['id' => $coursemodule->id]);
         $info->onclick =
             "window.open('" . $launchurl->out(false) . "', 'lti-" . $coursemodule->id . "'); return false;";

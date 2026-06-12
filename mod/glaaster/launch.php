@@ -86,7 +86,7 @@ if ($typeid) {
     $missingtooltype = empty($config);
     if (!$missingtooltype) {
         $config = glaaster_get_type_type_config($typeid);
-        if ($config->lti_ltiversion === GLAASTER_VERSION_1P3) {
+        if ($config->lti_ltiversion === MOD_GLAASTER_VERSION_1P3) {
             if (!isset($SESSION->lti_initiatelogin_status)) {
                 $msgtype = 'basic-lti-launch-request';
                 echo glaaster_initiate_login(
