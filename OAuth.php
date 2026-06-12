@@ -314,7 +314,10 @@ class GlaasterOAuthRequest {
             // Parse the query-string to find GET parameters.
             $parameters = GlaasterOAuthUtil::parse_parameters($_SERVER['QUERY_STRING']);
 
-            $ourpost = $_POST;
+            $ourpost = (array) (data_submitted() ?: []);
+            // The repost param is injected by the cross-site cookie repost form
+            // (repost_crosssite.mustache) and is not part of the originally signed request.
+            unset($ourpost['repost']);
             // Add POST Parameters if they exist.
             $parameters = array_merge($parameters, $ourpost);
 
