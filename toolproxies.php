@@ -29,11 +29,7 @@ require_once($CFG->dirroot . '/mod/glaaster/locallib.php');
 
 // No guest autologin.
 require_login(0, false);
-
-$pageurl = new moodle_url('/mod/glaaster/toolproxies.php');
-$PAGE->set_url($pageurl);
-
-$PAGE->set_title(get_string('toolregistration', 'glaaster'));
+admin_externalpage_setup('glaastertoolproxies');
 
 $configuredtoolproxieshtml = '';
 $pendingtoolproxieshtml = '';
