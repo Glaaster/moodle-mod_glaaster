@@ -64,7 +64,7 @@ abstract class mod_glaaster_testcase extends externallib_advanced_testcase {
      */
     protected function get_cartridge_fixture_url(): string {
         global $CFG;
-        return $CFG->wwwroot . '/mod/glaaster/tests/fixtures/ims_cartridge_basic_lti_link.xml';
+        return 'file://' . $CFG->dirroot . '/mod/glaaster/tests/fixtures/ims_cartridge_basic_lti_link.xml';
     }
 
     /**

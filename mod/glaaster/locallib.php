@@ -4836,8 +4836,13 @@ function glaaster_load_cartridge($url, $map, $propertiesmap = []) {
     global $CFG;
     require_once($CFG->libdir . "/filelib.php");
 
-    $curl = new curl();
-    $response = $curl->get($url);
+    if (str_starts_with($url, 'file://')) {
+        $filepath = substr($url, strlen('file://'));
+        $response = is_readable($filepath) ? file_get_contents($filepath) : '';
+    } else {
+        $curl = new curl();
+        $response = $curl->get($url);
+    }
 
     // Got a completely empty response (real or error), cannot process this with
     // DOMDocument::loadXML() because it errors with ValueError. So let's throw
