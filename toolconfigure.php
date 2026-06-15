@@ -169,11 +169,17 @@ if ($needssetup && $tooldomain && $apiuser && $apitoken) {
     $needssetup = false;
 }
 
-// Check if LTI tool registration is already complete.
+// Fully configured: collapse setup card and trigger JS enable of notify button.
 $isconnected = $DB->record_exists_select(
     'lti_types',
     'baseurl LIKE :domain AND state = :state',
     ['domain' => '%' . $tooldomain . '%', 'state' => MOD_GLAASTER_TOOL_STATE_CONFIGURED]
+);
+// Connect was clicked (PENDING or CONFIGURED): notify button should be enabled.
+$hasconnected = $isconnected || $DB->record_exists_select(
+    'lti_types',
+    'baseurl LIKE :domain AND state = :state',
+    ['domain' => '%' . $tooldomain . '%', 'state' => MOD_GLAASTER_TOOL_STATE_PENDING]
 );
 
 echo $output->header();
@@ -563,9 +569,9 @@ $setupform .= html_writer::tag(
 $notifybtnattrs = [
     'id' => 'apistep5-notify-btn',
     'href' => $mailtourl,
-    'class' => 'btn btn-outline-primary btn-sm' . ($isconnected ? '' : ' disabled'),
+    'class' => 'btn btn-outline-primary btn-sm' . ($hasconnected ? '' : ' disabled'),
 ];
-if (!$isconnected) {
+if (!$hasconnected) {
     $notifybtnattrs['aria-disabled'] = 'true';
     $notifybtnattrs['tabindex'] = '-1';
 }
