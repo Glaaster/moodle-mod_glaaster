@@ -1,0 +1,3 @@
+# Skip HTML validation for templates that inject dynamic HTML via {{{content}}}
+# aria-controls IDs are dynamic (rendered server-side), false positive from static analysis.
+tool_proxies_tabs.mustache

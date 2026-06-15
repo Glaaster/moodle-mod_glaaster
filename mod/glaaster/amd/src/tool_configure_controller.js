@@ -183,8 +183,8 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'mod_glaaster/ev
                             }
                             // Collapse the full setup card.
                             var collapseEl = document.getElementById('setup-collapse');
-                            if (collapseEl && typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
-                                bootstrap.Collapse.getOrCreateInstance(collapseEl).hide();
+                            if (collapseEl && typeof window.bootstrap !== 'undefined' && window.bootstrap.Collapse) {
+                                window.bootstrap.Collapse.getOrCreateInstance(collapseEl).hide();
                             }
                         } else if (result.status === 'PENDING' || result.status === '') {
                             pill.addClass('status-pending').find('.status-text').text(strings[3]);

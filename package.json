@@ -9,15 +9,15 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/Glaaster/moodle-glaaster_activity.git"
+        "url": "https://github.com/Glaaster/moodle-mod_glaaster.git"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/Glaaster/moodle-glaaster_activity/issues"
+        "url": "https://github.com/Glaaster/moodle-mod_glaaster/issues"
     },
-    "homepage": "https://github.com/Glaaster/moodle-glaaster_activity#readme",
+    "homepage": "https://github.com/Glaaster/moodle-mod_glaaster#readme",
     "devDependencies": {
         "@babel/core": "7.17.5",
         "@babel/eslint-parser": "^7.21.3",
