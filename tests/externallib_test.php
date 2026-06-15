@@ -488,7 +488,7 @@ final class externallib_test extends mod_glaaster_testcase {
      */
     public function test_mod_glaaster_create_tool_type(): void {
         $this->setAdminUser();
-        $type = mod_glaaster_external::create_tool_type($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'), '', '');
+        $type = mod_glaaster_external::create_tool_type($this->get_cartridge_fixture_url(), '', '');
         $type = external_api::clean_returnvalue(mod_glaaster_external::create_tool_type_returns(), $type);
 
         $this->assertEquals('Example tool', $type['name']);
@@ -527,7 +527,7 @@ final class externallib_test extends mod_glaaster_testcase {
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $this->setUser($teacher);
         $this->expectException(required_capability_exception::class);
-        mod_glaaster_external::create_tool_type($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'), '', '');
+        mod_glaaster_external::create_tool_type($this->get_cartridge_fixture_url(), '', '');
     }
 
     /**
@@ -535,7 +535,7 @@ final class externallib_test extends mod_glaaster_testcase {
      */
     public function test_mod_glaaster_update_tool_type(): void {
         $this->setAdminUser();
-        $type = mod_glaaster_external::create_tool_type($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'), '', '');
+        $type = mod_glaaster_external::create_tool_type($this->get_cartridge_fixture_url(), '', '');
         $type = external_api::clean_returnvalue(mod_glaaster_external::create_tool_type_returns(), $type);
 
         $type =
@@ -552,7 +552,7 @@ final class externallib_test extends mod_glaaster_testcase {
      */
     public function test_mod_glaaster_delete_tool_type(): void {
         $this->setAdminUser();
-        $type = mod_glaaster_external::create_tool_type($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'), '', '');
+        $type = mod_glaaster_external::create_tool_type($this->get_cartridge_fixture_url(), '', '');
         $type = external_api::clean_returnvalue(mod_glaaster_external::create_tool_type_returns(), $type);
         $this->assertNotEmpty(glaaster_get_type($type['id']));
 
@@ -566,7 +566,7 @@ final class externallib_test extends mod_glaaster_testcase {
      */
     public function test_mod_glaaster_delete_tool_type_without_capability(): void {
         $this->setAdminUser();
-        $type = mod_glaaster_external::create_tool_type($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'), '', '');
+        $type = mod_glaaster_external::create_tool_type($this->get_cartridge_fixture_url(), '', '');
         $type = external_api::clean_returnvalue(mod_glaaster_external::create_tool_type_returns(), $type);
         $this->assertNotEmpty(glaaster_get_type($type['id']));
 
@@ -582,7 +582,7 @@ final class externallib_test extends mod_glaaster_testcase {
      */
     public function test_mod_glaaster_is_cartridge(): void {
         $this->setAdminUser();
-        $result = mod_glaaster_external::is_cartridge($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'));
+        $result = mod_glaaster_external::is_cartridge($this->get_cartridge_fixture_url());
         $result = external_api::clean_returnvalue(mod_glaaster_external::is_cartridge_returns(), $result);
         $this->assertTrue($result['iscartridge']);
 

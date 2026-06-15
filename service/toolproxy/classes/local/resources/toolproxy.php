@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/mod/lti/OAuth.php');
 require_once($CFG->dirroot . '/mod/lti/TrivialStore.php');
 
 use mod_glaaster\local\ltiglaasterservice\resource_base;
-use moodle\mod\lti as lti;
+use moodle\mod\lti;
 use stdClass;
 
 /**

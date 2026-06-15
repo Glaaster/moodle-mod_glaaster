@@ -377,7 +377,7 @@
     user-select: none;
 }
 .glaaster-setup-card .card-header:hover {
-    background: #f8f9fa !important;
+    background: #f8f9fa;
 }
 .glaaster-setup-chevron {
     transition: transform 0.2s ease;

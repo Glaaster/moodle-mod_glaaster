@@ -18,7 +18,6 @@
  * Adds Glaaster buttons to supported file types in resource and folder modules.
  *
  * @module      mod_glaaster/before_footer
- * @package     mod_glaaster
  * @copyright   2025 Glaaster
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -483,7 +482,7 @@ export function init(config) {
     }
 
     if (webserviceConfigured === false) {
-        warn('Glaaster webservice not configured. User with email system@glaaster.com, valid token, or external functions missing. Aborting.');
+        warn('Glaaster webservice not configured. Missing user, token, or external functions. Aborting.');
         return;
     }
 

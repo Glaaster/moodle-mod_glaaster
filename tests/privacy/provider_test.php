@@ -63,7 +63,7 @@ final class provider_test extends provider_testcase {
         $this->assertEquals('lti_provider', $ltiproviderexternal->get_name());
 
         $ltitoolproxies = array_shift($itemcollection);
-        $this->assertEquals('lti_tool_proxies', $ltitoolproxies->get_name());
+        $this->assertEquals('glaaster_tool_proxies', $ltitoolproxies->get_name());
 
         $ltitypestable = array_shift($itemcollection);
         $this->assertEquals('glaaster_types', $ltitypestable->get_name());
@@ -134,8 +134,7 @@ final class provider_test extends provider_testcase {
         $userlist = new userlist($coursecontext, $component);
         provider::get_users_in_context($userlist);
 
-        // Note: get_users_in_context uses CONTEXT_COURSE join but userlist context is module — returns empty.
-        $this->assertEmpty($userlist);
+        $this->assertCount(2, $userlist);
     }
 
     /**

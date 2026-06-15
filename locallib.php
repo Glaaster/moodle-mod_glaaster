@@ -41,7 +41,7 @@ use mod_glaaster\local\ltiglaasterservice\service_base;
 use mod_glaaster\local\ltiopenid\jwks_helper;
 use mod_glaaster\local\ltiopenid\registration_helper;
 use mod_glaaster\local\types_helper;
-use moodle\mod\lti as lti;
+use moodle\mod\lti;
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/lti/OAuth.php');

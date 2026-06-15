@@ -542,7 +542,7 @@ final class locallib_test extends mod_glaaster_testcase {
      */
     public function test_glaaster_load_type_from_cartridge(): void {
         $type = new stdClass();
-        $type->lti_toolurl = $this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml');
+        $type->lti_toolurl = $this->get_cartridge_fixture_url();
 
         glaaster_load_type_if_cartridge($type);
 
@@ -558,7 +558,7 @@ final class locallib_test extends mod_glaaster_testcase {
      */
     public function test_glaaster_load_tool_from_cartridge(): void {
         $lti = new stdClass();
-        $lti->toolurl = $this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml');
+        $lti->toolurl = $this->get_cartridge_fixture_url();
 
         glaaster_load_tool_if_cartridge($lti);
 
@@ -1386,7 +1386,7 @@ MwIDAQAB
 
         $typeid = glaaster_add_type($type, $data);
 
-        $this->expectExceptionMessage('JWT security not supported with LTI 2');
+        $this->expectExceptionMessage('JWT security is not supported with LTI 2.');
         glaaster_verify_jwt_signature($typeid, '', '');
     }
 

@@ -56,6 +56,18 @@ abstract class mod_glaaster_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Returns a URL to the local IMS cartridge test fixture served through Moodle's wwwroot.
+     *
+     * Avoids depending on http://download.moodle.org which is an external resource that can go stale.
+     *
+     * @return string URL to ims_cartridge_basic_lti_link.xml fixture.
+     */
+    protected function get_cartridge_fixture_url(): string {
+        global $CFG;
+        return $CFG->wwwroot . '/mod/glaaster/tests/fixtures/ims_cartridge_basic_lti_link.xml';
+    }
+
+    /**
      * Generate a tool proxy.
      *
      * @param string $uniqueid Each tool proxy needs a different reg url. Provide a unique string for every tool proxy created.

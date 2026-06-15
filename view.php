@@ -123,7 +123,6 @@ if ($coursemoduleid !== 0 && empty($filename) && empty($filepath)) {
     if (!$match) {
         throw new moodle_exception('filenotfound', 'error', '', $targetfilename);
     }
-
 }
 
 $typeid = $lti->typeid;
