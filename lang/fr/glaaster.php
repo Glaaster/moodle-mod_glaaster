@@ -684,3 +684,10 @@ $string['errorjwtlti2unsupported'] = 'La sécurité JWT n\'est pas supportée av
 $string['errornopublickey'] = 'Aucune clé publique configurée.';
 $string['errornopublickeyset'] = 'Aucun jeu de clés publiques configuré.';
 $string['errorinvalidkeytype'] = 'Type de clé publique invalide.';
+$string['errornocachedkeysetfound'] = 'Aucun jeu de clés en cache trouvé pour cet outil.';
+
+// Chaînes mod_form.php.
+$string['lti:addmanualinstanceprohibitederror'] = 'La création manuelle d\'outils sans définition d\'outil de cours n\'est plus supportée. Veuillez d\'abord créer un outil de cours, puis l\'utiliser pour créer des instances d\'activité.';
+
+// Chaînes de liaison profonde.
+$string['contentitem_multiple_graded'] = 'Activité notée (note maximale : {$a})';

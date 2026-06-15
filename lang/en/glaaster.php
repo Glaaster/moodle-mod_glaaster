@@ -740,3 +740,10 @@ $string['errorjwtlti2unsupported'] = 'JWT security is not supported with LTI 2.'
 $string['errornopublickey'] = 'No public key configured.';
 $string['errornopublickeyset'] = 'No public keyset configured.';
 $string['errorinvalidkeytype'] = 'Invalid public key type.';
+$string['errornocachedkeysetfound'] = 'No cached keyset found for this tool.';
+
+// mod_form.php strings.
+$string['lti:addmanualinstanceprohibitederror'] = 'The manual creation of tools without a course tool definition is no longer supported. Please create a course tool first and then use that to create activity instances.';
+
+// Deep linking strings.
+$string['contentitem_multiple_graded'] = 'Graded activity (Maximum grade: {$a})';
