@@ -5054,38 +5054,27 @@ function glaaster_check_webservices_enabled() {
  * Check if Glaaster webservice API user is properly configured.
  *
  * Verifies that:
- * - A user with email 'system@glaaster.com' exists (username typically 'glaasterapi')
- * - The user has at least one active webservice token
- * - The required Glaaster external functions are available
+ * - The 'Glaaster API' external service exists and is enabled
+ * - At least one active (non-expired) token is linked to that service
  *
  * @return bool True if webservice is properly configured, false otherwise
  */
 function glaaster_check_webservice_configured() {
     global $DB;
 
-    // Check if Glaaster API user exists (by email, as username can be customized).
-    $glaasteruser = $DB->get_record('user', ['email' => 'system@glaaster.com', 'deleted' => 0]);
-    if (!$glaasteruser) {
+    // Resolve the Glaaster API service by its shortname.
+    $service = $DB->get_record('external_services', ['shortname' => 'glaaster_api', 'enabled' => 1]);
+    if (!$service) {
         return false;
     }
 
-    // Check if the user has at least one valid (non-expired) token.
+    // Check at least one valid (non-expired) token exists for this service.
     $now = time();
-    $tokenexists = $DB->record_exists_select(
+    return $DB->record_exists_select(
         'external_tokens',
-        'userid = ? AND (validuntil = 0 OR validuntil > ?)',
-        [$glaasteruser->id, $now]
+        'externalserviceid = ? AND (validuntil = 0 OR validuntil > ?)',
+        [$service->id, $now]
     );
-
-    if (!$tokenexists) {
-        return false;
-    }
-
-    // Check if required Glaaster external functions are registered.
-    // We check for the validate_instance function as it's critical for the plugin.
-    $functionexists = $DB->record_exists('external_functions', ['name' => 'mod_glaaster_validate_instance']);
-
-    return $functionexists;
 }
 
 /**
