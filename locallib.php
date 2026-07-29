@@ -1434,6 +1434,9 @@ function glaaster_verify_with_keyset($jwtparam, $keyseturl, $clientid) {
         // Something went wrong, so attempt to update cached keyset and then try again.
         $keyset = download_file_content($keyseturl);
         $keysetarr = json_decode($keyset, true);
+        if (!is_array($keysetarr) || !isset($keysetarr['keys'])) {
+            throw new moodle_exception('errorkeysetdownloadfailed', 'mod_glaaster');
+        }
 
         // Fix for firebase/php-jwt's dependency on the optional 'alg' property in the JWK.
         // The fix_jwks_alg() call only fixes a single, matched key and will leave others present (which may be missing alg too),

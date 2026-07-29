@@ -741,6 +741,7 @@ $string['errornopublickey'] = 'No public key configured.';
 $string['errornopublickeyset'] = 'No public keyset configured.';
 $string['errorinvalidkeytype'] = 'Invalid public key type.';
 $string['errornocachedkeysetfound'] = 'No cached keyset found for this tool.';
+$string['errorkeysetdownloadfailed'] = 'Unable to download or parse the public keyset from the configured URL.';
 
 // mod_form.php strings.
 $string['lti:addmanualinstanceprohibitederror'] = 'The manual creation of tools without a course tool definition is no longer supported. Please create a course tool first and then use that to create activity instances.';
