@@ -2,7 +2,7 @@
     "branches": [
         {
             "name": "main",
-            "channel": "main"
+            "channel": "5.0"
         },
         {
             "name": "moodle/4.0",
@@ -35,8 +35,14 @@
             "prerelease": "4.5"
         }
     ],
+
     "plugins": [
-        "@semantic-release/commit-analyzer",
+        [
+            "@semantic-release/commit-analyzer",
+            {
+                "preset": "conventionalcommits"
+            }
+        ],
         [
             "@semantic-release/exec",
             {

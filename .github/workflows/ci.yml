@@ -21,22 +21,34 @@ jobs:
       matrix:
         include:
           # Moodle 4.5
-          - php: '8.1'
-            moodle-branch: MOODLE_405_STABLE
-            db: mariadb
-          - php: '8.1'
-            moodle-branch: MOODLE_405_STABLE
-            db: pgsql
-          - php: '8.2'
-            moodle-branch: MOODLE_405_STABLE
-            db: mariadb
-          - php: '8.3'
-            moodle-branch: MOODLE_405_STABLE
-            db: mariadb
+            - php: '8.1'
+              moodle-branch: MOODLE_405_STABLE
+              db: mariadb
+            - php: '8.2'
+              moodle-branch: MOODLE_405_STABLE
+              db: mariadb
+            - php: '8.3'
+              moodle-branch: MOODLE_405_STABLE
+              db: mariadb
+              # Moodle 5.0
+            - php: '8.3'
+              moodle-branch: MOODLE_500_STABLE
+              db: mariadb
+            # Moodle 5.1
+            - php: '8.3'
+              moodle-branch: MOODLE_501_STABLE
+              db: mariadb
+            # Moodle 5.2
+            - php: '8.3'
+              moodle-branch: MOODLE_502_STABLE
+              db: pgsql
+            - php: '8.3'
+              moodle-branch: MOODLE_502_STABLE
+              db: mariadb
 
     services:
       postgres:
-        image: postgres:15
+        image: postgres:16
         env:
           POSTGRES_USER: 'postgres'
           POSTGRES_HOST_AUTH_METHOD: 'trust'
@@ -97,7 +109,7 @@ jobs:
 
       - name: Moodle Code Checker
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phpcs 
+        run: moodle-plugin-ci phpcs
 
       - name: PHPDoc Checker
         if: ${{ !cancelled() }}
@@ -117,7 +129,9 @@ jobs:
 
       - name: Rebuild AMD files with Moodle grunt
         if: ${{ !cancelled() }}
-        run: cd moodle/mod/glaaster/amd && npx grunt amd
+        run: |
+          PLUGIN_PATH="$(find moodle -maxdepth 4 -type d -path '*/mod/glaaster')"
+          cd "$PLUGIN_PATH/amd" && npx grunt amd
 
       - name: Grunt
         if: ${{ !cancelled() }}

@@ -1,8 +1,8 @@
 
 # Glaaster Activity Plugin for Moodle
 
-[![Moodle 4.5+](https://img.shields.io/badge/Moodle-4.5%2B-orange)](https://moodle.org)
-[![PHP 8.1 | 8.2 | 8.3](https://img.shields.io/badge/PHP-8.1%20|%208.2%20|%208.3-blue)](https://php.net)
+[![Moodle 4.5-5.2](https://img.shields.io/badge/Moodle-4.5--5.2-orange)](https://moodle.org)
+[![PHP 8.1 | 8.2 | 8.3 | 8.4](https://img.shields.io/badge/PHP-8.1%20|%208.2%20|%208.3%20|%208.4-blue)](https://php.net)
 [![LTI 1.3](https://img.shields.io/badge/LTI-1.3%20Advantage-green)](https://www.imsglobal.org/spec/lti/v1p3/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Latest Release](https://img.shields.io/badge/version-4.5.1-brightgreen)](https://github.com/Glaaster/moodle-glaaster_activity/releases)
@@ -45,7 +45,7 @@ The **Glaaster Activity** plugin is a Moodle activity module that integrates [Gl
 - **Real-time instance validation** — MutationObserver detects when the Glaaster activity is removed from the course page in under 500ms and hides buttons accordingly
 - **Custom JWT claims** — Forwards `resource_id`, `file_name`, and `file_path` as custom claims so Glaaster loads the exact file the student clicked
 - **Zero-auth web service** — `mod_glaaster_validate_instance` is intentionally unauthenticated for performance (no sensitive data exposed)
-- **Moodle 4.3 → 4.5+** support across multiple maintained branches
+- **Moodle 4.5 → 5.2** support across multiple maintained branches
 
 ---
 
@@ -53,8 +53,8 @@ The **Glaaster Activity** plugin is a Moodle activity module that integrates [Gl
 
 | Requirement | Version |
 |-------------|---------|
-| Moodle | 4.5 or later |
-| PHP | 8.1 or later |
+| Moodle | 4.5 – 5.2 |
+| PHP | 8.1 – 8.4 (8.3+ required for Moodle 5.2) |
 | Database | PostgreSQL or MariaDB/MySQL |
 | PHP Extensions | `curl`, `openssl`, `json`, `mbstring` |
 | Glaaster account  | (see [glaaster.com](https://glaaster.com)) |

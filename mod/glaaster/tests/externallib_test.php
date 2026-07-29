@@ -165,6 +165,26 @@ final class externallib_test extends mod_glaaster_testcase {
     }
 
     /**
+     * Normalise an expected "lti" entry the same way get_ltis_by_courses() output is cleaned,
+     * so scalar types (e.g. int vs numeric string) match regardless of the underlying Moodle
+     * version.
+     *
+     * @param array $expected raw expected values, keyed by field name
+     * @return array the expected values, cast per the declared external_single_structure
+     */
+    protected function clean_expected_lti(array $expected): array {
+        $returndescription = mod_glaaster_external::get_ltis_by_courses_returns();
+        $toolstructure = $returndescription->keys['ltis']->content;
+
+        $cleaned = external_api::clean_returnvalue(
+            new \core_external\external_multiple_structure($toolstructure),
+            [$expected]
+        );
+
+        return $cleaned[0];
+    }
+
+    /**
      * Test get_ltis_by_courses.
      */
     public function test_mod_glaaster_get_ltis_by_courses(): void {
@@ -233,7 +253,10 @@ final class externallib_test extends mod_glaaster_testcase {
             $expected2[$field] = $lti2->{$field};
         }
 
-        $expectedltis = [$expected2, $expected1];
+        $expectedltis = [
+            $this->clean_expected_lti($expected2),
+            $this->clean_expected_lti($expected1),
+        ];
 
         // Call the external function passing course ids.
         $result = mod_glaaster_external::get_ltis_by_courses([$course2->id, $course->id]);
@@ -275,6 +298,12 @@ final class externallib_test extends mod_glaaster_testcase {
         foreach ($additionalfields as $field) {
             $expectedltis[0][$field] = $lti1->{$field};
         }
+        // Moodle 5.1+ adds these two AI-related fields alongside groupmode/section/etc.
+        // (same capability gate). mod_glaaster has no matching columns, so they're always null;
+        // clean_expected_lti() drops them again on older branches where the schema omits them.
+        $expectedltis[0]['enableaitools'] = null;
+        $expectedltis[0]['enabledaiactions'] = null;
+        $expectedltis[0] = $this->clean_expected_lti($expectedltis[0]);
 
         $result = mod_glaaster_external::get_ltis_by_courses();
         $result = external_api::clean_returnvalue($returndescription, $result);
