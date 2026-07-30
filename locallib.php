@@ -5081,34 +5081,6 @@ function glaaster_check_webservice_configured() {
 }
 
 /**
- * Injects the Glaaster instance ID into a global JavaScript variable.
- *
- * This function retrieves the instance ID using a custom function and then
- * uses js_init_code to define a global JS variable (glaasterInstanceId). Even if the
- * necessary table does not exist or the instance is not found, it will always define the variable.
- *
- * @return string
- */
-function mod_glaaster_inject_instance_js() {
-    global $DB;
-    $dbman = $DB->get_manager();
-    // Check if the required table exists.
-    if (!$dbman->table_exists('glaaster_types')) {
-        // Table does not exist (likely during installation) so define the variable as an empty string.
-        return "<script>const glaasterInstanceId = '';</script>";
-    }
-
-    // Retrieve the instance ID using your custom function.
-    $instanceid = glaaster_retrieve_instance_from_tooldomain();
-    // If retrieval fails, set instanceid to an empty string.
-    if ($instanceid === false) {
-        $instanceid = '';
-    }
-    // Always define the variable so that it exists in the JS scope.
-    return "<script>const glaasterInstanceId = '{$instanceid}';</script>";
-}
-
-/**
  * Returns configuration array for the before_footer AMD module.
  *
  * @return array
