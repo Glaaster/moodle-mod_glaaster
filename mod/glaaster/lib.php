@@ -633,18 +633,6 @@ function glaaster_extend_navigation_course($navigation, $course, $context): void
 }
 
 /**
- *
- *
- * @return string
- */
-function mod_glaaster_before_standard_top_of_body_html() {
-    global $CFG;
-    require_once($CFG->dirroot . '/mod/glaaster/locallib.php');
-    // Inject the instance ID into the page.
-    return mod_glaaster_inject_instance_js();
-}
-
-/**
  * Legacy callback for Moodle versions before 4.4.
  *
  * This function is used for compatibility with older Moodle versions.
