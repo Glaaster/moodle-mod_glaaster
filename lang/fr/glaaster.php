@@ -591,6 +591,24 @@ $string['generalsettings'] = 'Configuration générale';
 $string['tooldomain'] = 'Domaine de l\'outil';
 $string['tooldomain_desc'] =
     'Domaine utilisé pour récupérer l\'instance Glaaster. Permet de tester avec différents environnements.';
+
+// Paramètres de configuration de l'icône.
+$string['iconsettings'] = 'Configuration de l\'icône';
+$string['iconsenabled'] = 'Activer les icônes contextuelles';
+$string['iconsenabled_desc'] =
+    'Si désactivé, aucune icône Glaaster n\'est affichée, quel que soit le statut de l\'instance.';
+$string['iconurl'] = 'URL de l\'icône';
+$string['iconurl_desc'] =
+    'URL de l\'icône affichée sur le bouton contextuel Glaaster. Laisser vide pour utiliser l\'icône par défaut.';
+$string['iconposition'] = 'Position de l\'icône';
+$string['iconposition_left'] = 'Collé à gauche du texte';
+$string['iconposition_right'] = 'Collé à droite du texte';
+$string['iconposition_blockend'] = 'À la fin du bloc d\'activité (ancien affichage)';
+$string['iconposition_desc'] =
+    'Choisissez comment l\'icône est positionnée par rapport au nom de l\'activité. Ceci s\'applique uniquement ' .
+    'aux ressources/pages standard et au format de cours Tiles ; les icônes de fichiers dans les dossiers ne ' .
+    'sont pas affectées.';
+$string['not_configured_tooltip'] = 'Glaaster n\'est pas encore configuré. Contactez votre administrateur.';
 $string['apisetup'] = 'Configuration de l\'API Glaaster';
 $string['apisetup_desc'] = 'Suivez les étapes ci-dessous pour configurer la connexion à l\'API Glaaster.';
 

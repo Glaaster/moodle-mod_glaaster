@@ -391,3 +391,101 @@
     pointer-events: none;
     opacity: 0.5;
 }
+
+/* Glaaster contextual icon: standard resource/page activities */
+/* "left"/"right" are inserted inside .activityname, next to the title text/badge, */
+/* so the icon stays glued to the text regardless of theme grid layout. */
+
+/* Glued to the right of the text: icon appended after the title/badge. */
+/* position:relative is required so z-index lifts the link above Bootstrap's */
+/* .stretched-link::after overlay on the activity name link, which otherwise */
+/* captures every click in the row. */
+.glaaster-icon-right {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 6px;
+    height: 1.2em;
+    vertical-align: middle;
+    z-index: 30;
+}
+
+/* Glued to the left of the text: icon prepended before the title. */
+.glaaster-icon-left {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-right: 6px;
+    height: 1.2em;
+    vertical-align: middle;
+    z-index: 30;
+}
+
+/* Legacy layout: icon appended at the end of the activity block (outside the text), */
+/* offset from the activity name with margin gaps. */
+.glaaster-icon-blockend {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    height: 50px;
+    z-index: 30;
+}
+
+/* Glaaster contextual icon: Tiles course format */
+/* "blockend": absolute bottom-right corner of the tile (legacy layout). */
+.glaaster-icon-tile-blockend {
+    position: absolute;
+    bottom: 10px;
+    right: 6px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+/* "left"/"right": icon inline with the tile's name/title text. */
+.glaaster-icon-tile-inline {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin-left: 4px;
+    vertical-align: middle;
+    z-index: 10;
+}
+
+/* Disabled state: instance invalid/deleted, or plugin not yet configured. */
+/* Icon stays visible (per design) but is greyed out and non-interactive (click is */
+/* blocked in JS, not via pointer-events: none, so hover/focus still work and the */
+/* native title tooltip keeps firing). A small "?" badge is added top-right so the */
+/* state is visible without needing to hover at all. */
+.glaaster-icon-disabled {
+    /* No position rule here: every base icon class (left/right/blockend/tile-*) already */
+    /* sets position: relative or absolute, which is all the badge's ::after needs. */
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.glaaster-icon-disabled::after {
+    content: "?";
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 12px;
+    height: 12px;
+    line-height: 12px;
+    font-size: 9px;
+    font-weight: 700;
+    text-align: center;
+    border-radius: 50%;
+    background-color: #f0ad4e;
+    color: #fff;
+    z-index: 31;
+    pointer-events: none;
+}

@@ -36,15 +36,29 @@ const SUPPORTEDFILEICONS = ['f/pdf', 'f/image', 'f/document', 'f/powerpoint', 'f
  * Initialise the Glaaster before-footer integration.
  *
  * @param {Object} config - Configuration passed from PHP via js_call_amd
- * @param {string} config.instanceId - Glaaster instance ID
+ * @param {string} config.instanceId - Glaaster instance ID (may be empty if none exists)
+ * @param {boolean} config.instanceValid - Whether a valid, non-deleted Glaaster instance was found
+ * @param {boolean} config.iconsEnabled - Admin toggle: whether contextual icons should render at all
  * @param {boolean} config.webservicesEnabled - Whether Moodle web services are enabled
  * @param {boolean} config.webserviceConfigured - Whether Glaaster webservice is configured
  * @param {boolean} config.debugEnabled - Whether debug mode is active
+ * @param {string} config.iconUrl - Full URL of the icon to use for the contextual button
+ * @param {string} config.iconPosition - Icon position mode: 'left' (glued to the left of the text),
+ *                                        'right' (glued to the right of the text, default), or
+ *                                        'blockend' (end of the activity block, legacy layout)
  */
 export function init(config) {
     'use strict';
 
-    const {instanceId, webservicesEnabled, webserviceConfigured, debugEnabled} = config;
+    const {
+        instanceId, instanceValid, iconsEnabled, webservicesEnabled, webserviceConfigured,
+        debugEnabled, iconUrl, iconPosition,
+    } = config;
+
+    // Icons are always shown once enabled by the admin; only their enabled/disabled
+    // visual state depends on instance validity. This flag is kept live and flipped
+    // by the deletion watcher when the instance disappears without a page reload.
+    let currentInstanceValid = instanceValid === true;
 
     /**
      * Debug logging helper.
@@ -116,20 +130,65 @@ export function init(config) {
     }
 
     /**
+     * Block navigation on disabled Glaaster links.
+     *
+     * Pointer-events can't be disabled on the link itself (that would also block
+     * hover, so the "not configured" tooltip would never show). Instead every link
+     * gets this listener once and it no-ops unless aria-disabled is set at click time.
+     * @param {MouseEvent} event
+     */
+    function blockClickIfDisabled(event) {
+        if (event.currentTarget.getAttribute('aria-disabled') === 'true') {
+            event.preventDefault();
+        }
+    }
+
+    /**
+     * Apply the enabled/disabled state to a Glaaster link element.
+     * @param {HTMLElement} a
+     * @param {string} url
+     * @param {string} enabledTitle
+     * @param {string} disabledTitle
+     */
+    function applyLinkState(a, url, enabledTitle, disabledTitle) {
+        if (!a.dataset.glaasterClickBound) {
+            a.addEventListener('click', blockClickIfDisabled);
+            a.dataset.glaasterClickBound = 'true';
+        }
+        if (currentInstanceValid) {
+            a.href = url;
+            a.title = enabledTitle || '';
+            a.removeAttribute('aria-disabled');
+            a.removeAttribute('tabindex');
+            a.classList.remove('glaaster-icon-disabled');
+        } else {
+            // Keep href present (harmless "#") rather than removing it: an <a> with
+            // no href isn't hoverable/focusable in every browser, which would also
+            // silently kill the tooltip. aria-disabled + the click blocker above are
+            // what actually stop navigation.
+            a.href = '#';
+            a.title = disabledTitle || '';
+            a.setAttribute('aria-disabled', 'true');
+            a.setAttribute('tabindex', '-1');
+            a.classList.add('glaaster-icon-disabled');
+        }
+    }
+
+    /**
      * Create a Glaaster link element with proper attributes.
      * @param {string} url
      * @param {string} title
      * @param {string} imgClass
+     * @param {string} disabledTitle
      * @return {HTMLElement}
      */
-    function createGlaasterLink(url, title, imgClass) {
+    function createGlaasterLink(url, title, imgClass, disabledTitle) {
         const a = document.createElement('a');
         a.setAttribute('data-glaaster-link', 'true');
-        a.href = url;
-        a.title = title || '';
         const klass = (imgClass || '').toString().trim();
-        a.innerHTML = `<img src="${M.cfg.wwwroot}/mod/glaaster/pix/icon.svg" class="${klass}" ` +
+        a.innerHTML = `<img src="${iconUrl}" class="${klass}" ` +
             `alt="${title || ''}" role="presentation" aria-hidden="true">`;
+        applyLinkState(a, url, title, disabledTitle);
         return a;
     }
 
@@ -186,13 +245,22 @@ export function init(config) {
      * @param {NodeList} fileLinks
      * @param {string} folderModuleId
      * @param {string} translation
+     * @param {string} disabledTranslation
      */
-    function addGlaasterButtonsToFiles(fileLinks, folderModuleId, translation) {
+    function addGlaasterButtonsToFiles(fileLinks, folderModuleId, translation, disabledTranslation) {
         fileLinks.forEach((fileAnchor) => {
             try {
                 const fileLabel = (fileAnchor.textContent || '').trim();
                 if (!hasSupportedExtension(fileLabel)) {
-                    return;
+                    // No recognisable extension in the filename (e.g. extensionless upload):
+                    // fall back to Moodle's mimetype-derived file icon. The icon lives in a
+                    // sibling .fp-icon span, outside the anchor itself, so look at the closest
+                    // shared wrapper (.fp-filename-icon) rather than inside fileAnchor.
+                    const wrapper = fileAnchor.closest('.fp-filename-icon') || fileAnchor.parentNode;
+                    const iconImg = wrapper && wrapper.querySelector('.fp-icon img');
+                    if (!iconImg || !hasSupportedFileIcon(iconImg.src)) {
+                        return;
+                    }
                 }
 
                 const extractedPath = extractPluginFilePath(fileAnchor.getAttribute('href'));
@@ -214,7 +282,7 @@ export function init(config) {
                     file_path: safeBtoa(fileDir)
                 });
 
-                parent.appendChild(createGlaasterLink(url, translation, 'icon'));
+                parent.appendChild(createGlaasterLink(url, translation, 'icon', disabledTranslation));
             } catch (e) {
                 warn('Failed adding folder file link', e);
             }
@@ -222,18 +290,24 @@ export function init(config) {
     }
 
     /**
-     * Remove all Glaaster buttons from the page.
+     * Flip all existing Glaaster buttons on the page into the disabled state
+     * (kept visible, but non-clickable with a "not configured" tooltip).
      */
-    function removeAllGlaasterButtons() {
+    function disableAllGlaasterButtons() {
+        currentInstanceValid = false;
         const buttons = document.querySelectorAll('a[data-glaaster-link="true"]');
-        buttons.forEach(button => button.remove());
+        buttons.forEach((button) => applyLinkState(button, button.getAttribute('href') || '', '', disabledTranslationText));
     }
+
+    // Cached translation used by the deletion watcher, set once strings are loaded.
+    let disabledTranslationText = '';
 
     /**
      * Setup MutationObserver to watch for dynamically loaded content (Tiles format).
      * @param {string} translation
+     * @param {string} disabledTranslation
      */
-    function setupContentObserver(translation) {
+    function setupContentObserver(translation, disabledTranslation) {
         const observer = new MutationObserver((mutations) => {
             for (const mutation of mutations) {
                 if (mutation.addedNodes.length > 0) {
@@ -244,11 +318,11 @@ export function init(config) {
                                 node.classList.contains('modtype_folder') ||
                                 node.classList.contains('modtype_page')
                             )) {
-                                injectButtonsInContainer(node.parentElement, translation);
+                                injectButtonsInContainer(node.parentElement, translation, disabledTranslation);
                             } else if (node.querySelector) {
                                 const hasActivities = node.querySelector('li.modtype_resource, li.modtype_folder, li.modtype_page');
                                 if (hasActivities) {
-                                    injectButtonsInContainer(node, translation);
+                                    injectButtonsInContainer(node, translation, disabledTranslation);
                                 }
                             }
                         }
@@ -271,9 +345,9 @@ export function init(config) {
      *
      * Monitors the course content area for DOM changes, specifically watching for
      * Glaaster activity removals. When detected, triggers AJAX revalidation and
-     * removes all buttons if the instance is no longer valid.
+     * disables all buttons (kept visible) if the instance is no longer valid.
      *
-     * This provides instant button removal (< 500ms) without requiring page refresh.
+     * This provides instant button state update (< 500ms) without requiring page refresh.
      */
     function setupDeletionWatcher() {
         const observer = new MutationObserver((mutations) => {
@@ -290,10 +364,10 @@ export function init(config) {
                                 args: {instanceid: parseInt(instanceId)},
                             }])[0].done(function(response) {
                                 if (!response.isvalid) {
-                                    removeAllGlaasterButtons();
+                                    disableAllGlaasterButtons();
                                 }
                             }).fail(function() {
-                                removeAllGlaasterButtons();
+                                disableAllGlaasterButtons();
                             });
                             return;
                         }
@@ -316,8 +390,9 @@ export function init(config) {
      * Supports both Tiles format and standard Moodle formats.
      * @param {HTMLElement|null} container
      * @param {string} translation
+     * @param {string} disabledTranslation
      */
-    function injectButtonsInContainer(container, translation) {
+    function injectButtonsInContainer(container, translation, disabledTranslation) {
         const root = container || document;
 
         const resources = root.querySelectorAll('li.modtype_resource, li.modtype_page');
@@ -352,24 +427,18 @@ export function init(config) {
 
                     const glaasterButton = document.createElement('a');
                     glaasterButton.setAttribute('data-glaaster-link', 'true');
-                    glaasterButton.href = url;
-                    glaasterButton.title = translation;
-                    glaasterButton.innerHTML = `<img src="${M.cfg.wwwroot}/mod/glaaster/pix/icon.svg" ` +
+                    glaasterButton.innerHTML = `<img src="${iconUrl}" ` +
                         `class="iconlarge activityicon" alt="${translation}" role="presentation" ` +
                         `aria-hidden="true" width="24" height="24" style="display: block;">`;
+                    applyLinkState(glaasterButton, url, translation, disabledTranslation);
 
-                    glaasterButton.style.position = 'absolute';
-                    glaasterButton.style.bottom = '10px';
-                    glaasterButton.style.right = '6px';
-                    glaasterButton.style.width = '36px';
-                    glaasterButton.style.height = '36px';
-                    glaasterButton.style.display = 'flex';
-                    glaasterButton.style.alignItems = 'center';
-                    glaasterButton.style.justifyContent = 'center';
-                    glaasterButton.style.zIndex = '10';
-
-                    if (window.getComputedStyle(resource).position === 'static') {
-                        resource.style.position = 'relative';
+                    if (iconPosition === 'blockend') {
+                        glaasterButton.classList.add('glaaster-icon-tile-blockend');
+                        if (window.getComputedStyle(resource).position === 'static') {
+                            resource.style.position = 'relative';
+                        }
+                    } else {
+                        glaasterButton.classList.add('glaaster-icon-tile-inline');
                     }
 
                     resource.appendChild(glaasterButton);
@@ -405,22 +474,51 @@ export function init(config) {
                         course_module_id: String(resourceId)
                     });
 
-                    const glaasterLink = createGlaasterLink(url, translation, 'iconlarge activityicon');
-                    glaasterLink.style.alignItems = 'center';
-                    glaasterLink.style.display = 'flex';
-                    glaasterLink.style.marginLeft = '10px';
-                    glaasterLink.style.marginRight = '10px';
-                    glaasterLink.style.height = '50px';
-                    glaasterLink.style.zIndex = '30';
+                    const glaasterLink = createGlaasterLink(url, translation, 'iconlarge activityicon', disabledTranslation);
 
-                    const activityNameArea = activityContainer.querySelector('.activity-name-area');
-                    const mediaBody = activityContainer.querySelector('.media-body');
-                    if (activityNameArea) {
-                        activityNameArea.after(glaasterLink);
-                    } else if (mediaBody) {
-                        mediaBody.after(glaasterLink);
+                    if (iconPosition === 'blockend') {
+                        // Legacy layout: icon appended at the end of the whole activity block,
+                        // outside the name text, with its own margin/height styling.
+                        glaasterLink.classList.add('glaaster-icon-blockend');
+                        const activityNameArea = activityContainer.querySelector('.activity-name-area');
+                        const mediaBody = activityContainer.querySelector('.media-body');
+                        const anchor = activityNameArea || mediaBody;
+                        if (anchor) {
+                            anchor.after(glaasterLink);
+                        } else {
+                            activityContainer.append(glaasterLink);
+                        }
                     } else {
-                        activityContainer.prepend(glaasterLink);
+                        // The activity row uses CSS Grid with named areas (Boost .activity-grid):
+                        // appending a plain sibling ignores DOM order for visual placement. Instead,
+                        // inject the link inside the "name" grid-area's own content (.activityname),
+                        // which is a normal inline flow, so left/right insertion order is honoured.
+                        const activityName = activityContainer.querySelector('.activityname');
+                        const activityNameArea = activityContainer.querySelector('.activity-name-area');
+                        const mediaBody = activityContainer.querySelector('.media-body');
+                        const isLeftPosition = iconPosition === 'left';
+                        glaasterLink.classList.add(isLeftPosition ? 'glaaster-icon-left' : 'glaaster-icon-right');
+                        if (activityName) {
+                            if (isLeftPosition) {
+                                activityName.prepend(glaasterLink);
+                            } else {
+                                activityName.append(glaasterLink);
+                            }
+                        } else if (activityNameArea) {
+                            if (isLeftPosition) {
+                                activityNameArea.before(glaasterLink);
+                            } else {
+                                activityNameArea.after(glaasterLink);
+                            }
+                        } else if (mediaBody) {
+                            if (isLeftPosition) {
+                                mediaBody.before(glaasterLink);
+                            } else {
+                                mediaBody.after(glaasterLink);
+                            }
+                        } else {
+                            activityContainer.prepend(glaasterLink);
+                        }
                     }
                 }
             } catch (e) {
@@ -445,18 +543,20 @@ export function init(config) {
 
             const fileLinks = folderLi.querySelectorAll('span.fp-filename a');
             if (fileLinks.length) {
-                addGlaasterButtonsToFiles(fileLinks, folderModuleId, translation);
+                addGlaasterButtonsToFiles(fileLinks, folderModuleId, translation, disabledTranslation);
             }
         });
     }
 
     /**
-     * Add Glaaster buttons to the page after validation.
+     * Add Glaaster buttons to the page. Buttons always render on supported documents;
+     * their enabled/disabled state depends on whether a valid Glaaster instance exists.
      * @param {string} translation
+     * @param {string} disabledTranslation
      */
-    function addButtonsToPage(translation) {
-        injectButtonsInContainer(null, translation);
-        setupContentObserver(translation);
+    function addButtonsToPage(translation, disabledTranslation) {
+        injectButtonsInContainer(null, translation, disabledTranslation);
+        setupContentObserver(translation, disabledTranslation);
 
         if (window.location.pathname.includes('/mod/folder/view.php')) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -464,7 +564,7 @@ export function init(config) {
             if (folderModuleId) {
                 const fileLinks = document.querySelectorAll('.fp-filename a');
                 if (fileLinks.length) {
-                    addGlaasterButtonsToFiles(fileLinks, folderModuleId, translation);
+                    addGlaasterButtonsToFiles(fileLinks, folderModuleId, translation, disabledTranslation);
                 }
             }
         }
@@ -476,35 +576,32 @@ export function init(config) {
         return;
     }
 
-    if (webservicesEnabled === false) {
-        warn('Moodle web services are not enabled. Cannot use AJAX validation. Aborting.');
+    if (iconsEnabled === false) {
+        warn('Contextual icons disabled by admin setting. Aborting.');
         return;
+    }
+
+    if (webservicesEnabled === false) {
+        warn('Moodle web services are not enabled. Real-time deletion watcher will be unavailable.');
     }
 
     if (webserviceConfigured === false) {
-        warn('Glaaster webservice not configured. Missing user, token, or external functions. Aborting.');
-        return;
+        warn('Glaaster webservice not configured. Real-time deletion watcher will be unavailable.');
     }
 
-    if (!instanceId) {
-        warn('instanceId is undefined/empty. Skipping link injection.');
-        return;
-    }
+    Promise.all([
+        getString('view_document_adaptive', 'mod_glaaster'),
+        getString('not_configured_tooltip', 'mod_glaaster'),
+    ]).then(function(translations) {
+        const translation = translations[0];
+        const disabledTranslation = translations[1];
+        disabledTranslationText = disabledTranslation;
 
-    getString('view_document_adaptive', 'mod_glaaster').then(function(translation) {
-        ajaxCall([{
-            methodname: 'mod_glaaster_validate_instance',
-            args: {instanceid: parseInt(instanceId)},
-        }])[0].done(function(response) {
-            if (!response.isvalid) {
-                warn('instanceId is not valid (deleted or course removed). Skipping link injection.');
-                return;
-            }
-            addButtonsToPage(translation);
+        addButtonsToPage(translation, disabledTranslation);
+
+        if (webservicesEnabled !== false && webserviceConfigured !== false) {
             setupDeletionWatcher();
-        }).fail(function(error) {
-            warn('Failed to validate instance:', error);
-        });
+        }
     }).catch(function(error) {
         warn('Failed to load translations:', error);
     });

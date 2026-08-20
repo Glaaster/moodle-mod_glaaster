@@ -221,5 +221,27 @@ function xmldb_glaaster_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026031803, 'glaaster');
     }
 
+    if ($oldversion < 2026082000) {
+        // Auto-provision the hidden Glaaster instance for tool types that were already
+        // connected (state CONFIGURED) before this became automatic. Without this,
+        // contextual buttons on sites connected pre-upgrade would stay disabled forever
+        // since nothing else ever creates this instance retroactively.
+        require_once($CFG->dirroot . '/mod/glaaster/locallib.php');
+
+        $configuredtypes = $DB->get_records('glaaster_types', ['state' => MOD_GLAASTER_TOOL_STATE_CONFIGURED]);
+        foreach ($configuredtypes as $type) {
+            if (!$DB->record_exists('glaaster', ['typeid' => $type->id])) {
+                try {
+                    glaaster_provision_hidden_instance($type->id);
+                } catch (\Throwable $e) {
+                    debugging('Glaaster upgrade: failed to auto-provision hidden instance for type '
+                        . $type->id . ': ' . $e->getMessage(), DEBUG_DEVELOPER);
+                }
+            }
+        }
+
+        upgrade_mod_savepoint(true, 2026082000, 'glaaster');
+    }
+
     return true;
 }

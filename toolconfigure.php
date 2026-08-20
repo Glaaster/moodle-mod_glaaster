@@ -145,6 +145,19 @@ if (optional_param('savetooldomain', 0, PARAM_BOOL)) {
     $tooldomain = $newdomain;
     redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
 }
+if (optional_param('saveiconsettings', 0, PARAM_BOOL)) {
+    require_sesskey();
+    $newiconurl = optional_param('iconurl', '', PARAM_URL);
+    $newiconposition = optional_param('iconposition', 'right', PARAM_ALPHA);
+    if (!in_array($newiconposition, ['left', 'right', 'blockend'], true)) {
+        $newiconposition = 'right';
+    }
+    $newiconsenabled = optional_param('iconsenabled', 0, PARAM_BOOL);
+    set_config('iconurl', $newiconurl, 'mod_glaaster');
+    set_config('iconposition', $newiconposition, 'mod_glaaster');
+    set_config('iconsenabled', $newiconsenabled ? 1 : 0, 'mod_glaaster');
+    redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
+}
 
 // Setup wizard: detect first-install flag and check whether config is now complete.
 $needssetup = (bool) get_config('mod_glaaster', 'needs_setup');
@@ -152,6 +165,23 @@ $tooldomain = get_config('mod_glaaster', 'tooldomain');
 if (!$tooldomain) {
     $tooldomain = 'lti.glaaster.com';
     set_config('tooldomain', $tooldomain, 'mod_glaaster');
+}
+$iconurl = get_config('mod_glaaster', 'iconurl');
+if ($iconurl === false) {
+    $iconurl = '';
+    set_config('iconurl', $iconurl, 'mod_glaaster');
+}
+$iconposition = get_config('mod_glaaster', 'iconposition');
+if (!in_array($iconposition, ['left', 'right', 'blockend'], true)) {
+    $iconposition = 'right';
+    set_config('iconposition', $iconposition, 'mod_glaaster');
+}
+$iconsenabled = get_config('mod_glaaster', 'iconsenabled');
+if ($iconsenabled === false) {
+    $iconsenabled = true;
+    set_config('iconsenabled', 1, 'mod_glaaster');
+} else {
+    $iconsenabled = (bool) $iconsenabled;
 }
 $apiuserid = (int) get_config('mod_glaaster', 'apiuserid');
 $apiuser = $apiuserid ? \core_user::get_user($apiuserid) : null;
@@ -234,6 +264,138 @@ $domainform .= html_writer::tag('button', get_string('savechanges'), [
 $domainform .= html_writer::end_tag('form');
 $domainform .= html_writer::end_div();
 $domainform .= html_writer::end_div();
+
+$iconform = html_writer::start_div('card border-0 mb-4', ['style' => 'box-shadow:0 4px 16px rgba(0,0,0,0.12),0 1px 4px rgba(0,0,0,0.08)']);
+$iconform .= html_writer::start_div('card-header bg-white border-bottom', ['style' => 'display:flex;align-items:center;gap:12px;']);
+$iconform .= html_writer::tag('span', '', [
+    'class' => 'rounded-circle bg-primary d-inline-block flex-shrink-0',
+    'style' => 'width:10px;height:10px;',
+]);
+$iconform .= html_writer::tag(
+    'h5',
+    get_string('iconsettings', 'mod_glaaster'),
+    ['class' => 'mb-0 fw-semibold text-dark']
+);
+$iconform .= html_writer::end_div();
+$iconform .= html_writer::start_div('card-body');
+$iconform .= html_writer::start_tag('form', ['method' => 'post', 'action' => $PAGE->url->out(false)]);
+$iconform .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+$iconform .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'saveiconsettings', 'value' => '1']);
+
+// Global enable/disable toggle for contextual icons.
+$iconform .= html_writer::start_div('mb-3 form-check form-switch');
+$iconform .= html_writer::empty_tag('input', [
+    'type' => 'checkbox',
+    'name' => 'iconsenabled',
+    'id' => 'iconsenabled',
+    'value' => '1',
+    'class' => 'form-check-input',
+    'checked' => $iconsenabled ? 'checked' : null,
+]);
+$iconform .= html_writer::tag(
+    'label',
+    get_string('iconsenabled', 'mod_glaaster'),
+    ['for' => 'iconsenabled', 'class' => 'form-check-label fw-medium']
+);
+$iconform .= html_writer::tag(
+    'div',
+    get_string('iconsenabled_desc', 'mod_glaaster'),
+    ['class' => 'form-text text-muted mt-1']
+);
+$iconform .= html_writer::end_div();
+
+// Icon URL field.
+$iconform .= html_writer::start_div('mb-3');
+$iconform .= html_writer::tag(
+    'label',
+    get_string('iconurl', 'mod_glaaster'),
+    [
+        'for' => 'iconurl',
+        'class' => 'form-label fw-medium small text-uppercase letter-spacing-1',
+        'style' => 'color:#343a40',
+    ]
+);
+$iconform .= html_writer::empty_tag('input', [
+    'type' => 'text',
+    'name' => 'iconurl',
+    'id' => 'iconurl',
+    'value' => $iconurl,
+    'class' => 'form-control form-control-lg',
+    'placeholder' => (new moodle_url('/mod/glaaster/pix/icon.svg'))->out(false),
+]);
+$iconform .= html_writer::tag(
+    'div',
+    get_string('iconurl_desc', 'mod_glaaster'),
+    ['class' => 'form-text text-muted mt-1']
+);
+$iconform .= html_writer::end_div();
+
+// Icon position choice.
+$iconform .= html_writer::start_div('mb-3');
+$iconform .= html_writer::tag(
+    'label',
+    get_string('iconposition', 'mod_glaaster'),
+    ['class' => 'form-label fw-medium small text-uppercase letter-spacing-1 d-block', 'style' => 'color:#343a40']
+);
+$iconform .= html_writer::start_div('form-check');
+$iconform .= html_writer::empty_tag('input', [
+    'type' => 'radio',
+    'name' => 'iconposition',
+    'id' => 'iconposition-left',
+    'value' => 'left',
+    'class' => 'form-check-input',
+    'checked' => ($iconposition === 'left') ? 'checked' : null,
+]);
+$iconform .= html_writer::tag(
+    'label',
+    get_string('iconposition_left', 'mod_glaaster'),
+    ['for' => 'iconposition-left', 'class' => 'form-check-label']
+);
+$iconform .= html_writer::end_div();
+$iconform .= html_writer::start_div('form-check');
+$iconform .= html_writer::empty_tag('input', [
+    'type' => 'radio',
+    'name' => 'iconposition',
+    'id' => 'iconposition-right',
+    'value' => 'right',
+    'class' => 'form-check-input',
+    'checked' => ($iconposition === 'right') ? 'checked' : null,
+]);
+$iconform .= html_writer::tag(
+    'label',
+    get_string('iconposition_right', 'mod_glaaster'),
+    ['for' => 'iconposition-right', 'class' => 'form-check-label']
+);
+$iconform .= html_writer::end_div();
+$iconform .= html_writer::start_div('form-check');
+$iconform .= html_writer::empty_tag('input', [
+    'type' => 'radio',
+    'name' => 'iconposition',
+    'id' => 'iconposition-blockend',
+    'value' => 'blockend',
+    'class' => 'form-check-input',
+    'checked' => ($iconposition === 'blockend') ? 'checked' : null,
+]);
+$iconform .= html_writer::tag(
+    'label',
+    get_string('iconposition_blockend', 'mod_glaaster'),
+    ['for' => 'iconposition-blockend', 'class' => 'form-check-label']
+);
+$iconform .= html_writer::end_div();
+$iconform .= html_writer::tag(
+    'div',
+    get_string('iconposition_desc', 'mod_glaaster'),
+    ['class' => 'form-text text-muted mt-1']
+);
+$iconform .= html_writer::end_div();
+
+$iconform .= html_writer::tag('button', get_string('savechanges'), [
+    'type' => 'submit',
+    'class' => 'btn btn-primary px-4',
+]);
+$iconform .= html_writer::end_tag('form');
+$iconform .= html_writer::end_div();
+$iconform .= html_writer::end_div();
 
 // Glaaster API Setup card.
 $apirole = $DB->get_record('role', ['shortname' => 'glaasterapi']);
@@ -595,5 +757,6 @@ $PAGE->requires->js_call_amd('mod_glaaster/tool_configure_controller', 'init');
 echo $setupform;
 
 echo $domainform;
+echo $iconform;
 
 echo $output->footer();
