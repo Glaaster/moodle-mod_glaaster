@@ -731,6 +731,23 @@ $string['tooldomain'] = 'Tool domain';
 $string['tooldomain_desc'] =
     'Domain used to retrieve Glaaster instance. This allows testing with different environments.';
 
+// Icon configuration settings.
+$string['iconsettings'] = 'Icon configuration';
+$string['iconsenabled'] = 'Enable contextual icons';
+$string['iconsenabled_desc'] =
+    'When disabled, no Glaaster icon is displayed anywhere, regardless of instance status.';
+$string['iconurl'] = 'Icon URL';
+$string['iconurl_desc'] =
+    'URL of the icon displayed on the Glaaster contextual button. Leave empty to use the default Glaaster icon.';
+$string['iconposition'] = 'Icon position';
+$string['iconposition_left'] = 'Glued to the left of the text';
+$string['iconposition_right'] = 'Glued to the right of the text';
+$string['iconposition_blockend'] = 'End of the activity block (legacy layout)';
+$string['iconposition_desc'] =
+    'Choose how the icon is positioned relative to the activity name. This applies to standard resource/page ' .
+    'activities and courses using the Tiles course format only; folder file icons are unaffected.';
+$string['not_configured_tooltip'] = 'Glaaster is not configured yet. Contact your administrator.';
+
 // Page title strings (view.php).
 $string['pageheading'] = 'Glaaster: {$a}';
 $string['pagetitle'] = '{$a->course} - Glaaster: {$a->name}';

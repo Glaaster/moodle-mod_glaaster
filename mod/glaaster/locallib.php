@@ -3092,6 +3092,72 @@ function glaaster_type_add_categories(int $typeid, string $lticoursecategories =
 }
 
 /**
+ * Auto-provision the single hidden Glaaster activity instance used for LTI launches.
+ *
+ * There is only ever one Glaaster instance per site: this function creates it (in a
+ * hidden container course, invisible everywhere in the UI) the first time a tool type
+ * is connected, so contextual buttons become usable without a teacher ever having to
+ * manually add the "Glaaster" activity to a course. Idempotent: safe to call repeatedly
+ * for the same typeid.
+ *
+ * @param int $typeid The connected glaaster_types id to attach the hidden instance to
+ * @return int The id of the (possibly pre-existing) hidden glaaster instance
+ */
+function glaaster_provision_hidden_instance(int $typeid): int {
+    global $CFG, $DB;
+
+    // Already provisioned for this type: nothing to do.
+    $existing = $DB->get_record('glaaster', ['typeid' => $typeid], 'id');
+    if ($existing) {
+        return (int) $existing->id;
+    }
+
+    require_once($CFG->dirroot . '/course/lib.php');
+    require_once($CFG->dirroot . '/course/modlib.php');
+
+    $containeridnumber = 'glaaster_hidden_container';
+    $course = $DB->get_record('course', ['idnumber' => $containeridnumber]);
+    if (!$course) {
+        $categoryidnumber = 'glaaster_hidden_category';
+        $category = $DB->get_record('course_categories', ['idnumber' => $categoryidnumber]);
+        if (!$category) {
+            $category = core_course_category::create([
+                'name'      => 'Glaaster',
+                'idnumber'  => $categoryidnumber,
+                'visible'   => 0,
+            ]);
+        }
+
+        $coursedata = new stdClass();
+        $coursedata->fullname = 'Glaaster (hidden container)';
+        $coursedata->shortname = 'glaaster_hidden_' . uniqid();
+        $coursedata->idnumber = $containeridnumber;
+        $coursedata->category = $category->id;
+        $coursedata->visible = 0;
+        $course = create_course($coursedata);
+    }
+
+    $moduleid = $DB->get_field('modules', 'id', ['name' => 'glaaster'], MUST_EXIST);
+
+    $moduleinfo = new stdClass();
+    $moduleinfo->course = $course->id;
+    $moduleinfo->modulename = 'glaaster';
+    $moduleinfo->module = $moduleid;
+    $moduleinfo->section = 0;
+    $moduleinfo->visible = 0;
+    $moduleinfo->visibleoncoursepage = 0;
+    $moduleinfo->name = 'Glaaster';
+    $moduleinfo->intro = '';
+    $moduleinfo->introformat = FORMAT_HTML;
+    $moduleinfo->toolurl = '';
+    $moduleinfo->typeid = $typeid;
+
+    $moduleinfo = add_moduleinfo($moduleinfo, $course);
+
+    return (int) $moduleinfo->instance;
+}
+
+/**
  * Add a new type to the database.
  *
  * @param stdClass $type The type object to add
@@ -3151,6 +3217,17 @@ function glaaster_add_type($type, $config) {
         }
         if (isset($config->lti_coursecategories) && !empty($config->lti_coursecategories)) {
             glaaster_type_add_categories($id, $config->lti_coursecategories);
+        }
+    }
+
+    // A newly-connected tool type should immediately power the contextual buttons,
+    // without requiring a teacher to manually add a Glaaster activity anywhere.
+    if ($id && isset($type->state) && $type->state === MOD_GLAASTER_TOOL_STATE_CONFIGURED) {
+        try {
+            glaaster_provision_hidden_instance($id);
+        } catch (\Throwable $e) {
+            debugging('Glaaster: failed to auto-provision hidden instance for type '
+                . $id . ': ' . $e->getMessage(), DEBUG_DEVELOPER);
         }
     }
 
@@ -5088,26 +5165,46 @@ function glaaster_check_webservice_configured() {
 function mod_glaaster_get_js_config(): array {
     global $CFG, $DB;
 
+    $iconurl = get_config('mod_glaaster', 'iconurl');
+    if (empty($iconurl)) {
+        $iconurl = (new moodle_url('/mod/glaaster/pix/icon.svg'))->out(false);
+    }
+    $iconposition = get_config('mod_glaaster', 'iconposition');
+    if (!in_array($iconposition, ['left', 'right', 'blockend'], true)) {
+        $iconposition = 'right';
+    }
+    $iconsenabled = get_config('mod_glaaster', 'iconsenabled');
+    $iconsenabled = ($iconsenabled === false) ? true : (bool)$iconsenabled;
+
     $dbman = $DB->get_manager();
     if (!$dbman->table_exists('glaaster_types')) {
         return [
             'instanceId'           => '',
+            'instanceValid'        => false,
+            'iconsEnabled'         => $iconsenabled,
             'webservicesEnabled'   => false,
             'webserviceConfigured' => false,
             'debugEnabled'         => false,
+            'iconUrl'              => $iconurl,
+            'iconPosition'         => $iconposition,
         ];
     }
 
     $instanceid = glaaster_retrieve_instance_from_tooldomain();
-    if ($instanceid === false) {
+    $instancevalid = ($instanceid !== false);
+    if (!$instancevalid) {
         $instanceid = '';
     }
 
     return [
         'instanceId'           => (string)$instanceid,
+        'instanceValid'        => $instancevalid,
+        'iconsEnabled'         => $iconsenabled,
         'webservicesEnabled'   => glaaster_check_webservices_enabled(),
         'webserviceConfigured' => glaaster_check_webservice_configured(),
         'debugEnabled'         => (!empty($CFG->debug) && $CFG->debug >= 15),
+        'iconUrl'              => $iconurl,
+        'iconPosition'         => $iconposition,
     ];
 }
 
