@@ -138,7 +138,7 @@ $string['connect_status_pending'] = 'Validating...';
 $string['connect_status_validated'] = 'Validated';
 $string['connect_status_error'] = 'Error';
 $string['connect_status_api_pending'] = 'Awaiting Glaaster validation';
-$string['connect_support_info'] = 'If you experience any issues connecting, please contact <a href="mailto:system@glaaster.com">system@glaaster.com</a> for assistance.';
+$string['connect_support_info'] = 'If you experience any issues connecting, you can refer to the Glaaster support FAQ at <a href="https://support.glaaster.com" target="_blank" rel="noopener noreferrer">https://support.glaaster.com</a>, or contact <a href="mailto:support@glaaster.com">support@glaaster.com</a> for assistance.';
 $string['add_ltilegacy'] = 'Add Legacy LTI';
 $string['addnewapp'] = 'Enable external application';
 $string['addserver'] = 'Add new trusted server';

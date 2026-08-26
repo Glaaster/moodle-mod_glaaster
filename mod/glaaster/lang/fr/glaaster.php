@@ -691,7 +691,7 @@ $string['connect_status_pending'] = 'En cours de validation';
 $string['connect_status_validated'] = 'Validé';
 $string['connect_status_error'] = 'Erreur';
 $string['connect_status_api_pending'] = 'En attente de validation de Glaaster';
-$string['connect_support_info'] = 'En cas de problème de connexion, veuillez contacter <a href="mailto:system@glaaster.com">system@glaaster.com</a> pour obtenir de l\'aide.';
+$string['connect_support_info'] = 'En cas de problème de connexion, vous pouvez vous référer à la page de support FAQ de Glaaster à l\'adresse <a href="https://support.glaaster.com" target="_blank" rel="noopener noreferrer">https://support.glaaster.com</a>, ou contacter <a href="mailto:support@glaaster.com">support@glaaster.com</a> pour obtenir de l\'aide.';
 
 // Titres de page (view.php).
 $string['pageheading'] = 'Glaaster : {$a}';
