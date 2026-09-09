@@ -79,7 +79,11 @@ function mod_glaaster_assign_api_role_capabilities($roleid) {
         'moodle/course:view', // View courses without enrolment.
         'webservice/rest:use', // Use REST protocol.
         'mod/resource:view', // View resource activities.
+        'mod/folder:view', // View folder contents.
         'moodle/course:update', // Required by core_course_get_contents webservice.
+        'moodle/course:viewhiddencourses', // Reach resources in hidden courses.
+        'moodle/course:viewhiddensections', // Reach resources in hidden sections.
+        'moodle/course:viewhiddenactivities', // Reach hidden resource activities.
     ];
 
     foreach ($capabilities as $capability) {
