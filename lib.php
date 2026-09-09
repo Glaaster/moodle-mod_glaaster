@@ -609,30 +609,6 @@ function mod_glaaster_core_calendar_provide_event_action(
 }
 
 /**
- * Extend the course navigation with an "LTI External tools" link which redirects to a list of all tools available for
- * course use.
- *
- * @param settings_navigation $navigation The settings navigation object
- * @param stdClass $course The course
- * @param stdclass $context Course context
- * @return void
- */
-function glaaster_extend_navigation_course($navigation, $course, $context): void {
-    if (has_capability('mod/glaaster:addpreconfiguredinstance', $context)) {
-        $url = new moodle_url('/mod/glaaster/coursetools.php', ['id' => $course->id]);
-        $settingsnode = navigation_node::create(
-            get_string('courseexternaltools', 'mod_glaaster'),
-            $url,
-            navigation_node::TYPE_SETTING,
-            null,
-            'coursetools_glaaster',
-            new pix_icon('i/settings', '')
-        );
-        $navigation->add_node($settingsnode);
-    }
-}
-
-/**
  * Legacy callback for Moodle versions before 4.4.
  *
  * This function is used for compatibility with older Moodle versions.
