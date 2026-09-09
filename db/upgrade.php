@@ -253,6 +253,47 @@ function xmldb_glaaster_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026090900, 'glaaster');
     }
 
+    if ($oldversion < 2026090901) {
+        // The Glaaster container course used to be created hidden, which made the single
+        // site-wide Glaaster activity unreachable for normal users. Make the category,
+        // course and activity visible and grant every authenticated user access to the
+        // course so LTI launches work without enrolment.
+        require_once($CFG->dirroot . '/mod/glaaster/locallib.php');
+        require_once($CFG->dirroot . '/course/lib.php');
+
+        $course = $DB->get_record('course', ['idnumber' => 'glaaster_hidden_container']);
+        if ($course) {
+            $category = $DB->get_record('course_categories', ['idnumber' => 'glaaster_hidden_category']);
+            if ($category && empty($category->visible)) {
+                core_course_category::get($category->id, MUST_EXIST, true)->show();
+            }
+
+            if (empty($course->visible)) {
+                $DB->set_field('course', 'visible', 1, ['id' => $course->id]);
+                $DB->set_field('course', 'visibleold', 1, ['id' => $course->id]);
+            }
+            if ($course->fullname === 'Glaaster (hidden container)') {
+                $DB->set_field('course', 'fullname', 'Glaaster', ['id' => $course->id]);
+            }
+
+            $moduleid = $DB->get_field('modules', 'id', ['name' => 'glaaster']);
+            if ($moduleid) {
+                $cms = $DB->get_records('course_modules', [
+                    'course' => $course->id,
+                    'module' => $moduleid,
+                ], '', 'id');
+                foreach ($cms as $cm) {
+                    set_coursemodule_visible($cm->id, 1);
+                }
+            }
+
+            glaaster_grant_container_course_access((int) $course->id);
+            rebuild_course_cache($course->id, true);
+        }
+
+        upgrade_mod_savepoint(true, 2026090901, 'glaaster');
+    }
+
     if ($oldversion < 2026090902) {
         // Grant mod/folder:view to the "Glaaster API" role: without it the Document
         // Service cannot list the files inside folder activities.
@@ -261,5 +302,6 @@ function xmldb_glaaster_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2026090902, 'glaaster');
     }
+
     return true;
 }

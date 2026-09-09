@@ -3092,16 +3092,46 @@ function glaaster_type_add_categories(int $typeid, string $lticoursecategories =
 }
 
 /**
- * Auto-provision the single hidden Glaaster activity instance used for LTI launches.
+ * Grant every authenticated user access to the Glaaster container course.
+ *
+ * The container course holds the single site-wide Glaaster activity used for LTI
+ * launches, so any logged-in user must be able to reach it without being enrolled.
+ * This grants moodle/course:view to the "Authenticated user" role in the course
+ * context only, leaving every other course untouched. Idempotent.
+ *
+ * @param int $courseid The container course id
+ * @return void
+ */
+function glaaster_grant_container_course_access(int $courseid): void {
+    global $DB;
+
+    $role = $DB->get_record('role', ['archetype' => 'user'], 'id', IGNORE_MULTIPLE);
+    if (!$role) {
+        return;
+    }
+
+    $context = context_course::instance($courseid);
+    foreach (['moodle/course:view', 'mod/glaaster:view'] as $capability) {
+        if (get_capability_info($capability)) {
+            assign_capability($capability, CAP_ALLOW, $role->id, $context->id, true);
+        }
+    }
+    $context->mark_dirty();
+}
+
+/**
+ * Auto-provision the single Glaaster activity instance used for LTI launches.
  *
  * There is only ever one Glaaster instance per site: this function creates it (in a
- * hidden container course, invisible everywhere in the UI) the first time a tool type
- * is connected, so contextual buttons become usable without a teacher ever having to
- * manually add the "Glaaster" activity to a course. Idempotent: safe to call repeatedly
- * for the same typeid.
+ * dedicated container course) the first time a tool type is connected, so contextual
+ * buttons become usable without a teacher ever having to manually add the "Glaaster"
+ * activity to a course. The container category, course and activity are all visible,
+ * and every authenticated user is granted moodle/course:view on the course so the
+ * launch works without enrolment. Idempotent: safe to call repeatedly for the same
+ * typeid.
  *
- * @param int $typeid The connected glaaster_types id to attach the hidden instance to
- * @return int The id of the (possibly pre-existing) hidden glaaster instance
+ * @param int $typeid The connected glaaster_types id to attach the instance to
+ * @return int The id of the (possibly pre-existing) glaaster instance
  */
 function glaaster_provision_hidden_instance(int $typeid): int {
     global $CFG, $DB;
@@ -3124,18 +3154,20 @@ function glaaster_provision_hidden_instance(int $typeid): int {
             $category = core_course_category::create([
                 'name'      => 'Glaaster',
                 'idnumber'  => $categoryidnumber,
-                'visible'   => 0,
+                'visible'   => 1,
             ]);
         }
 
         $coursedata = new stdClass();
-        $coursedata->fullname = 'Glaaster (hidden container)';
-        $coursedata->shortname = 'glaaster_hidden_' . uniqid();
+        $coursedata->fullname = 'Glaaster';
+        $coursedata->shortname = 'glaaster_' . uniqid();
         $coursedata->idnumber = $containeridnumber;
         $coursedata->category = $category->id;
-        $coursedata->visible = 0;
+        $coursedata->visible = 1;
         $course = create_course($coursedata);
     }
+
+    glaaster_grant_container_course_access((int) $course->id);
 
     $moduleid = $DB->get_field('modules', 'id', ['name' => 'glaaster'], MUST_EXIST);
 
@@ -3144,8 +3176,8 @@ function glaaster_provision_hidden_instance(int $typeid): int {
     $moduleinfo->modulename = 'glaaster';
     $moduleinfo->module = $moduleid;
     $moduleinfo->section = 0;
-    $moduleinfo->visible = 0;
-    $moduleinfo->visibleoncoursepage = 0;
+    $moduleinfo->visible = 1;
+    $moduleinfo->visibleoncoursepage = 1;
     $moduleinfo->name = 'Glaaster';
     $moduleinfo->intro = '';
     $moduleinfo->introformat = FORMAT_HTML;
