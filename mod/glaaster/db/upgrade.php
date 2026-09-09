@@ -243,17 +243,15 @@ function xmldb_glaaster_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026082000, 'glaaster');
     }
 
-    if ($oldversion < 2026090900) {
+    if ($oldversion < 2026090901) {
         // Grant the hidden-content capabilities to the "Glaaster API" role on existing
         // installs. Without them the Document Service cannot reach resources sitting in
         // hidden courses, hidden sections or hidden activities.
+        // Grant mod/folder:view to the "Glaaster API" role: without it the Document
+        // Service cannot list the files inside folder activities.
         require_once($CFG->dirroot . '/mod/glaaster/db/install.php');
         mod_glaaster_create_api_role();
 
-        upgrade_mod_savepoint(true, 2026090900, 'glaaster');
-    }
-
-    if ($oldversion < 2026090901) {
         // The Glaaster container course used to be created hidden, which made the single
         // site-wide Glaaster activity unreachable for normal users. Make the category,
         // course and activity visible and grant every authenticated user access to the
@@ -292,15 +290,6 @@ function xmldb_glaaster_upgrade($oldversion) {
         }
 
         upgrade_mod_savepoint(true, 2026090901, 'glaaster');
-    }
-
-    if ($oldversion < 2026090902) {
-        // Grant mod/folder:view to the "Glaaster API" role: without it the Document
-        // Service cannot list the files inside folder activities.
-        require_once($CFG->dirroot . '/mod/glaaster/db/install.php');
-        mod_glaaster_create_api_role();
-
-        upgrade_mod_savepoint(true, 2026090902, 'glaaster');
     }
 
     return true;

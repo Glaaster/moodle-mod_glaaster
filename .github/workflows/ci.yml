@@ -14,7 +14,6 @@ jobs:
   test:
     name: PHP ${{ matrix.php }} / Moodle ${{ matrix.moodle-branch }} / ${{ matrix.db }}
     runs-on: ubuntu-22.04
-    continue-on-error: true
 
     strategy:
       fail-fast: false
@@ -99,6 +98,24 @@ jobs:
           DB: ${{ matrix.db }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
 
+      - name: Disable external test files
+        run: |
+          # Moodle's root config.php: 5.x keeps it beside public/, older branches at the top.
+          CONFIG=""
+          for candidate in moodle/config.php moodle/public/config.php; do
+            if [ -f "$candidate" ]; then CONFIG="$candidate"; break; fi
+          done
+          if [ -z "$CONFIG" ]; then echo "Moodle config.php not found"; exit 1; fi
+          echo "Patching $CONFIG"
+          if ! grep -q '// Extra config.' "$CONFIG"; then
+            echo "Marker '// Extra config.' missing in $CONFIG"; exit 1
+          fi
+          # PHP constants, not env vars: empty values make advanced_testcase skip every
+          # test that needs Moodle's external fixture server (unreachable from this runner).
+          sed -i "s|// Extra config.|define('TEST_EXTERNAL_FILES_HTTP_URL', '');\ndefine('TEST_EXTERNAL_FILES_HTTPS_URL', '');\n// Extra config.|" "$CONFIG"
+          grep -n 'TEST_EXTERNAL_FILES' "$CONFIG"
+          php -l "$CONFIG"
+
       - name: PHP Lint
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci phplint
@@ -160,7 +177,7 @@ jobs:
     name: Semantic Release
     runs-on: ubuntu-22.04
     needs: test
-    if: ${{ !cancelled() && github.event_name == 'push' && (github.ref_name == 'main' || startsWith(github.ref_name, 'moodle/')) }}
+    if: ${{ needs.test.result == 'success' && github.event_name == 'push' && (github.ref_name == 'main' || startsWith(github.ref_name, 'moodle/')) }}
     permissions:
       contents: write
       issues: write
