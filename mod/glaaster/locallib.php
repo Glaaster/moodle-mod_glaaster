@@ -4129,28 +4129,55 @@ function glaaster_get_type($typeid) {
 }
 
 /**
+ * Get the launch containers an administrator may pick as the site-wide default.
+ *
+ * MOD_GLAASTER_LAUNCH_CONTAINER_DEFAULT is excluded on purpose: it means "inherit from the
+ * level above", which has no meaning once we are already at the top level.
+ *
+ * @return array Launch container constant => language string identifier.
+ */
+function glaaster_get_launch_container_options() {
+    return [
+        MOD_GLAASTER_LAUNCH_CONTAINER_EMBED => 'embed',
+        MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS => 'embed_no_blocks',
+        MOD_GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW => 'existing_window',
+        MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW => 'new_window',
+    ];
+}
+
+/**
+ * Get the site-wide default launch container.
+ *
+ * Falls back to embedding without blocks, which is the behaviour that applied before this
+ * setting existed.
+ *
+ * @return int Launch container constant.
+ */
+function glaaster_get_default_launch_container() {
+    $configured = (int) get_config('mod_glaaster', 'launchcontainer');
+
+    if (!array_key_exists($configured, glaaster_get_launch_container_options())) {
+        return MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+    }
+
+    return $configured;
+}
+
+/**
  * Get the launch container for an LTI instance.
+ *
+ * Unlike core mod_lti, the site-wide setting takes precedence over the value stored on the tool
+ * type. Tool types are seeded with a concrete launch container when they are registered, so
+ * honouring them here would make the administrator's choice unreachable. The per-activity value
+ * is likewise always MOD_GLAASTER_LAUNCH_CONTAINER_DEFAULT for Glaaster instances, which leaves
+ * the site setting as the single place where the opening mode is decided.
  *
  * @param stdClass $lti LTI instance
  * @param array $toolconfig Tool configuration
  * @return string Launch container
  */
 function glaaster_get_launch_container($lti, $toolconfig) {
-    if (empty($lti->launchcontainer)) {
-        $lti->launchcontainer = MOD_GLAASTER_LAUNCH_CONTAINER_DEFAULT;
-    }
-
-    if ($lti->launchcontainer == MOD_GLAASTER_LAUNCH_CONTAINER_DEFAULT) {
-        if (isset($toolconfig['launchcontainer'])) {
-            $launchcontainer = $toolconfig['launchcontainer'];
-        }
-    } else {
-        $launchcontainer = $lti->launchcontainer;
-    }
-
-    if (empty($launchcontainer) || $launchcontainer == MOD_GLAASTER_LAUNCH_CONTAINER_DEFAULT) {
-        $launchcontainer = MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
-    }
+    $launchcontainer = glaaster_get_default_launch_container();
 
     $devicetype = core_useragent::get_device_type();
 
@@ -5208,6 +5235,10 @@ function mod_glaaster_get_js_config(): array {
     $iconsenabled = get_config('mod_glaaster', 'iconsenabled');
     $iconsenabled = ($iconsenabled === false) ? true : (bool)$iconsenabled;
 
+    // Contextual buttons must open a new tab directly when that is the configured launch mode,
+    // otherwise the user lands on view.php and has to click a second link.
+    $openinnewwindow = (glaaster_get_default_launch_container() == MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW);
+
     $dbman = $DB->get_manager();
     if (!$dbman->table_exists('glaaster_types')) {
         return [
@@ -5219,6 +5250,7 @@ function mod_glaaster_get_js_config(): array {
             'debugEnabled'         => false,
             'iconUrl'              => $iconurl,
             'iconPosition'         => $iconposition,
+            'openInNewWindow'      => $openinnewwindow,
         ];
     }
 
@@ -5237,6 +5269,7 @@ function mod_glaaster_get_js_config(): array {
         'debugEnabled'         => (!empty($CFG->debug) && $CFG->debug >= 15),
         'iconUrl'              => $iconurl,
         'iconPosition'         => $iconposition,
+        'openInNewWindow'      => $openinnewwindow,
     ];
 }
 
