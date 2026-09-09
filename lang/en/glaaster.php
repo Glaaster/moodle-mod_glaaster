@@ -746,6 +746,19 @@ $string['iconposition_blockend'] = 'End of the activity block (legacy layout)';
 $string['iconposition_desc'] =
     'Choose how the icon is positioned relative to the activity name. This applies to standard resource/page ' .
     'activities and courses using the Tiles course format only; folder file icons are unaffected.';
+// Launch container settings.
+$string['launchsettings'] = 'Opening mode';
+$string['launchcontainer_setting'] = 'How Glaaster opens';
+$string['launchcontainer_setting_desc'] =
+    'Choose how Glaaster is displayed when a user opens an activity or clicks a contextual button. ' .
+    'On phones and tablets, Glaaster always opens in the existing window to make the best use of the screen.';
+$string['launchcontainer_embed_desc'] = 'Displayed in a frame inside the Moodle page, with the surrounding blocks.';
+$string['launchcontainer_embed_no_blocks_desc'] =
+    'Displayed in a frame inside the Moodle page, without the surrounding blocks. Recommended.';
+$string['launchcontainer_existing_window_desc'] =
+    'Takes over the whole page. The Moodle header and navigation are hidden.';
+$string['launchcontainer_new_window_desc'] = 'Opens in a new browser tab. Moodle stays open behind it.';
+
 $string['not_configured_tooltip'] = 'Glaaster is not configured yet. Contact your administrator.';
 
 // Page title strings (view.php).

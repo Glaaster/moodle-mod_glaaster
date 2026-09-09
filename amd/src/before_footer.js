@@ -46,13 +46,14 @@ const SUPPORTEDFILEICONS = ['f/pdf', 'f/image', 'f/document', 'f/powerpoint', 'f
  * @param {string} config.iconPosition - Icon position mode: 'left' (glued to the left of the text),
  *                                        'right' (glued to the right of the text, default), or
  *                                        'blockend' (end of the activity block, legacy layout)
+ * @param {boolean} config.openInNewWindow - Whether the admin configured Glaaster to open in a new tab
  */
 export function init(config) {
     'use strict';
 
     const {
         instanceId, instanceValid, iconsEnabled, webservicesEnabled, webserviceConfigured,
-        debugEnabled, iconUrl, iconPosition,
+        debugEnabled, iconUrl, iconPosition, openInNewWindow,
     } = config;
 
     // Icons are always shown once enabled by the admin; only their enabled/disabled
@@ -161,6 +162,15 @@ export function init(config) {
             a.removeAttribute('aria-disabled');
             a.removeAttribute('tabindex');
             a.classList.remove('glaaster-icon-disabled');
+            if (openInNewWindow === true) {
+                a.target = '_blank';
+                // Required alongside target=_blank: it stops the opened tab from reaching back
+                // through window.opener.
+                a.rel = 'noopener';
+            } else {
+                a.removeAttribute('target');
+                a.removeAttribute('rel');
+            }
         } else {
             // Keep href present (harmless "#") rather than removing it: an <a> with
             // no href isn't hoverable/focusable in every browser, which would also
@@ -171,6 +181,10 @@ export function init(config) {
             a.setAttribute('aria-disabled', 'true');
             a.setAttribute('tabindex', '-1');
             a.classList.add('glaaster-icon-disabled');
+            // A disabled link must never open a tab, including when the deletion watcher
+            // flips a previously enabled link.
+            a.removeAttribute('target');
+            a.removeAttribute('rel');
         }
     }
 
@@ -200,6 +214,13 @@ export function init(config) {
     function buildGlaasterUrl(params) {
         const base = `${M.cfg.wwwroot}/mod/glaaster/view.php`;
         const usp = new URLSearchParams(params);
+        // The link already opens its own tab in new-window mode, so tell view.php to render the
+        // tool directly. Without this it shows the "opened in a new window" interstitial and
+        // opens yet another tab. launch.php is not a usable target here: it requires a course
+        // module id, while these buttons identify the instance with "l".
+        if (openInNewWindow === true) {
+            usp.set('forceview', '1');
+        }
         return `${base}?${usp.toString()}`;
     }
 

@@ -159,6 +159,19 @@ if (optional_param('saveiconsettings', 0, PARAM_BOOL)) {
     redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
 }
 
+if (optional_param('savelaunchsettings', 0, PARAM_BOOL)) {
+    require_sesskey();
+    $newlaunchcontainer = required_param('launchcontainer', PARAM_INT);
+    if (!array_key_exists($newlaunchcontainer, glaaster_get_launch_container_options())) {
+        $newlaunchcontainer = MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+    }
+    set_config('launchcontainer', $newlaunchcontainer, 'mod_glaaster');
+    // glaaster_get_coursemodule_info() bakes the launch behaviour into cached_cm_info, so every
+    // course cache has to be rebuilt or activity links keep the previous opening mode.
+    rebuild_course_cache(0, true);
+    redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
+}
+
 // Setup wizard: detect first-install flag and check whether config is now complete.
 $needssetup = (bool) get_config('mod_glaaster', 'needs_setup');
 $tooldomain = get_config('mod_glaaster', 'tooldomain');
@@ -183,6 +196,7 @@ if ($iconsenabled === false) {
 } else {
     $iconsenabled = (bool) $iconsenabled;
 }
+$launchcontainer = glaaster_get_default_launch_container();
 $apiuserid = (int) get_config('mod_glaaster', 'apiuserid');
 $apiuser = $apiuserid ? \core_user::get_user($apiuserid) : null;
 $service = $DB->get_record('external_services', ['shortname' => 'glaaster_api']);
@@ -396,6 +410,76 @@ $iconform .= html_writer::tag('button', get_string('savechanges'), [
 $iconform .= html_writer::end_tag('form');
 $iconform .= html_writer::end_div();
 $iconform .= html_writer::end_div();
+
+$launchform = html_writer::start_div('card border-0 mb-4', ['style' => 'box-shadow:0 4px 16px rgba(0,0,0,0.12),0 1px 4px rgba(0,0,0,0.08)']);
+$launchform .= html_writer::start_div('card-header bg-white border-bottom', ['style' => 'display:flex;align-items:center;gap:12px;']);
+$launchform .= html_writer::tag('span', '', [
+    'class' => 'rounded-circle bg-primary d-inline-block flex-shrink-0',
+    'style' => 'width:10px;height:10px;',
+]);
+$launchform .= html_writer::tag(
+    'h5',
+    get_string('launchsettings', 'mod_glaaster'),
+    ['class' => 'mb-0 fw-semibold text-dark']
+);
+$launchform .= html_writer::end_div();
+$launchform .= html_writer::start_div('card-body');
+$launchform .= html_writer::start_tag('form', ['method' => 'post', 'action' => $PAGE->url->out(false)]);
+$launchform .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+$launchform .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'savelaunchsettings', 'value' => '1']);
+
+$launchform .= html_writer::start_div('mb-3');
+$launchform .= html_writer::tag(
+    'label',
+    get_string('launchcontainer_setting', 'mod_glaaster'),
+    ['class' => 'form-label fw-medium small text-uppercase letter-spacing-1 d-block', 'style' => 'color:#343a40']
+);
+
+// One radio per available launch container, each with its own explanation.
+$launchdescriptions = [
+    MOD_GLAASTER_LAUNCH_CONTAINER_EMBED => 'launchcontainer_embed_desc',
+    MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS => 'launchcontainer_embed_no_blocks_desc',
+    MOD_GLAASTER_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW => 'launchcontainer_existing_window_desc',
+    MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW => 'launchcontainer_new_window_desc',
+];
+foreach (glaaster_get_launch_container_options() as $value => $labelkey) {
+    $inputid = 'launchcontainer-' . $value;
+    $launchform .= html_writer::start_div('form-check mb-2');
+    $launchform .= html_writer::empty_tag('input', [
+        'type' => 'radio',
+        'name' => 'launchcontainer',
+        'id' => $inputid,
+        'value' => $value,
+        'class' => 'form-check-input',
+        'checked' => ($launchcontainer == $value) ? 'checked' : null,
+    ]);
+    $launchform .= html_writer::tag(
+        'label',
+        get_string($labelkey, 'mod_glaaster'),
+        ['for' => $inputid, 'class' => 'form-check-label fw-medium']
+    );
+    $launchform .= html_writer::tag(
+        'div',
+        get_string($launchdescriptions[$value], 'mod_glaaster'),
+        ['class' => 'form-text text-muted mt-0']
+    );
+    $launchform .= html_writer::end_div();
+}
+
+$launchform .= html_writer::tag(
+    'div',
+    get_string('launchcontainer_setting_desc', 'mod_glaaster'),
+    ['class' => 'form-text text-muted mt-2']
+);
+$launchform .= html_writer::end_div();
+
+$launchform .= html_writer::tag('button', get_string('savechanges'), [
+    'type' => 'submit',
+    'class' => 'btn btn-primary px-4',
+]);
+$launchform .= html_writer::end_tag('form');
+$launchform .= html_writer::end_div();
+$launchform .= html_writer::end_div();
 
 // Glaaster API Setup card.
 $apirole = $DB->get_record('role', ['shortname' => 'glaasterapi']);
@@ -758,5 +842,6 @@ echo $setupform;
 
 echo $domainform;
 echo $iconform;
+echo $launchform;
 
 echo $output->footer();

@@ -255,10 +255,13 @@ if ($foruserid) {
 }
 unset($SESSION->lti_initiatelogin_status);
 if (($launchcontainer == MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW)) {
-    if (!$forceview) {
-        $PAGE->requires->js_call_amd('mod_glaaster/view', 'initWindowLaunch', [$launchurl->out(true), $cm->id]);
-        echo '<p>' . get_string('basiclti_in_new_window', 'lti') . "</p>\n";
+    if ($forceview) {
+        // The caller already opened this tab (contextual buttons set forceview), so launch the
+        // tool here instead of making the user click through a second time.
+        redirect($launchurl);
     }
+    $PAGE->requires->js_call_amd('mod_glaaster/view', 'initWindowLaunch', [$launchurl->out(true), $cm->id]);
+    echo '<p>' . get_string('basiclti_in_new_window', 'lti') . "</p>\n";
     echo html_writer::start_tag('p');
     echo html_writer::link(
         $launchurl->out(false),
@@ -286,9 +289,10 @@ if (($launchcontainer == MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW)) {
     ]);
 
     $PAGE->requires->js_call_amd('mod_glaaster/view', 'initIframeResize');
-}
 
-$PAGE->requires->js('/mod/glaaster/assets/js/iframe-loader.js');
+    // Only useful when the tool is embedded: the loader hooks onto the iframe element.
+    $PAGE->requires->js('/mod/glaaster/assets/js/iframe-loader.js');
+}
 
 // Finish the page.
 echo $OUTPUT->footer();

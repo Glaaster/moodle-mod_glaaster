@@ -24,6 +24,12 @@
 // Using YUI to manipulate the DOM
 YUI().use("node", "event", function(Y) {
     const frameYUI = Y.one("#contentframe");
+    const main = Y.one("div[role='main']");
+
+    // Nothing to decorate when the tool is not embedded (new window / existing window launches).
+    if (!frameYUI || !main) {
+        return;
+    }
 
     // Dynamically add the loader to the DOM
     const loaderHTML = '' +
@@ -35,7 +41,7 @@ YUI().use("node", "event", function(Y) {
         '</div>';
 
     // Inject the loader into the DOM
-    Y.one("div[role='main']").append(loaderHTML);
+    main.append(loaderHTML);
 
     // Add keyframes CSS for the animation
     const style = document.createElement('style');
@@ -43,9 +49,12 @@ YUI().use("node", "event", function(Y) {
     document.getElementsByTagName('head')[0].appendChild(style);
 
     const loader = Y.one("#loader");
+    if (!loader) {
+        return;
+    }
     loader.setStyle('display', 'flex');
 
-    // Display the loader when the iframe starts loading
+    // Hide the loader once the iframe has finished loading
     frameYUI.on('load', function() {
         loader.setStyle('display', 'none');
     });

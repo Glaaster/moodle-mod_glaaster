@@ -608,6 +608,23 @@ $string['iconposition_desc'] =
     'Choisissez comment l\'icône est positionnée par rapport au nom de l\'activité. Ceci s\'applique uniquement ' .
     'aux ressources/pages standard et au format de cours Tiles ; les icônes de fichiers dans les dossiers ne ' .
     'sont pas affectées.';
+
+// Paramètres du mode d'ouverture.
+$string['launchsettings'] = 'Mode d\'ouverture';
+$string['launchcontainer_setting'] = 'Comment Glaaster s\'ouvre';
+$string['launchcontainer_setting_desc'] =
+    'Choisissez comment Glaaster s\'affiche lorsqu\'un utilisateur ouvre une activité ou clique sur un ' .
+    'bouton contextuel. Sur téléphone et tablette, Glaaster s\'ouvre toujours dans la fenêtre existante ' .
+    'afin d\'exploiter au mieux l\'écran.';
+$string['launchcontainer_embed_desc'] =
+    'Affiché dans un cadre au sein de la page Moodle, avec les blocs autour.';
+$string['launchcontainer_embed_no_blocks_desc'] =
+    'Affiché dans un cadre au sein de la page Moodle, sans les blocs autour. Recommandé.';
+$string['launchcontainer_existing_window_desc'] =
+    'Occupe toute la page. L\'en-tête et la navigation Moodle sont masqués.';
+$string['launchcontainer_new_window_desc'] =
+    'S\'ouvre dans un nouvel onglet du navigateur. Moodle reste ouvert derrière.';
+
 $string['not_configured_tooltip'] = 'Glaaster n\'est pas encore configuré. Contactez votre administrateur.';
 $string['apisetup'] = 'Configuration de l\'API Glaaster';
 $string['apisetup_desc'] = 'Suivez les étapes ci-dessous pour configurer la connexion à l\'API Glaaster.';
