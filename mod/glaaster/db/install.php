@@ -84,6 +84,7 @@ function mod_glaaster_assign_api_role_capabilities($roleid) {
         'moodle/course:viewhiddencourses', // Reach resources in hidden courses.
         'moodle/course:viewhiddensections', // Reach resources in hidden sections.
         'moodle/course:viewhiddenactivities', // Reach hidden resource activities.
+        'moodle/course:ignoreavailabilityrestrictions', // Reach activities behind access restrictions.
     ];
 
     foreach ($capabilities as $capability) {

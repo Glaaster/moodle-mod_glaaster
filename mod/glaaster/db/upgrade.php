@@ -292,5 +292,15 @@ function xmldb_glaaster_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026090901, 'glaaster');
     }
 
+    if ($oldversion < 2026091000) {
+        // Grant moodle/course:ignoreavailabilityrestrictions to the "Glaaster API" role on
+        // existing installs. Without it the Document Service cannot reach resources whose
+        // activity carries availability restrictions (date, grade, group conditions).
+        require_once($CFG->dirroot . '/mod/glaaster/db/install.php');
+        mod_glaaster_create_api_role();
+
+        upgrade_mod_savepoint(true, 2026091000, 'glaaster');
+    }
+
     return true;
 }
