@@ -4195,8 +4195,8 @@ function glaaster_get_launch_container_options() {
 /**
  * Get the site-wide default launch container.
  *
- * Falls back to embedding without blocks, which is the behaviour that applied before this
- * setting existed.
+ * Falls back to opening in a new browser tab, which is the behaviour Glaaster expects when
+ * an administrator has not chosen a mode.
  *
  * @return int Launch container constant.
  */
@@ -4204,7 +4204,7 @@ function glaaster_get_default_launch_container() {
     $configured = (int) get_config('mod_glaaster', 'launchcontainer');
 
     if (!array_key_exists($configured, glaaster_get_launch_container_options())) {
-        return MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+        return MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW;
     }
 
     return $configured;
