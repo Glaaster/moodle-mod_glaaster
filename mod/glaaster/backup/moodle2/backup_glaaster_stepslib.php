@@ -167,7 +167,7 @@ class backup_glaaster_activity_structure_step extends backup_activity_structure_
             // Site LTI types or registrations are not backed up except for their name (which is visible).
             // Predefined course types can be backed up.
             $allowedkeys = ['id', 'course', 'name', 'toolproxyid'];
-            foreach (array_keys($record) as $key) {
+            foreach ($record as $key => $value) {
                 if (!in_array($key, $allowedkeys)) {
                     $record->$key = null;
                 }
