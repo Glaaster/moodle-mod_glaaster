@@ -60,6 +60,7 @@ $forceview = optional_param('forceview', 0, PARAM_BOOL);
 $coursemoduleid = optional_param('course_module_id', 0, PARAM_INT);
 $filename = optional_param('file_name', '', PARAM_TEXT);
 $filepath = optional_param('file_path', '', PARAM_TEXT);
+$redirecttarget = optional_param('redirect', '', PARAM_ALPHANUMEXT);
 
 
 if ($l) {  // Two ways to specify the module.
@@ -187,6 +188,10 @@ if ($launchcontainer == MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
             }
         }
 
+        if (!empty($redirecttarget)) {
+            $params['redirect'] = $redirecttarget;
+        }
+
         $url = new moodle_url('/mod/glaaster/launch.php', $params);
         redirect($url);
     }
@@ -244,6 +249,10 @@ if (!empty($filename) && !empty($filepath)) {
     if (!empty($courseorigin) && isset($courseorigin->id)) {
         $params['course_id'] = $courseorigin->id;
     }
+}
+
+if (!empty($redirecttarget)) {
+    $params['redirect'] = $redirecttarget;
 }
 
 $launchurl = new moodle_url('/mod/glaaster/launch.php', $params);

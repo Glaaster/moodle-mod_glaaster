@@ -128,6 +128,7 @@ if ($ok) {
         $filepath = $ltimessagehint->filepath ?? '';
         $foldercmid = $ltimessagehint->folderCmid ?? 0;
         $foldercourseid = $ltimessagehint->folderCourseId ?? 0;
+        $redirecttarget = $ltimessagehint->redirect ?? '';
         [$endpoint, $params] =
             glaaster_get_launch_data(
                 $lti,
@@ -139,7 +140,8 @@ if ($ok) {
                 $foldercmid,
                 $foldercourseid,
                 $filename,
-                $filepath
+                $filepath,
+                $redirecttarget
             );
     } else {
         require_login($course);
