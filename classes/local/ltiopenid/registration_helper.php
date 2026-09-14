@@ -166,7 +166,7 @@ class registration_helper {
             $config->lti_customparameters = implode(PHP_EOL, $paramssarray);
         }
         // Sets launch container.
-        $config->lti_launchcontainer = MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+        $config->lti_launchcontainer = MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW;
 
         // Sets Service info based on scopes.
         $config->ltiglaasterservice_memberships = 0;

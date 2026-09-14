@@ -163,7 +163,7 @@ if (optional_param('savelaunchsettings', 0, PARAM_BOOL)) {
     require_sesskey();
     $newlaunchcontainer = required_param('launchcontainer', PARAM_INT);
     if (!array_key_exists($newlaunchcontainer, glaaster_get_launch_container_options())) {
-        $newlaunchcontainer = MOD_GLAASTER_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+        $newlaunchcontainer = MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW;
     }
     set_config('launchcontainer', $newlaunchcontainer, 'mod_glaaster');
     // glaaster_get_coursemodule_info() bakes the launch behaviour into cached_cm_info, so every
