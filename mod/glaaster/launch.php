@@ -59,6 +59,7 @@ $courseid = optional_param('course_id', 0, PARAM_INT);
 $filename = optional_param('file_name', '', PARAM_TEXT);
 $filepath = optional_param('file_path', '', PARAM_TEXT);
 $coursemoduleid = optional_param('course_module_id', 0, PARAM_INT);
+$redirecttarget = optional_param('redirect', '', PARAM_ALPHANUMEXT);
 
 // For folder files, use dedicated folder parameters.
 $foldercmid = 0;
@@ -103,7 +104,8 @@ if ($typeid) {
                     $foldercmid,
                     $foldercourseid,
                     $filename,
-                    $filepath
+                    $filepath,
+                    $redirecttarget
                 );
                 exit;
             } else {

@@ -19,6 +19,7 @@ namespace mod_glaaster;
 use context_course;
 use context_module;
 use core_external\external_api;
+use core_plugin_manager;
 use course_modinfo;
 use mod_glaaster_external;
 use mod_glaaster_testcase;
@@ -105,7 +106,7 @@ final class externallib_test extends mod_glaaster_testcase {
 
         // Basic test, the function returns what it's expected.
         self::assertEquals($lti->toolurl, $result['endpoint']);
-        self::assertCount(34, $result['parameters']);
+        self::assertCount(37, $result['parameters']);
 
         // Check some parameters.
         $parameters = [];
@@ -122,6 +123,18 @@ final class externallib_test extends mod_glaaster_testcase {
         self::assertEquals($USER->username, $parameters['ext_user_username']);
         self::assertEquals("phpunit", $parameters['tool_consumer_instance_name']);
         self::assertEquals("PHPUnit test site", $parameters['tool_consumer_instance_description']);
+
+        // The plugin reports its own build: tool_consumer_info_version carries the Moodle core
+        // version, so the tool cannot derive ours from the standard claims.
+        $plugininfo = core_plugin_manager::instance()->get_plugin_info('mod_glaaster');
+        self::assertEquals($plugininfo->release, $parameters['plugin_release']);
+        self::assertEquals(get_config('mod_glaaster', 'version'), $parameters['plugin_version']);
+
+        // The resource_link_id claim carries the instance id, so the cmid is sent separately.
+        self::assertEquals($lti->cmid, $parameters['activity_cmid']);
+
+        // No redirect was requested, so the claim must stay out of the launch data.
+        self::assertArrayNotHasKey('redirect', $parameters);
     }
 
     /**

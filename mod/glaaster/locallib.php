@@ -470,6 +470,7 @@ function glaaster_get_instance_type(object $instance): ?object {
  * @param int $foldercourseid Course ID of the folder
  * @param string $filename Base64-encoded filename for folder launches
  * @param string $filepath Base64-encoded filepath for folder launches
+ * @param string $redirecttarget Redirect target forwarded to the tool as a custom claim
  * @return array the endpoint URL and parameters (including the signature)
  * @since  Moodle 3.0
  */
@@ -483,7 +484,8 @@ function glaaster_get_launch_data(
     $foldercmid = 0,
     $foldercourseid = 0,
     $filename = '',
-    $filepath = ''
+    $filepath = '',
+    $redirecttarget = ''
 ) {
     global $PAGE, $USER;
     $messagetype = $messagetype ? $messagetype : 'basic-lti-launch-request';
@@ -572,7 +574,8 @@ function glaaster_get_launch_data(
             $foldercmid,
             $foldercourseid,
             $filename,
-            $filepath
+            $filepath,
+            $redirecttarget
         );
     if ($islti2) {
         $requestparams = glaaster_build_request_lti2($tool, $allparams);
@@ -815,6 +818,7 @@ function glaaster_get_organizationid($typeconfig) {
  * @param int $foldercourseid Course ID of the folder
  * @param string $filename Base64-encoded filename for folder launches
  * @param string $filepath Base64-encoded filepath for folder launches
+ * @param string $redirecttarget Redirect target forwarded to the tool as a custom claim
  *
  * @return array                    Request details
  */
@@ -831,7 +835,8 @@ function glaaster_build_request(
     $foldercmid = 0,
     $foldercourseid = 0,
     $filename = '',
-    $filepath = ''
+    $filepath = '',
+    $redirecttarget = ''
 ) {
     global $USER, $CFG;
 
@@ -895,6 +900,28 @@ function glaaster_build_request(
     }
     if (!empty($instance->resource_link_id)) {
         $requestparams['resource_link_id'] = $instance->resource_link_id;
+    }
+    // The resource_link_id claim carries the glaaster instance id, so send the cmid separately:
+    // the tool needs the cmid to address the activity and cannot derive it from the instance id.
+    if (!empty($instance->cmid)) {
+        $requestparams['activity_cmid'] = $instance->cmid;
+    }
+    // Optional redirect target requested through the view.php query string; the tool maps it to a
+    // front-end route. Kept as an opaque token: the allow list lives on the tool side.
+    if (!empty($redirecttarget)) {
+        $requestparams['redirect'] = $redirecttarget;
+    }
+    // Let the tool know which build of this plugin produced the launch: the standard
+    // tool_platform.version claim already carries the Moodle core version, not ours.
+    // Only the version number is stored in config; the release string lives in version.php,
+    // which the plugin manager reads for us.
+    $plugininfo = core_plugin_manager::instance()->get_plugin_info('mod_glaaster');
+    if (!empty($plugininfo->release)) {
+        $requestparams['plugin_release'] = $plugininfo->release;
+    }
+    $pluginversion = get_config('mod_glaaster', 'version');
+    if (!empty($pluginversion)) {
+        $requestparams['plugin_version'] = strval($pluginversion);
     }
     if ($course->format == 'site') {
         $requestparams['context_type'] = 'Group';
@@ -3741,6 +3768,9 @@ function glaaster_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0, $n
     if (isset($parms['resource_course_id'])) {
         $payload['resource_course_id'] = $parms['resource_course_id'];
     }
+    if (isset($parms['activity_cmid'])) {
+        $payload['activity_cmid'] = $parms['activity_cmid'];
+    }
     if (isset($parms['folder_cmid'])) {
         $payload['folder_cmid'] = $parms['folder_cmid'];
     }
@@ -3752,6 +3782,15 @@ function glaaster_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0, $n
     }
     if (isset($parms['filepath'])) {
         $payload['filepath'] = $parms['filepath'];
+    }
+    if (isset($parms['redirect'])) {
+        $payload['redirect'] = $parms['redirect'];
+    }
+    if (isset($parms['plugin_release'])) {
+        $payload['plugin_release'] = $parms['plugin_release'];
+    }
+    if (isset($parms['plugin_version'])) {
+        $payload['plugin_version'] = $parms['plugin_version'];
     }
     foreach ($parms as $key => $value) {
         $claim = MOD_GLAASTER_JWT_CLAIM_PREFIX;
@@ -3963,6 +4002,7 @@ function glaaster_post_launch_html($newparms, $endpoint, $debug = false) {
  * @param int $foldercourseid Course ID of the folder
  * @param string $filename Base64-encoded filename for folder launches
  * @param string $filepath Base64-encoded filepath for folder launches
+ * @param string $redirecttarget Redirect target forwarded to the tool as a custom claim
  * @return string
  */
 function glaaster_initiate_login(
@@ -3979,7 +4019,8 @@ function glaaster_initiate_login(
     $foldercmid = 0,
     $foldercourseid = 0,
     $filename = '',
-    $filepath = ''
+    $filepath = '',
+    $redirecttarget = ''
 ) {
     global $SESSION;
 
@@ -3998,7 +4039,8 @@ function glaaster_initiate_login(
             $foldercmid,
             $foldercourseid,
             $filename,
-            $filepath
+            $filepath,
+            $redirecttarget
         );
 
     $r = "<form action=\"" . $config->lti_initiatelogin .
@@ -4038,6 +4080,7 @@ function glaaster_initiate_login(
  * @param int $foldercourseid Course ID of the folder
  * @param string $filename Base64-encoded filename for folder launches
  * @param string $filepath Base64-encoded filepath for folder launches
+ * @param string $redirecttarget Redirect target forwarded to the tool as a custom claim
  * @return array Login request parameters
  */
 function glaaster_build_login_request(
@@ -4054,7 +4097,8 @@ function glaaster_build_login_request(
     $foldercmid = 0,
     $foldercourseid = 0,
     $filename = '',
-    $filepath = ''
+    $filepath = '',
+    $redirecttarget = ''
 ) {
     global $USER, $CFG, $SESSION;
     $ltihint = [];
@@ -4098,6 +4142,9 @@ function glaaster_build_login_request(
     }
     if (!empty($filepath)) {
         $ltihint['filepath'] = $filepath;
+    }
+    if (!empty($redirecttarget)) {
+        $ltihint['redirect'] = $redirecttarget;
     }
     // If SSL is forced make sure https is on the normal launch URL.
     if (isset($config->lti_forcessl) && ($config->lti_forcessl == '1')) {
