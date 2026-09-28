@@ -129,6 +129,14 @@ class registration_helper {
             throw new registration_exception('invalid_application_type', 400);
         }
 
+        // The JWKS and login initiation URIs are fetched or posted to by Moodle, so they must be valid http(s) URLs.
+        if (!$this->is_valid_http_url($jwksuri)) {
+            throw new registration_exception('invalid_jwks_uri', 400);
+        }
+        if (!$this->is_valid_http_url($initiateloginuri)) {
+            throw new registration_exception('invalid_initiate_login_uri', 400);
+        }
+
         $config = new stdClass();
         $config->lti_clientid = $clientid;
         $config->lti_toolurl = $targetlinkuri;
@@ -421,6 +429,20 @@ class registration_helper {
     }
 
     /**
+     * Checks that a value is a well-formed absolute http(s) URL.
+     *
+     * @param mixed $url Value to check
+     *
+     * @return bool true if valid
+     */
+    private function is_valid_http_url($url): bool {
+        if (!is_string($url) || $url === '') {
+            return false;
+        }
+        return clean_param($url, PARAM_URL) === $url && preg_match('#^https?://#i', $url) === 1;
+    }
+
+    /**
      * Base64 encoded signature for LTI 1.1 migration.
      *
      * @param string $key LTI 1.1 key
@@ -430,6 +452,6 @@ class registration_helper {
      * @return string base64encoded hash
      */
     public function sign(string $key, string $salt, string $secret): string {
-        return base64_encode(hash_hmac('sha-256', $key . $salt, $secret, true));
+        return base64_encode(hash_hmac('sha256', $key . $salt, $secret, true));
     }
 }
