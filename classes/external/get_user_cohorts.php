@@ -38,12 +38,17 @@ class get_user_cohorts extends external_api {
      * @return array List of cohort objects
      */
     public static function execute(int $userid): array {
-        global $CFG;
+        global $CFG, $USER;
 
         $params = self::validate_parameters(self::execute_parameters(), ['userid' => $userid]);
 
         $context = context_system::instance();
         self::validate_context($context);
+
+        // Only allow reading another user's cohorts with the cohort view capability.
+        if ((int) $params['userid'] !== (int) $USER->id) {
+            require_capability('moodle/cohort:view', $context);
+        }
 
         $user = \core_user::get_user($params['userid'], '*', MUST_EXIST);
         \core_user::require_active_user($user);

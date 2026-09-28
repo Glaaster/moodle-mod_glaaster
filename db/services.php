@@ -218,7 +218,7 @@ $functions = [
         'methodname'    => 'execute',
         'description'   => 'Return the list of cohorts a user belongs to',
         'type'          => 'read',
-        'ajax'          => true,
+        'capabilities'  => 'moodle/cohort:view',
         'loginrequired' => true,
     ],
 ];
