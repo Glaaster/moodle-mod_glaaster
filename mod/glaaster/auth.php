@@ -72,6 +72,11 @@ if ($ok && ($responsetype !== 'id_token')) {
     $ok = false;
     $error = 'unsupported_response_type';
 }
+if ($ok && !isset($SESSION->{$ltimessagehint->launchid})) {
+    $ok = false;
+    $error = 'invalid_request';
+    $desc = 'Unknown launch id';
+}
 if ($ok) {
     $launchid = $ltimessagehint->launchid;
     [$courseid, $typeid, $id, $messagetype, $foruserid, $titleb64, $textb64] = explode(',', $SESSION->$launchid, 7);
@@ -188,7 +193,7 @@ if (isset($state)) {
     $params['state'] = $state;
 }
 unset($SESSION->lti_message_hint);
-$r = '<form action="' . $redirecturi . "\" name=\"ltiAuthForm\" id=\"ltiAuthForm\" " .
+$r = '<form action="' . s($redirecturi) . "\" name=\"ltiAuthForm\" id=\"ltiAuthForm\" " .
     "method=\"post\" enctype=\"application/x-www-form-urlencoded\">\n";
 if (!empty($params)) {
     foreach ($params as $key => $value) {
