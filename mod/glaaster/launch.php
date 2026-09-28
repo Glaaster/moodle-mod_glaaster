@@ -77,6 +77,13 @@ if (!empty($filename) && !empty($filepath) && $coursemoduleid > 0) {
 
 $cm = get_coursemodule_from_id('glaaster', $cmid, 0, false, MUST_EXIST);
 $lti = $DB->get_record('glaaster', ['id' => $cm->instance], '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+
+$context = context_module::instance($cm->id);
+
+// Authenticate before any LTI processing (including the LTI 1.3 OIDC login initiation).
+require_login($course, true, $cm);
+require_capability('mod/glaaster:view', $context);
 
 $typeid = $lti->typeid;
 if (empty($typeid) && ($tool = glaaster_get_tool_by_url_match($lti->toolurl))) {
@@ -114,13 +121,6 @@ if ($typeid) {
         }
     }
 }
-
-$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
-
-$context = context_module::instance($cm->id);
-
-require_login($course, true, $cm);
-require_capability('mod/glaaster:view', $context);
 
 if (!empty($missingtooltype)) {
     $PAGE->set_url(new moodle_url('/mod/glaaster/launch.php'));

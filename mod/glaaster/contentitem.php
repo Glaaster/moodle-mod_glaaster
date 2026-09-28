@@ -32,6 +32,13 @@ $courseid = required_param('course', PARAM_INT);
 $title = optional_param('title', '', PARAM_TEXT);
 $text = optional_param('text', '', PARAM_ALPHANUMEXT);
 
+// Check access and capabilities before any LTI processing (including the LTI 1.3 OIDC login initiation).
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+require_login($course);
+$context = context_course::instance($courseid);
+require_capability('moodle/course:manageactivities', $context);
+require_capability('mod/glaaster:addcoursetool', $context);
+
 $config = glaaster_get_type_type_config($id);
 if ($config->lti_ltiversion === MOD_GLAASTER_VERSION_1P3) {
     if (!isset($SESSION->lti_initiatelogin_status)) {
@@ -41,13 +48,6 @@ if ($config->lti_ltiversion === MOD_GLAASTER_VERSION_1P3) {
         unset($SESSION->lti_initiatelogin_status);
     }
 }
-
-// Check access and capabilities.
-$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
-require_login($course);
-$context = context_course::instance($courseid);
-require_capability('moodle/course:manageactivities', $context);
-require_capability('mod/glaaster:addcoursetool', $context);
 
 // Set the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns.
 $returnurlparams = [
