@@ -240,6 +240,28 @@ EOD;
     }
 
     /**
+     * Validation Test: jwks uri with a non http(s) scheme is rejected.
+     */
+    public function test_validation_jwks_invalid_scheme(): void {
+        $registration = json_decode($this->registrationfulljson, true);
+        $this->expectException(registration_exception::class);
+        $this->expectExceptionCode(400);
+        $registration['jwks_uri'] = 'file:///etc/passwd';
+        registration_helper::get()->registration_to_config($registration, 'TheClientId');
+    }
+
+    /**
+     * Validation Test: malformed initiation login uri is rejected.
+     */
+    public function test_validation_initlogin_invalid_url(): void {
+        $registration = json_decode($this->registrationfulljson, true);
+        $this->expectException(registration_exception::class);
+        $this->expectExceptionCode(400);
+        $registration['initiate_login_uri'] = 'https://client.example.org/"onmouseover="x';
+        registration_helper::get()->registration_to_config($registration, 'TheClientId');
+    }
+
+    /**
      * Validation Test: no domain nor targetlinkuri is rejected.
      */
     public function test_validation_missing_domain_targetlinkuri(): void {
