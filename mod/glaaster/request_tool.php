@@ -29,8 +29,8 @@ require_once($CFG->dirroot . '/mod/glaaster/locallib.php');
 
 $instanceid = required_param('instanceid', PARAM_INT);
 
-$lti = $DB->get_record('glaaster', ['id' => $instanceid]);
-$course = $DB->get_record('course', ['id' => $lti->course]);
+$lti = $DB->get_record('glaaster', ['id' => $instanceid], '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $lti->course], '*', MUST_EXIST);
 $cm = get_coursemodule_from_instance('glaaster', $lti->id, $lti->course, false, MUST_EXIST);
 $context = context_module::instance($cm->id);
 
