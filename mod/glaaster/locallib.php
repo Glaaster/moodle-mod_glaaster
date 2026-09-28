@@ -1682,7 +1682,7 @@ function glaaster_tool_configuration_from_content_item(
 
     $items = json_decode($contentitemsjson);
     if (empty($items)) {
-        throw new moodle_exception('errorinvaliddata', 'mod_glaaster', '', $contentitemsjson);
+        throw new moodle_exception('errorinvaliddata', 'mod_glaaster', '', s($contentitemsjson));
     }
     if (!isset($items->{'@graph'}) || !is_array($items->{'@graph'})) {
         throw new moodle_exception('errorinvalidresponseformat', 'mod_glaaster');
