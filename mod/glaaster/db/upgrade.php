@@ -302,5 +302,14 @@ function xmldb_glaaster_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026091000, 'glaaster');
     }
 
+    if ($oldversion < 2026100100) {
+        // Grant moodle/cohort:view to the "Glaaster API" role on existing installs. Since 5.3.3,
+        // mod_glaaster_get_user_cohorts requires it to read the cohorts of another user.
+        require_once($CFG->dirroot . '/mod/glaaster/db/install.php');
+        mod_glaaster_create_api_role();
+
+        upgrade_mod_savepoint(true, 2026100100, 'glaaster');
+    }
+
     return true;
 }
