@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="fr" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-flows" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.10.2">
+<title data-rh="true">Flux de données | Glaaster Plugin</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://glaaster.github.io/moodle-mod_glaaster/flows/"><meta data-rh="true" property="og:locale" content="fr"><meta data-rh="true" name="docusaurus_locale" content="fr"><meta data-rh="true" name="docsearch:language" content="fr"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Flux de données | Glaaster Plugin"><meta data-rh="true" name="description" content="Ce document décrit les flux critiques du plugin Glaaster (mod_glaaster, version 5.3.x) avec des"><meta data-rh="true" property="og:description" content="Ce document décrit les flux critiques du plugin Glaaster (mod_glaaster, version 5.3.x) avec des"><link data-rh="true" rel="icon" href="/moodle-mod_glaaster/img/favicon.png"><link data-rh="true" rel="canonical" href="https://glaaster.github.io/moodle-mod_glaaster/flows/"><link data-rh="true" rel="alternate" href="https://glaaster.github.io/moodle-mod_glaaster/flows/" hreflang="fr"><link data-rh="true" rel="alternate" href="https://glaaster.github.io/moodle-mod_glaaster/flows/" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Flux de données","item":"https://glaaster.github.io/moodle-mod_glaaster/flows"}]}</script><link rel="stylesheet" href="/moodle-mod_glaaster/assets/css/styles.bbf36dee.css">
+<script src="/moodle-mod_glaaster/assets/js/runtime~main.e1f1eae6.js" defer="defer"></script>
+<script src="/moodle-mod_glaaster/assets/js/main.af2c40e1.js" defer="defer"></script>
+</head>
+<body>
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||"light"),document.documentElement.setAttribute("data-theme-choice",t||"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Aller au contenu principal"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Aller au contenu principal</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Ouvrir/fermer la barre de navigation" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/moodle-mod_glaaster/"><div class="navbar__logo"><img src="/moodle-mod_glaaster/img/Glaaster_Logo.png" alt="Glaaster Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/moodle-mod_glaaster/img/Glaaster_Logo.png" alt="Glaaster Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Glaaster Plugin</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/moodle-mod_glaaster/">Documentation</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/moodle-mod_glaaster/release-notes/intro/">Release notes</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Basculer entre le mode sombre et clair (actuellement system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Retour au début de la page" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/moodle-mod_glaaster/"><span class="linkLabel_WmDU">Introduction</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/moodle-mod_glaaster/quickstart/"><span class="linkLabel_WmDU">Démarrage rapide</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/moodle-mod_glaaster/architecture/"><span class="linkLabel_WmDU">Architecture</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/moodle-mod_glaaster/structure/"><span class="linkLabel_WmDU">Structure du projet</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/moodle-mod_glaaster/components/"><span class="linkLabel_WmDU">Composants</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/moodle-mod_glaaster/configuration/"><span class="linkLabel_WmDU">Configuration</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/moodle-mod_glaaster/flows/"><span class="linkLabel_WmDU">Flux de données</span></a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/moodle-mod_glaaster/release-notes/intro/"><span class="categoryLinkLabel_W154">Release notes</span></a></div></li></ul></nav><button type="button" title="Réduire le menu latéral" aria-label="Réduire le menu latéral" class="button button--secondary button--outline collapseSidebarButton_PEFL"><svg width="20" height="20" aria-hidden="true" class="collapseSidebarButtonIcon_kv0_"><g fill="#7a7a7a"><path d="M9.992 10.023c0 .2-.062.399-.172.547l-4.996 7.492a.982.982 0 01-.828.454H1c-.55 0-1-.453-1-1 0-.2.059-.403.168-.551l4.629-6.942L.168 3.078A.939.939 0 010 2.528c0-.548.45-.997 1-.997h2.996c.352 0 .649.18.828.45L9.82 9.472c.11.148.172.347.172.55zm0 0"></path><path d="M19.98 10.023c0 .2-.058.399-.168.547l-4.996 7.492a.987.987 0 01-.828.454h-3c-.547 0-.996-.453-.996-1 0-.2.059-.403.168-.551l4.625-6.942-4.625-6.945a.939.939 0 01-.168-.55 1 1 0 01.996-.997h3c.348 0 .649.18.828.45l4.996 7.492c.11.148.168.347.168.55zm0 0"></path></g></svg></button></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Fil d&#x27;Ariane"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Page d&#x27;accueil" class="breadcrumbs__link" href="/moodle-mod_glaaster/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Flux de données</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">Sur cette page</button></div><div class="theme-doc-markdown markdown"><header><h1>Flux de Données et Diagrammes de Séquence</h1></header>
+<p>Ce document décrit les flux critiques du plugin Glaaster (<code>mod_glaaster</code>, version 5.3.x) avec des
+diagrammes de séquence. Les étapes côté Glaaster (Reader App, Document Service) sont indicatives :
+elles ne font pas partie du plugin.</p>
+<blockquote>
+<p><strong>Depuis 5.0</strong>, toutes les fonctions <code>lti_glaaster_*</code> sont renommées <code>glaaster_*</code>.
+<strong>La synchronisation des notes (AGS / Basic Outcomes) a été supprimée</strong> : table
+<code>glaaster_submission</code> et sous-plugins <code>gradebookservices</code> / <code>basicoutcomes</code> retirés
+(<code>db/upgrade.php</code>). Aucun flux de notes n&#x27;existe plus.</p>
+</blockquote>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="flux-1--lancement-lti-13-avec-ressource">Flux 1 : Lancement LTI 1.3 avec Ressource<a href="#flux-1--lancement-lti-13-avec-ressource" class="hash-link" aria-label="Lien direct vers Flux 1 : Lancement LTI 1.3 avec Ressource" title="Lien direct vers Flux 1 : Lancement LTI 1.3 avec Ressource" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="description">Description<a href="#description" class="hash-link" aria-label="Lien direct vers Description" title="Lien direct vers Description" translate="no">​</a></h3>
+<p>Du clic sur l&#x27;icône Glaaster d&#x27;une ressource jusqu&#x27;à l&#x27;affichage du document dans le Reader App,
+avec l&#x27;aller-retour OIDC complet (login initiation → auth → <code>id_token</code>).</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="diagramme-de-séquence">Diagramme de séquence<a href="#diagramme-de-séquence" class="hash-link" aria-label="Lien direct vers Diagramme de séquence" title="Lien direct vers Diagramme de séquence" translate="no">​</a></h3>
+<div class="mermaid-wrapper" role="button" tabindex="0" aria-label="Afficher le diagramme en plein écran" title="Cliquer pour agrandir"><span class="mermaid-wrapper__hint">Cliquer pour agrandir</span></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="points-dentrée">Points d&#x27;entrée<a href="#points-dentrée" class="hash-link" aria-label="Lien direct vers Points d&#x27;entrée" title="Lien direct vers Points d&#x27;entrée" translate="no">​</a></h3>
+<ul>
+<li class=""><strong>Icône contextuelle</strong> : <code>view.php?l={instanceid}&amp;course_module_id={resource_cmid}</code> (+ <code>forceview=1</code> en mode nouvel onglet)</li>
+<li class=""><strong>Lien activité</strong> : <code>view.php?id={cmid}[&amp;redirect={cible}]</code></li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="paramètres-transmis">Paramètres transmis<a href="#paramètres-transmis" class="hash-link" aria-label="Lien direct vers Paramètres transmis" title="Lien direct vers Paramètres transmis" translate="no">​</a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Paramètre</th><th>Source</th><th>Transport</th><th>Claim JWT</th></tr></thead><tbody><tr><td><code>resource_id</code></td><td>cmid de la ressource (<code>course_module_id</code> → <code>resource_id</code>)</td><td><code>lti_message_hint.resourceid</code></td><td><code>resource_id</code></td></tr><tr><td><code>course_id</code></td><td>Cours de la ressource</td><td><code>lti_message_hint.resourcecourseid</code></td><td><code>resource_course_id</code></td></tr><tr><td><code>redirect</code> (5.3.0)</td><td>Query string, <code>PARAM_ALPHANUMEXT</code>, opaque</td><td><code>lti_message_hint.redirect</code></td><td><code>redirect</code> (absent si vide)</td></tr><tr><td>—</td><td><code>cm-&gt;id</code> de l&#x27;activité Glaaster</td><td>—</td><td><code>activity_cmid</code> (5.3.0)</td></tr><tr><td>—</td><td><code>core_plugin_manager</code> / <code>get_config</code></td><td>—</td><td><code>plugin_release</code>, <code>plugin_version</code> (5.3.0)</td></tr><tr><td>—</td><td>Instance Glaaster</td><td>—</td><td><code>…/claim/resource_link.id</code> (id d&#x27;instance, pas le cmid)</td></tr><tr><td>—</td><td>Session Moodle</td><td><code>login_hint</code></td><td><code>sub</code></td></tr></tbody></table>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="flux-2--lancement-lti-13-avec-fichier-de-dossier">Flux 2 : Lancement LTI 1.3 avec Fichier de Dossier<a href="#flux-2--lancement-lti-13-avec-fichier-de-dossier" class="hash-link" aria-label="Lien direct vers Flux 2 : Lancement LTI 1.3 avec Fichier de Dossier" title="Lien direct vers Flux 2 : Lancement LTI 1.3 avec Fichier de Dossier" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="description-1">Description<a href="#description-1" class="hash-link" aria-label="Lien direct vers Description" title="Lien direct vers Description" translate="no">​</a></h3>
+<p>Même aller-retour OIDC que le Flux 1 ; seuls les paramètres diffèrent (fichier dans un dossier,
+sous-dossiers inclus).</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="diagramme-de-séquence-1">Diagramme de séquence<a href="#diagramme-de-séquence-1" class="hash-link" aria-label="Lien direct vers Diagramme de séquence" title="Lien direct vers Diagramme de séquence" translate="no">​</a></h3>
+<div class="mermaid-wrapper" role="button" tabindex="0" aria-label="Afficher le diagramme en plein écran" title="Cliquer pour agrandir"><span class="mermaid-wrapper__hint">Cliquer pour agrandir</span></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="paramètres-transmis-dossier">Paramètres transmis (dossier)<a href="#paramètres-transmis-dossier" class="hash-link" aria-label="Lien direct vers Paramètres transmis (dossier)" title="Lien direct vers Paramètres transmis (dossier)" translate="no">​</a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Paramètre</th><th>Source</th><th>Encodage</th><th>Claim JWT</th></tr></thead><tbody><tr><td><code>file_name</code></td><td>Query string</td><td>Base64</td><td><code>filename</code></td></tr><tr><td><code>file_path</code></td><td>Query string</td><td>Base64</td><td><code>filepath</code></td></tr><tr><td><code>course_module_id</code></td><td>Query string</td><td>-</td><td><code>folder_cmid</code></td></tr><tr><td>—</td><td>Cours du CM dossier</td><td>-</td><td><code>folder_course_id</code></td></tr></tbody></table>
+<p><strong>Raison de l&#x27;encodage Base64</strong> : caractères spéciaux et espaces dans les noms de fichiers et chemins.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="flux-3--mode-douverture-launch-container">Flux 3 : Mode d&#x27;ouverture (launch container)<a href="#flux-3--mode-douverture-launch-container" class="hash-link" aria-label="Lien direct vers Flux 3 : Mode d&#x27;ouverture (launch container)" title="Lien direct vers Flux 3 : Mode d&#x27;ouverture (launch container)" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="description-2">Description<a href="#description-2" class="hash-link" aria-label="Lien direct vers Description" title="Lien direct vers Description" translate="no">​</a></h3>
+<p>Depuis 5.2, le réglage site <strong>« Mode d&#x27;ouverture »</strong> (<code>mod_glaaster/launchcontainer</code>) décide seul
+de l&#x27;affichage ; il prime sur la valeur du type d&#x27;outil et de l&#x27;activité. Défaut depuis 5.3.2 :
+<strong>nouvel onglet</strong> (<code>MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW</code>).</p>
+<div class="mermaid-wrapper" role="button" tabindex="0" aria-label="Afficher le diagramme en plein écran" title="Cliquer pour agrandir"><span class="mermaid-wrapper__hint">Cliquer pour agrandir</span></div>
+<ul>
+<li class="">Mobile / tablette : toujours fenêtre existante ; depuis 5.3.4 les icônes n&#x27;y portent jamais
+<code>forceview=1</code> (sinon <code>view.php</code> sautait la redirection et affichait l&#x27;iframe).</li>
+<li class="">En mode nouvel onglet, les icônes contextuelles portent <code>target=&quot;_blank&quot;</code>, <code>rel=&quot;noopener&quot;</code> et
+<code>forceview=1</code> : <code>view.php</code> redirige directement vers <code>launch.php</code> (un seul clic, un seul onglet).</li>
+<li class=""><code>iframe-loader.js</code> n&#x27;est chargé que pour les lancements intégrés.</li>
+<li class="">L&#x27;enregistrement du réglage reconstruit le cache de tous les cours (<code>glaaster_get_coursemodule_info()</code>).</li>
+</ul>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="flux-4--injection-des-boutons-contextuels">Flux 4 : Injection des Boutons Contextuels<a href="#flux-4--injection-des-boutons-contextuels" class="hash-link" aria-label="Lien direct vers Flux 4 : Injection des Boutons Contextuels" title="Lien direct vers Flux 4 : Injection des Boutons Contextuels" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="description-3">Description<a href="#description-3" class="hash-link" aria-label="Lien direct vers Description" title="Lien direct vers Description" translate="no">​</a></h3>
+<p>Détection des fichiers supportés sur une page et injection des icônes Glaaster. Depuis 5.1, les
+icônes sont <strong>toujours injectées</strong> ; sans instance valide elles sont affichées <strong>désactivées</strong>.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="diagramme-de-séquence-2">Diagramme de séquence<a href="#diagramme-de-séquence-2" class="hash-link" aria-label="Lien direct vers Diagramme de séquence" title="Lien direct vers Diagramme de séquence" translate="no">​</a></h3>
+<div class="mermaid-wrapper" role="button" tabindex="0" aria-label="Afficher le diagramme en plein écran" title="Cliquer pour agrandir"><span class="mermaid-wrapper__hint">Cliquer pour agrandir</span></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="points-de-décision">Points de décision<a href="#points-de-décision" class="hash-link" aria-label="Lien direct vers Points de décision" title="Lien direct vers Points de décision" translate="no">​</a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Condition</th><th>Action</th></tr></thead><tbody><tr><td><code>iconsEnabled</code> = false</td><td>Aucune icône</td></tr><tr><td>Pas d&#x27;instance valide</td><td>Icône injectée <strong>désactivée</strong></td></tr><tr><td>Extension non supportée</td><td>Ignorer</td></tr><tr><td>Icône déjà présente</td><td>Ignorer (pas de doublon)</td></tr><tr><td>Web services désactivés / <code>glaaster_api</code> sans token valide</td><td>Pas de surveillance de suppression</td></tr></tbody></table>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="flux-5--validation-dinstance-en-temps-réel">Flux 5 : Validation d&#x27;Instance en Temps Réel<a href="#flux-5--validation-dinstance-en-temps-réel" class="hash-link" aria-label="Lien direct vers Flux 5 : Validation d&#x27;Instance en Temps Réel" title="Lien direct vers Flux 5 : Validation d&#x27;Instance en Temps Réel" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="description-4">Description<a href="#description-4" class="hash-link" aria-label="Lien direct vers Description" title="Lien direct vers Description" translate="no">​</a></h3>
+<p>Quand l&#x27;activité Glaaster disparaît du DOM (suppression dans le cours), les icônes sont
+revalidées et <strong>désactivées sur place</strong> (elles ne sont plus retirées depuis 5.1).</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="diagramme-de-séquence-3">Diagramme de séquence<a href="#diagramme-de-séquence-3" class="hash-link" aria-label="Lien direct vers Diagramme de séquence" title="Lien direct vers Diagramme de séquence" translate="no">​</a></h3>
+<div class="mermaid-wrapper" role="button" tabindex="0" aria-label="Afficher le diagramme en plein écran" title="Cliquer pour agrandir"><span class="mermaid-wrapper__hint">Cliquer pour agrandir</span></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="déclencheurs-et-performance">Déclencheurs et performance<a href="#déclencheurs-et-performance" class="hash-link" aria-label="Lien direct vers Déclencheurs et performance" title="Lien direct vers Déclencheurs et performance" translate="no">​</a></h3>
+<ul>
+<li class=""><strong>Déclencheur</strong> : retrait DOM d&#x27;une activité Glaaster (pas de polling)</li>
+<li class=""><strong>Latence</strong> : &lt; 500 ms (détection MutationObserver + un appel AJAX sans authentification)</li>
+</ul>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="flux-6--enregistrement-dynamique-lti-13-et-provisioning-du-conteneur">Flux 6 : Enregistrement Dynamique LTI 1.3 et Provisioning du Conteneur<a href="#flux-6--enregistrement-dynamique-lti-13-et-provisioning-du-conteneur" class="hash-link" aria-label="Lien direct vers Flux 6 : Enregistrement Dynamique LTI 1.3 et Provisioning du Conteneur" title="Lien direct vers Flux 6 : Enregistrement Dynamique LTI 1.3 et Provisioning du Conteneur" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="description-5">Description<a href="#description-5" class="hash-link" aria-label="Lien direct vers Description" title="Lien direct vers Description" translate="no">​</a></h3>
+<p>« Connecter à Glaaster » (LTI Advantage Dynamic Registration) crée le type d&#x27;outil puis
+provisionne automatiquement l&#x27;unique instance Glaaster du site (5.1+, visible depuis 5.2).</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="diagramme-de-séquence-4">Diagramme de séquence<a href="#diagramme-de-séquence-4" class="hash-link" aria-label="Lien direct vers Diagramme de séquence" title="Lien direct vers Diagramme de séquence" translate="no">​</a></h3>
+<div class="mermaid-wrapper" role="button" tabindex="0" aria-label="Afficher le diagramme en plein écran" title="Cliquer pour agrandir"><span class="mermaid-wrapper__hint">Cliquer pour agrandir</span></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="exemple-de-payload-envoyé-par-loutil">Exemple de payload envoyé par l&#x27;outil<a href="#exemple-de-payload-envoyé-par-loutil" class="hash-link" aria-label="Lien direct vers Exemple de payload envoyé par l&#x27;outil" title="Lien direct vers Exemple de payload envoyé par l&#x27;outil" translate="no">​</a></h3>
+<div class="language-json codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-json codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#bfc7d5"><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token property">&quot;application_type&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&quot;web&quot;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token property">&quot;response_types&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">[</span><span class="token string" style="color:rgb(195, 232, 141)">&quot;id_token&quot;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">]</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token property">&quot;grant_types&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">[</span><span class="token string" style="color:rgb(195, 232, 141)">&quot;implicit&quot;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&quot;client_credentials&quot;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">]</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token property">&quot;client_name&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&quot;Glaaster&quot;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token property">&quot;initiate_login_uri&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&quot;https://lti.glaaster.com/lti/login&quot;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token property">&quot;redirect_uris&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">[</span><span class="token string" style="color:rgb(195, 232, 141)">&quot;https://lti.glaaster.com/lti/launch&quot;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">]</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token property">&quot;jwks_uri&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&quot;https://lti.glaaster.com/.well-known/jwks.json&quot;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token property">&quot;token_endpoint_auth_method&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&quot;private_key_jwt&quot;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token property">&quot;scope&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&quot;https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly&quot;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token property">&quot;https://purl.imsglobal.org/spec/lti-tool-configuration&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    </span><span class="token property">&quot;domain&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&quot;lti.glaaster.com&quot;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    </span><span class="token property">&quot;target_link_uri&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&quot;https://lti.glaaster.com/lti/launch&quot;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    </span><span class="token property">&quot;messages&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">[</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">      </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token property">&quot;type&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&quot;LtiDeepLinkingRequest&quot;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"> </span><span class="token property">&quot;target_link_uri&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&quot;https://lti.glaaster.com/lti/deeplink&quot;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    </span><span class="token punctuation" style="color:rgb(199, 146, 234)">]</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><br></div></code></pre></div></div>
+<p>La réponse de Moodle n&#x27;accorde que les scopes NRPS et Tool Settings ; aucun scope AGS n&#x27;est
+renvoyé (synchronisation des notes supprimée).</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="flux-7--appels-du-document-service-rest-glaaster_api">Flux 7 : Appels du Document Service (REST <code>glaaster_api</code>)<a href="#flux-7--appels-du-document-service-rest-glaaster_api" class="hash-link" aria-label="Lien direct vers flux-7--appels-du-document-service-rest-glaaster_api" title="Lien direct vers flux-7--appels-du-document-service-rest-glaaster_api" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="description-6">Description<a href="#description-6" class="hash-link" aria-label="Lien direct vers Description" title="Lien direct vers Description" translate="no">​</a></h3>
+<p>Le Document Service récupère les fichiers via le service externe pré-construit <strong>Glaaster API</strong>
+(shortname <code>glaaster_api</code>, utilisateurs restreints, <code>downloadfiles = 1</code>).</p>
+<div class="mermaid-wrapper" role="button" tabindex="0" aria-label="Afficher le diagramme en plein écran" title="Cliquer pour agrandir"><span class="mermaid-wrapper__hint">Cliquer pour agrandir</span></div>
+<p>Capacités du rôle « Glaaster API » : <code>moodle/course:view</code>, <code>moodle/course:update</code>,
+<code>moodle/course:viewhiddencourses</code>, <code>moodle/course:viewhiddensections</code>,
+<code>moodle/course:viewhiddenactivities</code>, <code>moodle/course:ignoreavailabilityrestrictions</code> (5.2.1),
+<code>mod/resource:view</code>, <code>mod/folder:view</code> (5.2), <code>webservice/rest:use</code>, <code>moodle/cohort:view</code>
+(accordée automatiquement depuis 5.3.4).</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="résumé-des-endpoints">Résumé des Endpoints<a href="#résumé-des-endpoints" class="hash-link" aria-label="Lien direct vers Résumé des Endpoints" title="Lien direct vers Résumé des Endpoints" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="endpoints-moodle-mod_glaaster">Endpoints Moodle (mod_glaaster)<a href="#endpoints-moodle-mod_glaaster" class="hash-link" aria-label="Lien direct vers Endpoints Moodle (mod_glaaster)" title="Lien direct vers Endpoints Moodle (mod_glaaster)" translate="no">​</a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Endpoint</th><th>Méthode</th><th>Responsabilité</th><th>Authentification</th></tr></thead><tbody><tr><td><code>/mod/glaaster/view.php</code></td><td>GET</td><td>Affichage activité, choix du mode d&#x27;ouverture, relais des params vers <code>launch.php</code></td><td>Session Moodle + <code>mod/glaaster:view</code> (ou <code>mod/resource:view</code> / <code>mod/folder:view</code> pour la source)</td></tr><tr><td><code>/mod/glaaster/launch.php</code></td><td>GET</td><td>Initiation OIDC (formulaire auto-submit vers <code>initiate_login_uri</code>)</td><td>Session Moodle + <code>mod/glaaster:view</code> (vérifiés avant l&#x27;OIDC depuis 5.3.3)</td></tr><tr><td><code>/mod/glaaster/contentitem.php</code></td><td>GET</td><td>Initiation Deep Linking (sélection de contenu)</td><td>Session Moodle + <code>moodle/course:manageactivities</code> + <code>mod/glaaster:addcoursetool</code> (avant l&#x27;OIDC depuis 5.3.3)</td></tr><tr><td><code>/mod/glaaster/auth.php</code></td><td>GET/POST</td><td>Endpoint d&#x27;authentification OIDC (construit, signe et poste l&#x27;<code>id_token</code>)</td><td>Session Moodle ; <code>redirect_uri</code> whitelisté + échappé ; launch id inconnu → <code>invalid_request</code></td></tr><tr><td><code>/mod/glaaster/token.php</code></td><td>POST</td><td>Tokens OAuth2 (<code>client_credentials</code>) pour les services LTI</td><td>JWT client assertion</td></tr><tr><td><code>/mod/glaaster/services.php</code></td><td>GET/POST/PUT/DELETE</td><td>Services LTI Advantage (NRPS, Tool Settings)</td><td>OAuth2 Bearer Token</td></tr><tr><td><code>/mod/glaaster/certs.php</code></td><td>GET</td><td>JWKS de la plateforme (clés publiques)</td><td>Aucune</td></tr><tr><td><code>/mod/glaaster/openid-configuration.php</code></td><td>GET</td><td>Configuration OpenID (enregistrement dynamique)</td><td>Aucune</td></tr><tr><td><code>/mod/glaaster/openid-registration.php</code></td><td>GET/POST</td><td>Enregistrement / mise à jour dynamique</td><td>Bearer <code>registration_token</code> ; URIs validées (5.3.3+)</td></tr><tr><td><code>/mod/glaaster/startltiadvregistration.php</code></td><td>GET</td><td>Démarrage de l&#x27;enregistrement dynamique</td><td>Session + <code>moodle/site:config</code> + sesskey</td></tr><tr><td><code>/mod/glaaster/request_tool.php</code></td><td>GET</td><td>Demande d&#x27;ajout d&#x27;outil au cours</td><td>Session Moodle + <code>mod/glaaster:requesttooladd</code> ; instance inconnue → erreur Moodle (<code>MUST_EXIST</code>)</td></tr><tr><td><code>/lib/ajax/service.php</code> (WS)</td><td>POST</td><td>Web services AJAX (<code>validate_instance</code>, <code>check_tool_status</code>, admin…)</td><td>Session Moodle (sauf <code>validate_instance</code> / <code>check_tool_status</code> : <code>loginrequired = false</code>)</td></tr><tr><td><code>/webservice/rest/server.php</code> (WS)</td><td>POST</td><td>Service <em>Glaaster API</em> (<code>core_course_get_contents</code>, <code>mod_glaaster_get_user_cohorts</code>…)</td><td>Token <code>glaaster_api</code> ; cohortes d&#x27;un autre user → <code>moodle/cohort:view</code> (5.3.3+)</td></tr></tbody></table>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="endpoints-glaaster-externes">Endpoints Glaaster Externes<a href="#endpoints-glaaster-externes" class="hash-link" aria-label="Lien direct vers Endpoints Glaaster Externes" title="Lien direct vers Endpoints Glaaster Externes" translate="no">​</a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Endpoint</th><th>Méthode</th><th>Responsabilité</th></tr></thead><tbody><tr><td>URL d&#x27;enregistrement de l&#x27;outil</td><td>GET</td><td>Démarrage de l&#x27;enregistrement dynamique</td></tr><tr><td><code>https://lti.glaaster.com/lti/login</code></td><td>GET/POST</td><td>Initiate login (LTI 1.3)</td></tr><tr><td><code>https://lti.glaaster.com/lti/launch</code></td><td>POST</td><td><code>redirect_uri</code> (réception de l&#x27;<code>id_token</code>)</td></tr><tr><td><code>https://lti.glaaster.com/.well-known/jwks.json</code></td><td>GET</td><td>JWKS de l&#x27;outil</td></tr><tr><td>Document Service</td><td>—</td><td>Téléchargement et traitement des documents</td></tr></tbody></table>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="performance-et-optimisations">Performance et Optimisations<a href="#performance-et-optimisations" class="hash-link" aria-label="Lien direct vers Performance et Optimisations" title="Lien direct vers Performance et Optimisations" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="flux-optimisés">Flux optimisés<a href="#flux-optimisés" class="hash-link" aria-label="Lien direct vers Flux optimisés" title="Lien direct vers Flux optimisés" translate="no">​</a></h3>
+<ol>
+<li class=""><strong>Validation d&#x27;instance</strong> : &lt; 500 ms (pas d&#x27;auth, requête simple)</li>
+<li class=""><strong>MutationObserver</strong> : détection événementielle, pas de polling</li>
+<li class=""><strong>Nouvel onglet</strong> : <code>forceview=1</code> évite la page intermédiaire (un seul clic)</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="goulots-détranglement-potentiels">Goulots d&#x27;étranglement potentiels<a href="#goulots-détranglement-potentiels" class="hash-link" aria-label="Lien direct vers Goulots d&#x27;étranglement potentiels" title="Lien direct vers Goulots d&#x27;étranglement potentiels" translate="no">​</a></h3>
+<ol>
+<li class=""><strong>Génération JWT</strong> : signature RSA (~50-100 ms)</li>
+<li class=""><strong>Webservice Moodle</strong> : <code>core_course_get_contents</code> peut être lent pour les gros cours</li>
+<li class=""><strong>Traitement document</strong> : conversion PDF/Office (variable selon la taille)</li>
+</ol></div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Pages de documentation"><a class="pagination-nav__link pagination-nav__link--prev" href="/moodle-mod_glaaster/configuration/"><div class="pagination-nav__sublabel">Précédent</div><div class="pagination-nav__label">Configuration</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/moodle-mod_glaaster/release-notes/intro/"><div class="pagination-nav__sublabel">Suivant</div><div class="pagination-nav__label">Historique des versions</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#flux-1--lancement-lti-13-avec-ressource" class="table-of-contents__link toc-highlight">Flux 1 : Lancement LTI 1.3 avec Ressource</a><ul><li><a href="#description" class="table-of-contents__link toc-highlight">Description</a></li><li><a href="#diagramme-de-séquence" class="table-of-contents__link toc-highlight">Diagramme de séquence</a></li><li><a href="#points-dentrée" class="table-of-contents__link toc-highlight">Points d&#39;entrée</a></li><li><a href="#paramètres-transmis" class="table-of-contents__link toc-highlight">Paramètres transmis</a></li></ul></li><li><a href="#flux-2--lancement-lti-13-avec-fichier-de-dossier" class="table-of-contents__link toc-highlight">Flux 2 : Lancement LTI 1.3 avec Fichier de Dossier</a><ul><li><a href="#description-1" class="table-of-contents__link toc-highlight">Description</a></li><li><a href="#diagramme-de-séquence-1" class="table-of-contents__link toc-highlight">Diagramme de séquence</a></li><li><a href="#paramètres-transmis-dossier" class="table-of-contents__link toc-highlight">Paramètres transmis (dossier)</a></li></ul></li><li><a href="#flux-3--mode-douverture-launch-container" class="table-of-contents__link toc-highlight">Flux 3 : Mode d&#39;ouverture (launch container)</a><ul><li><a href="#description-2" class="table-of-contents__link toc-highlight">Description</a></li></ul></li><li><a href="#flux-4--injection-des-boutons-contextuels" class="table-of-contents__link toc-highlight">Flux 4 : Injection des Boutons Contextuels</a><ul><li><a href="#description-3" class="table-of-contents__link toc-highlight">Description</a></li><li><a href="#diagramme-de-séquence-2" class="table-of-contents__link toc-highlight">Diagramme de séquence</a></li><li><a href="#points-de-décision" class="table-of-contents__link toc-highlight">Points de décision</a></li></ul></li><li><a href="#flux-5--validation-dinstance-en-temps-réel" class="table-of-contents__link toc-highlight">Flux 5 : Validation d&#39;Instance en Temps Réel</a><ul><li><a href="#description-4" class="table-of-contents__link toc-highlight">Description</a></li><li><a href="#diagramme-de-séquence-3" class="table-of-contents__link toc-highlight">Diagramme de séquence</a></li><li><a href="#déclencheurs-et-performance" class="table-of-contents__link toc-highlight">Déclencheurs et performance</a></li></ul></li><li><a href="#flux-6--enregistrement-dynamique-lti-13-et-provisioning-du-conteneur" class="table-of-contents__link toc-highlight">Flux 6 : Enregistrement Dynamique LTI 1.3 et Provisioning du Conteneur</a><ul><li><a href="#description-5" class="table-of-contents__link toc-highlight">Description</a></li><li><a href="#diagramme-de-séquence-4" class="table-of-contents__link toc-highlight">Diagramme de séquence</a></li><li><a href="#exemple-de-payload-envoyé-par-loutil" class="table-of-contents__link toc-highlight">Exemple de payload envoyé par l&#39;outil</a></li></ul></li><li><a href="#flux-7--appels-du-document-service-rest-glaaster_api" class="table-of-contents__link toc-highlight">Flux 7 : Appels du Document Service (REST <code>glaaster_api</code>)</a><ul><li><a href="#description-6" class="table-of-contents__link toc-highlight">Description</a></li></ul></li><li><a href="#résumé-des-endpoints" class="table-of-contents__link toc-highlight">Résumé des Endpoints</a><ul><li><a href="#endpoints-moodle-mod_glaaster" class="table-of-contents__link toc-highlight">Endpoints Moodle (mod_glaaster)</a></li><li><a href="#endpoints-glaaster-externes" class="table-of-contents__link toc-highlight">Endpoints Glaaster Externes</a></li></ul></li><li><a href="#performance-et-optimisations" class="table-of-contents__link toc-highlight">Performance et Optimisations</a><ul><li><a href="#flux-optimisés" class="table-of-contents__link toc-highlight">Flux optimisés</a></li><li><a href="#goulots-détranglement-potentiels" class="table-of-contents__link toc-highlight">Goulots d&#39;étranglement potentiels</a></li></ul></li></ul></div></div></div></div></main></div></div></div></div>
+</body>
+</html>

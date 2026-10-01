@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="fr" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-release-notes/5.2.1" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.10.2">
+<title data-rh="true">v5.2.1 | Glaaster Plugin</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://glaaster.github.io/moodle-mod_glaaster/release-notes/5.2.1/"><meta data-rh="true" property="og:locale" content="fr"><meta data-rh="true" name="docusaurus_locale" content="fr"><meta data-rh="true" name="docsearch:language" content="fr"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="v5.2.1 | Glaaster Plugin"><meta data-rh="true" name="description" content="Changes since v5.2.0"><meta data-rh="true" property="og:description" content="Changes since v5.2.0"><link data-rh="true" rel="icon" href="/moodle-mod_glaaster/img/favicon.png"><link data-rh="true" rel="canonical" href="https://glaaster.github.io/moodle-mod_glaaster/release-notes/5.2.1/"><link data-rh="true" rel="alternate" href="https://glaaster.github.io/moodle-mod_glaaster/release-notes/5.2.1/" hreflang="fr"><link data-rh="true" rel="alternate" href="https://glaaster.github.io/moodle-mod_glaaster/release-notes/5.2.1/" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"v5.2.1","item":"https://glaaster.github.io/moodle-mod_glaaster/release-notes/5.2.1"}]}</script><link rel="stylesheet" href="/moodle-mod_glaaster/assets/css/styles.bbf36dee.css">
+<script src="/moodle-mod_glaaster/assets/js/runtime~main.e1f1eae6.js" defer="defer"></script>
+<script src="/moodle-mod_glaaster/assets/js/main.af2c40e1.js" defer="defer"></script>
+</head>
+<body>
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||"light"),document.documentElement.setAttribute("data-theme-choice",t||"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Aller au contenu principal"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Aller au contenu principal</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Ouvrir/fermer la barre de navigation" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/moodle-mod_glaaster/"><div class="navbar__logo"><img src="/moodle-mod_glaaster/img/Glaaster_Logo.png" alt="Glaaster Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/moodle-mod_glaaster/img/Glaaster_Logo.png" alt="Glaaster Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Glaaster Plugin</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/moodle-mod_glaaster/">Documentation</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/moodle-mod_glaaster/release-notes/intro/">Release notes</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Basculer entre le mode sombre et clair (actuellement system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Retour au début de la page" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/moodle-mod_glaaster/"><span class="linkLabel_WmDU">Introduction</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/moodle-mod_glaaster/quickstart/"><span class="linkLabel_WmDU">Démarrage rapide</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/moodle-mod_glaaster/architecture/"><span class="linkLabel_WmDU">Architecture</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/moodle-mod_glaaster/structure/"><span class="linkLabel_WmDU">Structure du projet</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/moodle-mod_glaaster/components/"><span class="linkLabel_WmDU">Composants</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/moodle-mod_glaaster/configuration/"><span class="linkLabel_WmDU">Configuration</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/moodle-mod_glaaster/flows/"><span class="linkLabel_WmDU">Flux de données</span></a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role="button" aria-expanded="true" href="/moodle-mod_glaaster/release-notes/intro/"><span class="categoryLinkLabel_W154">Release notes</span></a></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/moodle-mod_glaaster/release-notes/intro/"><span class="linkLabel_WmDU">Historique des versions</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/moodle-mod_glaaster/release-notes/5.3.4/"><span class="linkLabel_WmDU">v5.3.4</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/moodle-mod_glaaster/release-notes/5.3.3/"><span class="linkLabel_WmDU">v5.3.3</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/moodle-mod_glaaster/release-notes/5.3.2/"><span class="linkLabel_WmDU">v5.3.2</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/moodle-mod_glaaster/release-notes/5.3.1/"><span class="linkLabel_WmDU">v5.3.1</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/moodle-mod_glaaster/release-notes/5.3.0/"><span class="linkLabel_WmDU">v5.3.0</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/moodle-mod_glaaster/release-notes/5.2.1/"><span class="linkLabel_WmDU">v5.2.1</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/moodle-mod_glaaster/release-notes/5.2.0/"><span class="linkLabel_WmDU">v5.2.0</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/moodle-mod_glaaster/release-notes/5.1.1/"><span class="linkLabel_WmDU">v5.1.1</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/moodle-mod_glaaster/release-notes/5.1.0/"><span class="linkLabel_WmDU">v5.1.0</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/moodle-mod_glaaster/release-notes/5.0.0/"><span class="linkLabel_WmDU">v5.0.0</span></a></li></ul></li></ul></nav><button type="button" title="Réduire le menu latéral" aria-label="Réduire le menu latéral" class="button button--secondary button--outline collapseSidebarButton_PEFL"><svg width="20" height="20" aria-hidden="true" class="collapseSidebarButtonIcon_kv0_"><g fill="#7a7a7a"><path d="M9.992 10.023c0 .2-.062.399-.172.547l-4.996 7.492a.982.982 0 01-.828.454H1c-.55 0-1-.453-1-1 0-.2.059-.403.168-.551l4.629-6.942L.168 3.078A.939.939 0 010 2.528c0-.548.45-.997 1-.997h2.996c.352 0 .649.18.828.45L9.82 9.472c.11.148.172.347.172.55zm0 0"></path><path d="M19.98 10.023c0 .2-.058.399-.168.547l-4.996 7.492a.987.987 0 01-.828.454h-3c-.547 0-.996-.453-.996-1 0-.2.059-.403.168-.551l4.625-6.942-4.625-6.945a.939.939 0 01-.168-.55 1 1 0 01.996-.997h3c.348 0 .649.18.828.45l4.996 7.492c.11.148.168.347.168.55zm0 0"></path></g></svg></button></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Fil d&#x27;Ariane"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Page d&#x27;accueil" class="breadcrumbs__link" href="/moodle-mod_glaaster/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">Release notes</span></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">v5.2.1</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">Sur cette page</button></div><div class="theme-doc-markdown markdown"><header><h1>Release Notes — v5.2.1</h1></header>
+<blockquote>
+<p>Changes since <strong>v5.2.0</strong></p>
+</blockquote>
+<p>Patch release. No new features, no database schema changes, no breaking changes.
+Two fixes: one permission grant for the Glaaster API role, one CI reliability fix.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="-bug-fixes">🐛 Bug Fixes<a href="#-bug-fixes" class="hash-link" aria-label="Lien direct vers 🐛 Bug Fixes" title="Lien direct vers 🐛 Bug Fixes" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="glaaster-api-role-now-ignores-activity-availability-restrictions">Glaaster API role now ignores activity availability restrictions<a href="#glaaster-api-role-now-ignores-activity-availability-restrictions" class="hash-link" aria-label="Lien direct vers Glaaster API role now ignores activity availability restrictions" title="Lien direct vers Glaaster API role now ignores activity availability restrictions" translate="no">​</a></h3>
+<p>The &quot;Glaaster API&quot; role already carried the capabilities needed to reach hidden courses,
+hidden sections and hidden activities. It did <strong>not</strong> carry
+<code>moodle/course:ignoreavailabilityrestrictions</code>.</p>
+<p>As a result, the Document Service could not reach resources whose activity carried an
+availability restriction — a date window, a grade condition, a group or grouping
+condition. Such documents were invisible to Glaaster even though the role was otherwise
+fully privileged, and the failure was silent: the file simply did not appear.</p>
+<ul>
+<li class=""><code>moodle/course:ignoreavailabilityrestrictions</code> is now granted to the role on <strong>fresh
+installs</strong> (added to <code>mod_glaaster_assign_api_role_capabilities()</code>).</li>
+<li class="">A new upgrade step grants it on <strong>existing installs</strong>. The role-provisioning function is
+idempotent, so the step only adds the missing capability and leaves everything else
+untouched.</li>
+</ul>
+<p>The role&#x27;s full capability set is now:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Capability</th><th>Purpose</th></tr></thead><tbody><tr><td><code>moodle/course:view</code></td><td>View courses without enrolment</td></tr><tr><td><code>moodle/course:update</code></td><td>Required by <code>core_course_get_contents</code></td></tr><tr><td><code>moodle/course:viewhiddencourses</code></td><td>Reach resources in hidden courses</td></tr><tr><td><code>moodle/course:viewhiddensections</code></td><td>Reach resources in hidden sections</td></tr><tr><td><code>moodle/course:viewhiddenactivities</code></td><td>Reach hidden resource activities</td></tr><tr><td><code>moodle/course:ignoreavailabilityrestrictions</code></td><td><strong>New</strong> — reach restricted activities</td></tr><tr><td><code>mod/resource:view</code></td><td>View file resources</td></tr><tr><td><code>mod/folder:view</code></td><td>List folder contents</td></tr><tr><td><code>webservice/rest:use</code></td><td>Use the REST protocol</td></tr></tbody></table>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="upgrade-steps-consolidated-and-renumbered">Upgrade steps consolidated and renumbered<a href="#upgrade-steps-consolidated-and-renumbered" class="hash-link" aria-label="Lien direct vers Upgrade steps consolidated and renumbered" title="Lien direct vers Upgrade steps consolidated and renumbered" translate="no">​</a></h3>
+<p>Three separate upgrade blocks all did the same thing — <code>require</code> <code>install.php</code> and call
+<code>mod_glaaster_create_api_role()</code> — across versions <code>2026090900</code>, <code>2026090901</code> and
+<code>2026090902</code>. The <code>2026090900</code> block has been folded into <code>2026090901</code>, and the folder
+capability block renumbered to <code>2026091000</code> to carry the new grant.</p>
+<p>Behaviour is unchanged for any site upgrading from 5.2.0 or earlier: the role-provisioning
+call is idempotent and re-runs harmlessly, so collapsing the blocks loses nothing.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="-ci">👷 CI<a href="#-ci" class="hash-link" aria-label="Lien direct vers 👷 CI" title="Lien direct vers 👷 CI" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="unit-tests-no-longer-silently-pass">Unit tests no longer silently pass<a href="#unit-tests-no-longer-silently-pass" class="hash-link" aria-label="Lien direct vers Unit tests no longer silently pass" title="Lien direct vers Unit tests no longer silently pass" translate="no">​</a></h3>
+<p>Two problems let a red test suite ship a release:</p>
+<ul>
+<li class="">The <code>test</code> job carried <code>continue-on-error: true</code>, so failures never failed the job.</li>
+<li class="">The <code>release</code> job was gated on <code>!cancelled()</code> rather than on the test result, so
+semantic-release ran and tagged even when tests had failed.</li>
+</ul>
+<p>Both are fixed: <code>continue-on-error</code> is removed, and the release gate is now
+<code>needs.test.result == &#x27;success&#x27;</code>. <strong>A failing test suite now blocks the release.</strong></p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="external-file-tests-skipped-instead-of-failing">External-file tests skipped instead of failing<a href="#external-file-tests-skipped-instead-of-failing" class="hash-link" aria-label="Lien direct vers External-file tests skipped instead of failing" title="Lien direct vers External-file tests skipped instead of failing" translate="no">​</a></h3>
+<p>Several <code>advanced_testcase</code> tests require Moodle&#x27;s external fixture server, which is not
+reachable from the CI runner — so they failed for environmental reasons rather than real
+defects.</p>
+<p>A new CI step defines <code>TEST_EXTERNAL_FILES_HTTP_URL</code> and <code>TEST_EXTERNAL_FILES_HTTPS_URL</code>
+as empty PHP constants in Moodle&#x27;s <code>config.php</code>, which makes Moodle <em>skip</em> those tests
+rather than fail them. The step locates <code>config.php</code> at either <code>moodle/config.php</code> or
+<code>moodle/public/config.php</code> (Moodle 5.x moved it beside <code>public/</code>), and fails loudly if the
+file or its <code>// Extra config.</code> marker is missing rather than patching silently.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="files-changed">Files Changed<a href="#files-changed" class="hash-link" aria-label="Lien direct vers Files Changed" title="Lien direct vers Files Changed" translate="no">​</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>File</th><th>Change</th></tr></thead><tbody><tr><td><code>mod/glaaster/db/install.php</code></td><td>Added <code>moodle/course:ignoreavailabilityrestrictions</code> to the API role</td></tr><tr><td><code>mod/glaaster/db/upgrade.php</code></td><td>Consolidated three role steps; new <code>2026091000</code> step for the capability</td></tr><tr><td><code>.github/workflows/ci.yml</code></td><td>Removed <code>continue-on-error</code>; gated release on test success; skip external-file tests</td></tr><tr><td><code>mod/glaaster/version.php</code></td><td><code>2026090900</code> → <code>2026091001</code>, release <code>5.2.0</code> → <code>5.2.1</code></td></tr></tbody></table>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="upgrade-notes">Upgrade Notes<a href="#upgrade-notes" class="hash-link" aria-label="Lien direct vers Upgrade Notes" title="Lien direct vers Upgrade Notes" translate="no">​</a></h2>
+<p>Standard plugin upgrade — no manual intervention required.</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#bfc7d5"><span class="token plain">php admin/cli/upgrade.php</span><br></div></code></pre></div></div>
+<p>The upgrade step re-provisions the &quot;Glaaster API&quot; role and adds the new capability. No
+cache purge is needed: no JavaScript, SCSS or language strings changed in this release.</p>
+<p><strong>If the role was customised manually,</strong> note that <code>assign_capability()</code> is called with
+<code>$overwrite = true</code> for every capability in the list. Any of the nine capabilities above
+that had been set to <em>Prevent</em> or <em>Prohibit</em> by hand will be reset to <em>Allow</em>. Capabilities
+outside that list are left alone.</p></div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Pages de documentation"><a class="pagination-nav__link pagination-nav__link--prev" href="/moodle-mod_glaaster/release-notes/5.3.0/"><div class="pagination-nav__sublabel">Précédent</div><div class="pagination-nav__label">v5.3.0</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/moodle-mod_glaaster/release-notes/5.2.0/"><div class="pagination-nav__sublabel">Suivant</div><div class="pagination-nav__label">v5.2.0</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#-bug-fixes" class="table-of-contents__link toc-highlight">🐛 Bug Fixes</a><ul><li><a href="#glaaster-api-role-now-ignores-activity-availability-restrictions" class="table-of-contents__link toc-highlight">Glaaster API role now ignores activity availability restrictions</a></li><li><a href="#upgrade-steps-consolidated-and-renumbered" class="table-of-contents__link toc-highlight">Upgrade steps consolidated and renumbered</a></li></ul></li><li><a href="#-ci" class="table-of-contents__link toc-highlight">👷 CI</a><ul><li><a href="#unit-tests-no-longer-silently-pass" class="table-of-contents__link toc-highlight">Unit tests no longer silently pass</a></li><li><a href="#external-file-tests-skipped-instead-of-failing" class="table-of-contents__link toc-highlight">External-file tests skipped instead of failing</a></li></ul></li><li><a href="#files-changed" class="table-of-contents__link toc-highlight">Files Changed</a></li><li><a href="#upgrade-notes" class="table-of-contents__link toc-highlight">Upgrade Notes</a></li></ul></div></div></div></div></main></div></div></div></div>
+</body>
+</html>
