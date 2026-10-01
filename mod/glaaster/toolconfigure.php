@@ -796,7 +796,7 @@ $setupform .= html_writer::end_div();
 // ── Step 5: Notify Glaaster ───────────────────────────────────────────────────
 $notifysubject = get_string('apistep_notify_subject', 'mod_glaaster', $CFG->wwwroot);
 $notifybody = get_string('apistep_notify_body', 'mod_glaaster', $CFG->wwwroot);
-$mailtourl = 'mailto:system@glaaster.com'
+$mailtourl = 'mailto:support@glaaster.com'
     . '?subject=' . rawurlencode($notifysubject)
     . '&body=' . rawurlencode($notifybody);
 
