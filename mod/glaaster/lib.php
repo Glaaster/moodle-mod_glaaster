@@ -607,17 +607,3 @@ function mod_glaaster_core_calendar_provide_event_action(
         true
     );
 }
-
-/**
- * Legacy callback for Moodle versions before 4.4.
- *
- * This function is used for compatibility with older Moodle versions.
- *
- * @return void
- */
-function mod_glaaster_before_footer() {
-    global $CFG;
-    require_once($CFG->dirroot . '/mod/glaaster/locallib.php');
-    // Load the appropriate JS file based on Moodle version.
-    mod_glaaster_load_js();
-}
