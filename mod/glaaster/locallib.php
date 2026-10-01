@@ -5282,9 +5282,11 @@ function mod_glaaster_get_js_config(): array {
     $iconsenabled = get_config('mod_glaaster', 'iconsenabled');
     $iconsenabled = ($iconsenabled === false) ? true : (bool)$iconsenabled;
 
-    // Contextual buttons must open a new tab directly when that is the configured launch mode,
-    // otherwise the user lands on view.php and has to click a second link.
-    $openinnewwindow = (glaaster_get_default_launch_container() == MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW);
+    // Contextual buttons must open a new tab directly when that is the effective launch mode,
+    // otherwise the user lands on view.php and has to click a second link. Use the device-aware
+    // container: phones and tablets always launch in the existing window, and sending forceview
+    // there would make view.php skip its redirect and render the embedded branch instead.
+    $openinnewwindow = (glaaster_get_launch_container(null, null) == MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW);
 
     $dbman = $DB->get_manager();
     if (!$dbman->table_exists('glaaster_types')) {
