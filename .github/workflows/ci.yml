@@ -219,3 +219,27 @@ jobs:
           name: plugin-zip
           path: mod_glaaster_v*.zip
           retention-days: 30
+
+  dist:
+    name: Publish dist branch (subtree split)
+    runs-on: ubuntu-22.04
+    needs: release
+    # Runs after the release job so the split includes the version.php bump and the new tag.
+    if: ${{ needs.release.result == 'success' }}
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Branch tip, not the triggering SHA: picks up the release commit pushed meanwhile.
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Split and push mod/glaaster
+        run: bash scripts/dist-split.sh "${{ github.ref_name }}" origin

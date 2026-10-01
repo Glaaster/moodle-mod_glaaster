@@ -5,7 +5,7 @@
 [![PHP 8.1 | 8.2 | 8.3 | 8.4](https://img.shields.io/badge/PHP-8.1%20|%208.2%20|%208.3%20|%208.4-blue)](https://php.net)
 [![LTI 1.3](https://img.shields.io/badge/LTI-1.3%20Advantage-green)](https://www.imsglobal.org/spec/lti/v1p3/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Latest Release](https://img.shields.io/badge/version-4.5.1-brightgreen)](https://github.com/Glaaster/moodle-glaaster_activity/releases)
+[![Latest Release](https://img.shields.io/github/v/release/Glaaster/moodle-mod_glaaster)](https://github.com/Glaaster/moodle-mod_glaaster/releases)
 
 The **Glaaster Activity** plugin is a Moodle activity module that integrates [Glaaster](https://glaaster.com) — a collaborative document reader — directly into Moodle courses via LTI 1.3/Advantage. Students can open course files (PDF, Word, PowerPoint, images) in Glaaster with a single click, without leaving Moodle.
 
@@ -73,20 +73,55 @@ The **Glaaster Activity** plugin is a Moodle activity module that integrates [Gl
 
 ### Option B — Manual (ZIP)
 
-1. Download the latest ZIP from [Releases](https://github.com/Glaaster/moodle-glaaster_activity/releases)
-2. Extract to your Moodle directory so that `version.php` is at:
-   ```
-   moodle/mod/glaaster/version.php
-   ```
-3. In Moodle, go to **Site administration → Notifications** (or run `php admin/cli/upgrade.php`)
+1. Download the latest ZIP from [Releases](https://github.com/Glaaster/moodle-mod_glaaster/releases)
+2. Extract it into your Moodle code so that `version.php` is at:
 
-### Option C — Git (development)
+   | Moodle version | Plugin location |
+   |----------------|-----------------|
+   | 4.5 – 5.0 | `<moodle>/mod/glaaster/version.php` |
+   | 5.1 and later | `<moodle>/public/mod/glaaster/version.php` |
+
+3. In Moodle, go to **Site administration → Notifications** (or run `php admin/cli/upgrade.php`
+   from the Moodle root — the CLI scripts stay outside `public/` on 5.1+)
+
+### Option C — Git submodule / clone (sites managed with Git)
+
+This repository holds the plugin under `mod/glaaster/` alongside development tooling, so it
+**cannot** be used directly as a submodule. CI publishes the plugin alone (with `version.php` at
+the root) to dedicated branches and tags of the same repository:
+
+| Ref | Content |
+|-----|---------|
+| `dist/main` | Latest release line (Moodle 4.5 – 5.2) |
+| `dist/moodle/<x.y>` | Maintenance branch for a given Moodle version, when it exists |
+| `dist-v<x.y.z>` | Tag of a specific release (e.g. `dist-v5.3.3`) |
 
 ```bash
 cd /path/to/moodle
-git clone https://github.com/Glaaster/moodle-glaaster_activity.git mod/glaaster
+
+# Moodle 5.1 and later (code under public/)
+git submodule add -b dist/main https://github.com/Glaaster/moodle-mod_glaaster.git public/mod/glaaster
+
+# Moodle 4.5 – 5.0
+git submodule add -b dist/main https://github.com/Glaaster/moodle-mod_glaaster.git mod/glaaster
+
 php admin/cli/upgrade.php
 ```
+
+To pin a specific release, check out its tag in the submodule:
+
+```bash
+cd public/mod/glaaster   # or mod/glaaster
+git fetch --tags && git checkout dist-v5.3.3
+cd - && git add public/mod/glaaster && git commit -m "Pin mod_glaaster 5.3.3"
+```
+
+Updating to the latest commit of the tracked branch: `git submodule update --remote public/mod/glaaster`.
+
+### Option D — Development
+
+Clone the full repository (tooling, tests, Docker) outside of Moodle and link or mount
+`mod/glaaster/` into your Moodle code (`mod/glaaster` or `public/mod/glaaster` on 5.1+).
 
 ---
 
