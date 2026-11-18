@@ -608,6 +608,16 @@ $string['iconposition_desc'] =
     'Choisissez comment l\'icône est positionnée par rapport au nom de l\'activité. Ceci s\'applique uniquement ' .
     'aux ressources/pages standard et au format de cours Tiles ; les icônes de fichiers dans les dossiers ne ' .
     'sont pas affectées.';
+$string['linkdetection'] = 'Détecter les liens vers les documents sur toutes les pages';
+$string['linkdetection_desc'] =
+    'Ajoute aussi l\'icône Glaaster à côté de tout lien vers une ressource fichier (/mod/resource/view.php), ' .
+    'pour les pages qui n\'utilisent pas l\'affichage standard des activités (pages de thème personnalisées, ' .
+    'tableaux de bord...). Le type de fichier est vérifié côté serveur : seuls les documents supportés ' .
+    'reçoivent une icône.';
+$string['linkdetectionpages'] = 'Pages concernées par la détection des liens';
+$string['linkdetectionpages_desc'] =
+    'Un chemin par ligne, relatif à la racine de Moodle (ex. /theme/remui/views/formation.php). Un chemin ' .
+    'couvre aussi les pages en dessous. Laisser vide pour détecter les liens sur toutes les pages.';
 
 // Paramètres du mode d'ouverture.
 $string['launchsettings'] = 'Mode d\'ouverture';

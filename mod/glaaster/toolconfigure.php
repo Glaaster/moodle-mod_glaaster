@@ -156,6 +156,14 @@ if (optional_param('saveiconsettings', 0, PARAM_BOOL)) {
     set_config('iconurl', $newiconurl, 'mod_glaaster');
     set_config('iconposition', $newiconposition, 'mod_glaaster');
     set_config('iconsenabled', $newiconsenabled ? 1 : 0, 'mod_glaaster');
+    $newlinkdetection = optional_param('linkdetection', 0, PARAM_BOOL);
+    $newlinkdetectionpages = optional_param('linkdetectionpages', '', PARAM_RAW_TRIMMED);
+    set_config('linkdetection', $newlinkdetection ? 1 : 0, 'mod_glaaster');
+    set_config(
+        'linkdetectionpages',
+        implode("\n", glaaster_parse_linkdetection_pages($newlinkdetectionpages)),
+        'mod_glaaster'
+    );
     redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
 }
 
@@ -196,6 +204,8 @@ if ($iconsenabled === false) {
 } else {
     $iconsenabled = (bool) $iconsenabled;
 }
+$linkdetection = (bool) get_config('mod_glaaster', 'linkdetection');
+$linkdetectionpages = (string) get_config('mod_glaaster', 'linkdetectionpages');
 $launchcontainer = glaaster_get_default_launch_container();
 $apiuserid = (int) get_config('mod_glaaster', 'apiuserid');
 $apiuser = $apiuserid ? \core_user::get_user($apiuserid) : null;
@@ -399,6 +409,52 @@ $iconform .= html_writer::end_div();
 $iconform .= html_writer::tag(
     'div',
     get_string('iconposition_desc', 'mod_glaaster'),
+    ['class' => 'form-text text-muted mt-1']
+);
+$iconform .= html_writer::end_div();
+
+// Generic resource link detection (custom pages / themes without standard activity markup).
+$iconform .= html_writer::start_div('mb-3 form-check form-switch');
+$iconform .= html_writer::empty_tag('input', [
+    'type' => 'checkbox',
+    'name' => 'linkdetection',
+    'id' => 'linkdetection',
+    'value' => '1',
+    'class' => 'form-check-input',
+    'checked' => $linkdetection ? 'checked' : null,
+]);
+$iconform .= html_writer::tag(
+    'label',
+    get_string('linkdetection', 'mod_glaaster'),
+    ['for' => 'linkdetection', 'class' => 'form-check-label fw-medium']
+);
+$iconform .= html_writer::tag(
+    'div',
+    get_string('linkdetection_desc', 'mod_glaaster'),
+    ['class' => 'form-text text-muted mt-1']
+);
+$iconform .= html_writer::end_div();
+
+$iconform .= html_writer::start_div('mb-3');
+$iconform .= html_writer::tag(
+    'label',
+    get_string('linkdetectionpages', 'mod_glaaster'),
+    [
+        'for' => 'linkdetectionpages',
+        'class' => 'form-label fw-medium small text-uppercase letter-spacing-1',
+        'style' => 'color:#343a40',
+    ]
+);
+$iconform .= html_writer::tag('textarea', s($linkdetectionpages), [
+    'name' => 'linkdetectionpages',
+    'id' => 'linkdetectionpages',
+    'rows' => 4,
+    'class' => 'form-control',
+    'placeholder' => '/theme/remui/views/formation.php',
+]);
+$iconform .= html_writer::tag(
+    'div',
+    get_string('linkdetectionpages_desc', 'mod_glaaster'),
     ['class' => 'form-text text-muted mt-1']
 );
 $iconform .= html_writer::end_div();

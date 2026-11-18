@@ -746,6 +746,15 @@ $string['iconposition_blockend'] = 'End of the activity block (legacy layout)';
 $string['iconposition_desc'] =
     'Choose how the icon is positioned relative to the activity name. This applies to standard resource/page ' .
     'activities and courses using the Tiles course format only; folder file icons are unaffected.';
+$string['linkdetection'] = 'Detect document links on all pages';
+$string['linkdetection_desc'] =
+    'Also add the Glaaster icon next to any link to a file resource (/mod/resource/view.php), for pages ' .
+    'that do not use the standard activity layout (custom theme pages, dashboards...). The file type is ' .
+    'checked on the server, so only supported documents get an icon.';
+$string['linkdetectionpages'] = 'Pages for document link detection';
+$string['linkdetectionpages_desc'] =
+    'One path per line, relative to the Moodle root (e.g. /theme/remui/views/formation.php). A path also ' .
+    'matches the pages below it. Leave empty to detect links on every page.';
 // Launch container settings.
 $string['launchsettings'] = 'Opening mode';
 $string['launchcontainer_setting'] = 'How Glaaster opens';
