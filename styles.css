@@ -421,6 +421,31 @@
     z-index: 30;
 }
 
+/* Generic link detection: icon placed next to a /mod/resource/view.php link on custom pages. */
+/* The surrounding markup is unknown, so keep it self-contained (fixed icon size, inline). */
+.glaaster-icon-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin: 0 6px;
+    vertical-align: middle;
+    z-index: 30;
+}
+
+.glaaster-icon-link img {
+    width: 24px;
+    height: 24px;
+}
+
+/* Link wrapping a block title (<a><div>Title</div></a>): inline-block shrinks it to the title */
+/* width so the sibling icon sits on its right; max-width keeps room for the icon on long titles. */
+/* 56px: icon up to 32px (themes may enlarge .icon) + 2 x 6px margin + safety gap. */
+a.glaaster-link-host {
+    display: inline-block;
+    vertical-align: middle;
+    max-width: calc(100% - 56px);
+}
+
 /* Legacy layout: icon appended at the end of the activity block (outside the text), */
 /* offset from the activity name with margin gaps. */
 .glaaster-icon-blockend {

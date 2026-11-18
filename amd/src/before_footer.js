@@ -47,13 +47,17 @@ const SUPPORTEDFILEICONS = ['f/pdf', 'f/image', 'f/document', 'f/powerpoint', 'f
  *                                        'right' (glued to the right of the text, default), or
  *                                        'blockend' (end of the activity block, legacy layout)
  * @param {boolean} config.openInNewWindow - Whether the admin configured Glaaster to open in a new tab
+ * @param {boolean} config.linkDetection - Admin toggle: also detect /mod/resource/view.php links on
+ *                                         pages without standard activity markup (custom theme pages)
+ * @param {string[]} config.linkDetectionPages - Paths (relative to wwwroot, prefix match) where link
+ *                                               detection runs; empty means every page
  */
 export function init(config) {
     'use strict';
 
     const {
         instanceId, instanceValid, iconsEnabled, webservicesEnabled, webserviceConfigured,
-        debugEnabled, iconUrl, iconPosition, openInNewWindow,
+        debugEnabled, iconUrl, iconPosition, openInNewWindow, linkDetection, linkDetectionPages,
     } = config;
 
     // Icons are always shown once enabled by the admin; only their enabled/disabled
@@ -570,6 +574,173 @@ export function init(config) {
     }
 
     /**
+     * Whether generic link detection applies to the current page.
+     * Entries are matched as prefixes, against the path relative to wwwroot (Moodle installed in a
+     * subdirectory) and against the full path (entry pasted with the subdirectory).
+     * @return {boolean}
+     */
+    function isLinkDetectionPage() {
+        if (linkDetection !== true) {
+            return false;
+        }
+        if (!Array.isArray(linkDetectionPages) || linkDetectionPages.length === 0) {
+            return true;
+        }
+        const fullPath = window.location.pathname;
+        let rootPath = '';
+        try {
+            rootPath = new URL(M.cfg.wwwroot).pathname.replace(/\/$/, '');
+        } catch (e) {
+            rootPath = '';
+        }
+        const relPath = rootPath && fullPath.startsWith(rootPath) ? fullPath.slice(rootPath.length) : fullPath;
+        return linkDetectionPages.some((page) => relPath.startsWith(page) || fullPath.startsWith(page));
+    }
+
+    // Areas where resource links are navigation rather than content, or already handled by the
+    // standard course page logic above.
+    const LINKDETECTIONEXCLUDED = [
+        'li.modtype_resource', 'li.modtype_folder', '#courseindex', '.courseindex', 'nav',
+        '.breadcrumb', '.drawer', 'section.block', '[data-glaaster-link]',
+    ].join(', ');
+
+    // Max course module ids per web service request (mirrors get_supported_resources::MAX_CMIDS).
+    const LINKDETECTIONBATCH = 200;
+
+    // Server answer cache: cmid (string) -> supported (boolean).
+    const resourceSupport = new Map();
+
+    /**
+     * Whether a Glaaster button is already glued to this link.
+     * @param {HTMLElement} anchor
+     * @return {boolean}
+     */
+    function hasAdjacentGlaasterLink(anchor) {
+        const isGlaaster = (el) => !!(el && el.matches && el.matches('a[data-glaaster-link="true"]'));
+        return isGlaaster(anchor.nextElementSibling) || isGlaaster(anchor.previousElementSibling);
+    }
+
+    /**
+     * Whether the link wraps block-level content (e.g. <a><div>Title</div></a>), which would push a
+     * sibling button onto its own line.
+     * @param {HTMLElement} anchor
+     * @return {boolean}
+     */
+    function hasBlockContent(anchor) {
+        return Array.from(anchor.querySelectorAll('*')).some((el) => {
+            const display = window.getComputedStyle(el).display;
+            return display !== 'none' && display !== 'contents' && !display.startsWith('inline');
+        });
+    }
+
+    /**
+     * Insert a Glaaster button next to a resource link (outside it: nested <a> is invalid HTML).
+     * @param {HTMLElement} anchor
+     * @param {string} cmid
+     * @param {string} translation
+     * @param {string} disabledTranslation
+     */
+    function injectButtonNextToLink(anchor, cmid, translation, disabledTranslation) {
+        if (!anchor.isConnected || hasAdjacentGlaasterLink(anchor)) {
+            return;
+        }
+        const url = buildGlaasterUrl({
+            l: String(instanceId),
+            course_module_id: String(cmid)
+        });
+        const glaasterLink = createGlaasterLink(url, translation, 'icon', disabledTranslation);
+        glaasterLink.classList.add('glaaster-icon-link');
+        if (hasBlockContent(anchor)) {
+            // Shrink the link to its content so the button stays on the same line as the title,
+            // without touching the theme's own block element.
+            anchor.classList.add('glaaster-link-host');
+        }
+        if (iconPosition === 'left') {
+            anchor.before(glaasterLink);
+        } else {
+            anchor.after(glaasterLink);
+        }
+    }
+
+    /**
+     * Generic detection: find /mod/resource/view.php links outside the standard activity markup,
+     * ask the server which ones are supported documents, then add a button next to them.
+     *
+     * Only links with visible text are kept, so a block made of an icon link + a title link to the
+     * same resource gets a single button (next to the title).
+     * @param {string} translation
+     * @param {string} disabledTranslation
+     */
+    function detectResourceLinks(translation, disabledTranslation) {
+        const candidates = [];
+        document.querySelectorAll('a[href*="/mod/resource/view.php"]').forEach((anchor) => {
+            if (anchor.dataset.glaasterScanned || anchor.closest(LINKDETECTIONEXCLUDED)) {
+                return;
+            }
+            if (!(anchor.textContent || '').trim()) {
+                return;
+            }
+            const cmid = extractIdFromHref(anchor.getAttribute('href'));
+            if (!cmid || !/^\d+$/.test(cmid)) {
+                return;
+            }
+            anchor.dataset.glaasterScanned = 'true';
+            candidates.push({anchor, cmid});
+        });
+        if (!candidates.length) {
+            return;
+        }
+
+        const injectSupported = () => candidates.forEach(({anchor, cmid}) => {
+            if (resourceSupport.get(cmid) === true) {
+                injectButtonNextToLink(anchor, cmid, translation, disabledTranslation);
+            }
+        });
+
+        const unknown = [...new Set(candidates.map((c) => c.cmid))].filter((id) => !resourceSupport.has(id));
+        if (!unknown.length) {
+            injectSupported();
+            return;
+        }
+
+        const requests = [];
+        for (let i = 0; i < unknown.length; i += LINKDETECTIONBATCH) {
+            requests.push({
+                methodname: 'mod_glaaster_get_supported_resources',
+                args: {cmids: unknown.slice(i, i + LINKDETECTIONBATCH).map(Number)},
+            });
+        }
+        Promise.all(ajaxCall(requests)).then((results) => {
+            const supported = new Set([].concat(...results).map(String));
+            unknown.forEach((id) => resourceSupport.set(id, supported.has(id)));
+            injectSupported();
+            return null;
+        }).catch((e) => {
+            // Let a later scan retry these links.
+            candidates.forEach(({anchor}) => delete anchor.dataset.glaasterScanned);
+            warn('Failed resolving resource links', e);
+        });
+    }
+
+    /**
+     * Re-run link detection when the page content changes (accordions, tabs, AJAX lists).
+     * Debounced: our own button insertions also trigger a cheap, no-op rescan.
+     * @param {string} translation
+     * @param {string} disabledTranslation
+     */
+    function setupLinkObserver(translation, disabledTranslation) {
+        let timer = null;
+        const observer = new MutationObserver((mutations) => {
+            if (!mutations.some((m) => m.addedNodes.length > 0)) {
+                return;
+            }
+            clearTimeout(timer);
+            timer = setTimeout(() => detectResourceLinks(translation, disabledTranslation), 200);
+        });
+        observer.observe(document.body, {childList: true, subtree: true});
+    }
+
+    /**
      * Add Glaaster buttons to the page. Buttons always render on supported documents;
      * their enabled/disabled state depends on whether a valid Glaaster instance exists.
      * @param {string} translation
@@ -578,6 +749,11 @@ export function init(config) {
     function addButtonsToPage(translation, disabledTranslation) {
         injectButtonsInContainer(null, translation, disabledTranslation);
         setupContentObserver(translation, disabledTranslation);
+
+        if (isLinkDetectionPage()) {
+            detectResourceLinks(translation, disabledTranslation);
+            setupLinkObserver(translation, disabledTranslation);
+        }
 
         if (window.location.pathname.includes('/mod/folder/view.php')) {
             const urlParams = new URLSearchParams(window.location.search);

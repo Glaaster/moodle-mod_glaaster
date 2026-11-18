@@ -5288,6 +5288,9 @@ function mod_glaaster_get_js_config(): array {
     // there would make view.php skip its redirect and render the embedded branch instead.
     $openinnewwindow = (glaaster_get_launch_container(null, null) == MOD_GLAASTER_LAUNCH_CONTAINER_WINDOW);
 
+    $linkdetection = (bool)get_config('mod_glaaster', 'linkdetection');
+    $linkdetectionpages = glaaster_parse_linkdetection_pages((string)get_config('mod_glaaster', 'linkdetectionpages'));
+
     $dbman = $DB->get_manager();
     if (!$dbman->table_exists('glaaster_types')) {
         return [
@@ -5300,6 +5303,8 @@ function mod_glaaster_get_js_config(): array {
             'iconUrl'              => $iconurl,
             'iconPosition'         => $iconposition,
             'openInNewWindow'      => $openinnewwindow,
+            'linkDetection'        => $linkdetection,
+            'linkDetectionPages'   => $linkdetectionpages,
         ];
     }
 
@@ -5319,7 +5324,35 @@ function mod_glaaster_get_js_config(): array {
         'iconUrl'              => $iconurl,
         'iconPosition'         => $iconposition,
         'openInNewWindow'      => $openinnewwindow,
+        'linkDetection'        => $linkdetection,
+        'linkDetectionPages'   => $linkdetectionpages,
     ];
+}
+
+/**
+ * Parse the admin list of pages where generic resource link detection runs.
+ *
+ * One path per line, relative to wwwroot (e.g. "/theme/remui/views/formation.php").
+ * Each entry is matched as a prefix of the current page path. Empty list = every page.
+ *
+ * @param string $raw
+ * @return string[]
+ */
+function glaaster_parse_linkdetection_pages(string $raw): array {
+    $pages = [];
+    foreach (preg_split('/\R/', $raw) as $line) {
+        $line = trim($line);
+        if ($line === '') {
+            continue;
+        }
+        // Keep only the path part if a full URL was pasted.
+        $path = parse_url($line, PHP_URL_PATH);
+        if (empty($path)) {
+            continue;
+        }
+        $pages[] = '/' . ltrim($path, '/');
+    }
+    return array_values(array_unique($pages));
 }
 
 /**
