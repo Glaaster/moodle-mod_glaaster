@@ -213,6 +213,16 @@ $functions = [
         'loginrequired' => false,
     ],
 
+    // Generic link detection: resolves which mod_resource links on a custom page point to a
+    // file type Glaaster supports. Login required, only visible resources are returned.
+    'mod_glaaster_get_supported_resources' => [
+        'classname'   => 'mod_glaaster\external\get_supported_resources',
+        'methodname'  => 'execute',
+        'description' => 'Filter course module ids down to visible file resources supported by Glaaster',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+
     'mod_glaaster_get_user_cohorts' => [
         'classname'     => 'mod_glaaster\external\get_user_cohorts',
         'methodname'    => 'execute',
